@@ -1,0 +1,141 @@
+#!/bin/sh
+# this file is part of Sage
+# (c) 2013 Felix Salfelder
+# license: gplv3+
+#
+# this is intended for installation within spkg-install
+#
+# same functionality as install-sh, but also
+# -F FILELIST append target filenames into filelist
+# -D DESTDIR  prepend destdir before copy
+# -v          verbose output
+#
+# EXAMPLES
+#
+## manual install, just use this instead of another install or cp
+# sage-dist-install ...
+#
+## sane upstream makefiles
+# make install INSTALL="/path/to/install -F$(prefix)/var/lib/sage/installed"
+#
+## broken makefile, doesn't honor DESTDIR, calls $(INSTALL)
+# make install INSTALL="/.../install -F... -D$(DESTDIR)"
+#
+## completely broken makefile, just calls install,
+## lets inject parameters through environment
+# (export PATH=... DESTDIR_BYPASS=... FILELIST_BYPASS=...; make install)
+#
+## distutils (don't know yet)
+# ...
+
+args=
+verbose=$INSTALL_DEBUG
+# query env, as it may be not possible to fix install call
+destdir=$DESTDIR_BYPASS
+filelist=$FILELIST_BYPASS
+
+while test $# -ne 0; do
+  case $1 in
+    -D)
+      shift; destdir=$1; shift
+      ;;
+    -F)
+      shift; filelist=$1; shift
+      ;;
+    -v)
+      shift; verbose=yes;
+      ;;
+    -c|-C|-g|-s|-T|--help|--version)
+      args="$args $1"
+      shift
+      ;;
+    -d)
+      shift
+      args="$args -d $destdir$1"
+      shift
+      ;;
+    -m|-o)
+      args="$args $1"
+      shift
+      args="$args $1"
+      shift
+      ;;
+    -t)
+      args="$args $1"
+      shift
+      dst_arg=$1
+      args="$args $1"
+      shift
+      ;;
+    --) break;;
+    -*)
+      echo "$0: invalid option: $1" >&2
+      exit 1
+      ;;
+    *) break;;
+esac
+done
+
+if test x$verbose = xyes; then
+  echo "finding done start $args / $@"
+fi
+
+extra_destarg=
+
+if test $# -ne 0 && test -z "$dir_arg$dst_arg"; then
+  if test x$verbose = xyes; then
+    echo "finding dst_arg"
+  fi
+  # When -d is used, all remaining arguments are directories to create.
+  # When -t is used, the destination is already specified.
+  # Otherwise, the last argument is the destination.  Remove it from $@.
+  for arg
+  do
+    if test -n "$dst_arg"; then
+      # $@ is not empty: it contains at least $arg.
+      set "$@" "$dst_arg"
+    fi
+    shift # arg
+    dst_arg=$arg
+    # Protect names problematic for `test' and other utilities.
+  done
+  extra_destarg=$destdir$dst_arg
+fi
+
+case $dst_arg in
+  -* | [=\(\)!]) dst_arg=./$dst_arg;;
+esac
+
+
+if test -n "$filelist"; then
+  set -C
+  until 2> /dev/null > .$filelist.lock; do :; done
+  trap 'rm -f .$filelist.lock; exit $?' INT TERM EXIT
+  set +C
+endif
+
+# $@ holds the list of files
+for src in $@; do
+  if test x$verbose = xyes; then
+    echo "..." $src
+  fi
+
+  dst=$dst_arg/`basename "$src"`
+  args="$args $1"
+  if test -n "$filelist"; then
+    if test x$verbose = xyes; then
+      echo "recording $dst_arg/$dst to $filelist"
+    fi
+    echo $dst_arg/$dst >> $filelist
+  fi
+  shift
+done
+
+cmd="@INSTALL@ $args $@ $extra_destarg"
+if test x$verbose = xyes; then
+  echo calling $cmd
+fi
+$cmd
+exit $?
+
+# vim:sw=2:et:

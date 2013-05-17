@@ -6,15 +6,192 @@
 #
 # See below for targets to build the documentation in other formats,
 # to run various types of test suites, and to remove parts of the build etc.
+#
+SUBDIRS = dist build
 
-PIPE = build/pipestatus
+# just pkgs?
+PKGSDIR=build/pkgs
+
+PIPE = $(abs_top_srcdir)/build/pipestatus
+V_ = 0 # $(AM_DEFAULT_VERBOSITY)
+V_0 = 0
+V_1 = 1
+
+# need absolute path, passed to other build scripts.
+SAGE_LOGS=@abs_top_builddir@/pkgs/logs
 
 all: start doc  # indirectly depends on build
+
+CORE_MODULES=src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
+CORE_ENV=LDFLAGS="-L$(prefix)/lib $$LDFLAGS" PATH="$(exec_prefix)/bin:$$PATH"
+CORE_OPTS=--prefix="@prefix@"
+
+### CORE_MODULE build implementation ###
+# FIXME: treat all modules the same?
+
+$(CORE_MODULES:%=%-configure): %-configure: %-configure-stamp
+$(CORE_MODULES:%=%-configure-stamp): %-configure-stamp: $(abs_srcdir)/%/configure
+	-mkdir -p $*
+	cd $*; $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
+	touch $@
+
+$(CORE_MODULES:%=%-build): %-build: %-build-stamp
+$(CORE_MODULES:%=%-build-stamp): %-build-stamp: %-configure-stamp
+	export $(CORE_ENV); \
+	$(MAKE) -C$* V=$(V_$(V))
+	touch $@
+
+$(CORE_MODULES:%=%-install-stamp): %-install-stamp: %-install
+	touch $@
+
+$(CORE_MODULES:%=%-install): %-install: %-build-stamp
+	$(MAKE) -C$* install
+
+# distribute core modules as tarballs
+# (probably unneeded)
+EXTRA_DIST=$(CORE_MODULES:%=%-builtin.tar.gz)
+$(CORE_MODULES:%=%-builtin.tar.gz): %-builtin.tar.gz: %-configure-stamp
+	$(MAKE) -C$* dist PACKAGE=internal VERSION=builtin
+	mv $*/internal-builtin.tar.gz $*-builtin.tar.gz
+
+# add submodule contents to dist (much better)
+@distdir_subs@
+
+### core module rules ###
+# FIXME: build src/sage out of tree
+# in src/build/sage/cythonized?!
+
+.PHONY: $(CORE_MODULES:%=%-configure) \
+        $(CORE_MODULES:%=%-build) \
+        $(CORE_MODULES:%=%-install)
+
+### core module dependencies ###
+
+src/doc-configure-stamp: # src/sage-install-stamp
+src/sage-configure-stamp: # src/c_lib-build-stamp
+
+PYTHON ?= $(abs_top_builddir)/local/bin/python
+
+src/sage-configure-stamp: CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
+src/sage-configure-stamp: CORE_ENV+= PYTHON="$(PYTHON)"
+src/sage-configure-stamp: CORE_ENV+= PKG_CONFIG_LIBDIR="$(abs_top_builddir)/local/lib/pkgconfig"
+src/sage-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
+
+src/c_lib-configure-stamp: CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
+src/c_lib-configure-stamp: CORE_ENV+= PYTHON="$(PYTHON)"
+src/c_lib-configure-stamp: CORE_ENV+= PKG_CONFIG_LIBDIR="$(abs_top_builddir)/local/lib/pkgconfig"
+src/c_lib-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
+
+src/bin-configure-stamp: CORE_OPTS+= --sysconfdir=@prefix@/etc
+
+# --path-paranoia?
+@SAGE_ONLY_TRUE@src/bin-configure-stamp: CORE_OPTS+= --enable-path_redundancy
+
+src/sage-build-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
+
+#c_lib depends from deps.in
+src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
+                           @DEP_pynac@ @DEP_python@
+
+BIN=src/bin-install-stamp
+CSAGE=src/c_lib-install-stamp
+SAGE=src/sage-install-stamp
+
+sage-stuff: $(SAGE)
+
+## install the core library parts
+core-install: $(CORE_MODULES:%=%-install)
+
+## foreign module stuff
+
+# this is the install-stamp location
+INST = local/var/lib/sage/installed
+
+LOCKFILE=$(abs_builddir)/.dllock
+
+packagename = $(firstword $(subst -, ,$1))
+unat = echo "$1"; $1
+
+define downloadit
+	@set -C; \
+	trap 'rm -f $(LOCKFILE); exit $?' INT TERM EXIT;\
+	until 2> /dev/null > $(LOCKFILE); do :; done
+	mkdir -p @UPSTREAM@; cd @UPSTREAM@;\
+	$(call unat,@URL_GRABBER@ @DOWNLOAD_URL@/$(call packagename,$*)/$(notdir $@))
+endef
+
+@UPSTREAM@/%.bz2:
+	$(downloadit)
+
+@UPSTREAM@/%.gz:
+	$(downloadit)
+
+@dotPRECIOUS@: @UPSTREAM@/%.bz2 @UPSTREAM@/%.gz
+
+# FIXME: decruft environment!!!1
+# this apparently is *not* prefix
+SAGE_LOCAL=@abs_top_builddir@/local
+
+### generic build stamp rule
+# FIXME: use more env.sh
+# FIXME: pass FILELIST
+.SECONDEXPANSION:
+$(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src | $(SAGE_LOGS) $(INST) $(PKGSDIR)
+	path=$(PKGSDIR)/$(firstword $(subst -, ,$*)); \
+	[ -d $$path/patches -o -h $$path/patches ] || ln -s $(abs_top_srcdir)/$$path/patches $$path;\
+	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	       MAKE=$(MAKE) UNAME="@UNAME@" \
+	       srcdir="$(abs_top_srcdir)/$$path" \
+	       PYTHONHOME="$(abs_builddir)/local" \
+	       PYTHONPATH="$(abs_builddir)/$$path" \
+	       SINGULARPATH="$(SAGE_LOCAL)/share/singular" \
+	       SINGULAR_EXECUTABLE="$(SAGE_LOCAL)/bin/Singular"; \
+	source dist/etc/env.sh; \
+	cd $$path; \
+	echo "$(abs_top_srcdir)/$$path/spkg-install" ;\
+	$(PIPE) "$(abs_top_srcdir)/$$path/spkg-install" 'tee -a $(SAGE_LOGS)/$*.log'
+	touch $@
+
+
+p=%
+define unpack
+	@echo unpacking $@
+# hmm, call clean?
+	rm -rf $(PKGSDIR)/$*/src $(PKGSDIR)/$*/*-stamp
+	mkdir -p $(PKGSDIR)/$*
+	cd $(PKGSDIR)/$*; tar -xf $(abs_top_builddir)/$|
+	@a="$(FP_$*)"; shopt -s extglob; \
+	  $(call unat,mv $(PKGSDIR)/$*/$${a%.p[0-9]?([0-9])} $@)
+endef
+
+.SECONDEXPANSION:
+$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
+                  $$(shell echo >&2 $$* to2 $$(FP_$$*))
+	$(unpack)
+
+.SECONDEXPANSION:
+$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
+                  $$(shell echo >&2 $$* to3 $$(FP_$$*))
+	$(unpack)
+
+$(INST):
+	mkdir -p $@
+
+$(INST)/:
+	mkdir -p $@
+
+$(SAGE_LOGS):
+	mkdir -p $@
 
 logs:
 	mkdir -p $@
 
 build: logs
+
+$(PKGSDIR):
+	mkdir -p $@
+
+build:
 	cd build && \
 	"../$(PIPE)" \
 		"env SAGE_PARALLEL_SPKG_BUILD='$(SAGE_PARALLEL_SPKG_BUILD)' ./install all 2>&1" \
@@ -26,6 +203,7 @@ build: logs
 # access. Note that this requires that your system have OpenSSL
 # libraries and headers installed. See README.txt for more
 # information.
+# FIXME: move to configure.ac
 ssl: all
 	./sage -i pyopenssl
 
@@ -63,34 +241,31 @@ doc-pdf: build
 
 doc-clean:
 	@echo "Deleting generated docs..."
-	rm -rf src/doc/en/reference/*/sage
-	rm -rf src/doc/en/reference/*/sagenb
-	rm -rf src/doc/en/reference/sage
-	rm -rf src/doc/en/reference/sagenb
-	rm -rf src/doc/output
+	make -Csrc/doc clean
 
-clean:
+clean-local:
 	@echo "Deleting package build directories..."
 	rm -rf local/var/tmp/sage/build
 
-lib-clean:
-	@echo "Deleting Sage library build artifacts..."
-	rm -f src/c_lib/.sconsign.dblite
-	find src/c_lib -name '*.os' -exec rm {} +
-	find src/c_lib -name '*.so' -exec rm {} +
-	rm -rf src/build
+	make -C src/c_lib clean
+	make -C src/sage clean
+# FIXME:
+# also remove foreign package src
 
 bdist-clean: clean
 	@echo "Deleting miscellaneous artifacts generated by build system ..."
 	rm -rf logs
-	rm -rf dist
+	rm -rf distFIXME
 	rm -rf tmp
 	rm -f build/Makefile
 	rm -f .BUILDSTART
 
-distclean: clean doc-clean lib-clean bdist-clean
+distclean-local:
+	-for i in $(CORE_MODULES); do \
+	  [ -f $$i/config.status ] && $(MAKE) -C $$i distclean; \
+	done
 	@echo "Deleting all remaining output from build system ..."
-	rm -rf local
+	rm -rf $(top_builddir)/local
 
 micro_release: bdist-clean lib-clean
 	@echo "Stripping binaries ..."
@@ -143,15 +318,15 @@ ptestoptional: ptestall # just an alias
 
 ptestoptionallong: ptestalllong # just an alias
 
-
-install:
+# this is pretty much 'incomplete'.
+install-broken:
 	echo "Experimental use only!"
 	if [ "$(DESTDIR)" = "" ]; then \
 		echo >&2 "Set the environment variable DESTDIR to the install path."; \
 		exit 1; \
 	fi
-	# Make sure we remove only an existing directory. If $(DESTDIR)/sage is
-	# a file instead of a directory then the mkdir statement later will fail
+# Make sure we remove only an existing directory. If $(DESTDIR)/sage is
+# a file instead of a directory then the mkdir statement later will fail
 	if [ -d "$(DESTDIR)"/sage ]; then \
 		rm -rf "$(DESTDIR)"/sage; \
 	fi
@@ -162,9 +337,15 @@ install:
 	ln -s ../sage/sage "$(DESTDIR)"/bin/sage
 	"$(DESTDIR)"/bin/sage -c # Run sage-location
 
-
 .PHONY: all build build-serial start install \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-clean clean lib-clean bdist-clean distclean micro_release \
 	test check testoptional testall testlong testoptionallong testallong \
-	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong
+	PTESt ptestoptional ptestall ptestlong ptestoptionallong ptestallong
+
+@dotPRECIOUS@: local/var/lib/sage/installed/%
+
+include deps.in
+
+uninstall-local:
+	rm -rf src/*-stamp

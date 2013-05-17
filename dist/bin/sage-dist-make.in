@@ -1,0 +1,3 @@
+#!/bin/sh
+
+@GMAKE@ -I@abs_top_builddir@/dist -f $@

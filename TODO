@@ -1,0 +1,19 @@
+
+FC is required (should not)
+
+paths are suboptimal.
+/build/pkgs should be /pkgs
+/build/etc should be /dist/etc (done?)
+/build/bin should be /dist/bin (done?)
+
+dependencies should be where packages are, not in "deps"
+
+PYTHON dependency, currently using SAGE_LOCAL/bin/python unconditionally
+
+CORE_MODULES should be built with VPATH.
+
+uninstall before fresh install
+
+src must be <packagename>-<version> or src-<version>, hmmm #17495
+
+remove this file

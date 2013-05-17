@@ -1,7 +1,11 @@
 ###############################################################################
-# This file ($SAGE_ROOT/spkg/standard/deps) will be copied into
-# $SAGE_ROOT/spkg/Makefile by $SAGE_ROOT/spkg/install
+# This file (deps.in) is included by the toplevel makefile template
 ###############################################################################
+#
+# FIXME: move package dependencies to packages
+#
+
+# compilation/install output will be teed to here
 
 # Let e.g. SAGE_ROOT/spkg/install pass options to sage-spkg, i.e. currently
 # "-f", to force rebuilding dependent packages during an upgrade (#9896).
@@ -12,7 +16,6 @@
 # (SAGE_ROOT/spkg/bin is added to the PATH in spkg/install).
 # Therefore, do not put an explicit path for sage-spkg here.
 SAGE_SPKG = sage-spkg $${SAGE_SPKG_OPTS}
-PIPE = $(SAGE_ROOT)/build/pipestatus
 
 # Tell make not to look for files with these names:
 .PHONY: all all-sage base toolchain toolchain-deps
@@ -21,102 +24,239 @@ PIPE = $(SAGE_ROOT)/build/pipestatus
 # During the toolchain build, we export SAGE_BUILD_TOOLCHAIN=yes
 # such that packages can do different things when they are built
 # as prerequisite of GCC.
-all:
+all-old:
 	$(MAKE) base
 	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain
 	$(MAKE) toolchain-deps
 	$(MAKE) all-sage
 
+# Base packages
+# FP_prereq = $(call newest_version_base,prereq)
+
+# Usage: newest_version_base $pkg
+# Print version number of latest (according to modification time)
+# base package $pkg
+# As a fallback, we also look at the latest installed package.
+define newest_version_base
+$(shell \
+    PKG="$(1)";\
+    for FILE in `{ ls -1t @abs_top_srcdir@/build/base/$$PKG-*-install; ls -1t installed/$$PKG-*; } 2>/dev/null`;\
+    do\
+        ANS=`echo "$$FILE" | sed 's|.*/||; s|-install||'`;\
+        if test -n "$$ANS"; then\
+            echo "$$ANS";\
+            exit 0;\
+        fi;\
+    done;\
+    echo >&2 "Cannot determine latest version of $$PKG.";\
+    echo "$$PKG"; )
+endef
+
+# Usage: newest_version $pkg
+# Print version number of latest standard package $pkg
+define newest_version
+$(shell \
+    PKG="$(1)";\
+    if [ -f "@abs_top_srcdir@/build/pkgs/$$PKG/package-version.txt" ]; then\
+        echo -n $$PKG-;\
+        cat "@abs_top_srcdir@/build/pkgs/$$PKG/package-version.txt";\
+    else\
+        echo >&2 "Cannot determine latest version of $$PKG.";\
+        echo -n "$$PKG-unknown";\
+    fi;)
+endef
+
+# Standard foreign packages
+# FIXME: autogenerate
+FP_atlas=$(call newest_version,atlas)
+FP_blas=$(call newest_version,blas)
+FP_boehm_gc=$(call newest_version,boehm_gc)
+FP_boost_cropped=$(call newest_version,boost_cropped)
+FP_bzip2=$(call newest_version,bzip2)
+FP_cddlib=$(call newest_version,cddlib)
+FP_cephes=$(call newest_version,cephes)
+FP_cliquer=$(call newest_version,cliquer)
+FP_conway_polynomials=$(call newest_version,conway_polynomials)
+FP_cvxopt=$(call newest_version,cvxopt)
+FP_cython=$(call newest_version,cython)
+FP_docutils=$(call newest_version,docutils)
+FP_ecl=$(call newest_version,ecl)
+FP_eclib=$(call newest_version,eclib)
+FP_ecm=$(call newest_version,ecm)
+FP_elliptic_curves=$(call newest_version,elliptic_curves)
+FP_fflas_ffpack=$(call newest_version,fflas_ffpack)
+FP_flint=$(call newest_version,flint)
+FP_flintqs=$(call newest_version,flintqs)
+FP_libfplll=$(call newest_version,libfplll)
+FP_freetype=$(call newest_version,freetype)
+FP_gap=$(call newest_version,gap)
+FP_gcc=$(call newest_version,gcc)
+FP_gd=$(call newest_version,gd)
+FP_gdmodule=$(call newest_version,gdmodule)
+FP_genus2reduction=$(call newest_version,genus2reduction)
+FP_gfan=$(call newest_version,gfan)
+# FP_git=$(call newest_version,git)
+FP_givaro=$(call newest_version,givaro)
+FP_glpk=$(call newest_version,glpk)
+FP_graphs=$(call newest_version,graphs)
+FP_gf2x=$(call newest_version,gf2x)
+FP_gsl=$(call newest_version,gsl)
+FP_iconv=$(call newest_version,iconv)
+FP_iml=$(call newest_version,iml)
+FP_ipython=$(call newest_version,ipython)
+FP_jinja2=$(call newest_version,jinja2)
+FP_jmol=$(call newest_version,jmol)
+FP_lapack=$(call newest_version,lapack)
+FP_lcalc=$(call newest_version,lcalc)
+FP_lrcalc=$(call newest_version,lrcalc)
+FP_libgap=$(call newest_version,libgap)
+FP_libpng=$(call newest_version,libpng)
+FP_linbox=$(call newest_version,linbox)
+FP_libm4ri=$(call newest_version,libm4ri)
+FP_libm4rie=$(call newest_version,libm4rie)
+FP_matplotlib=$(call newest_version,matplotlib)
+FP_maxima=$(call newest_version,maxima)
+FP_mpc=$(call newest_version,mpc)
+FP_mpfi=$(call newest_version,mpfi)
+FP_mpfr=$(call newest_version,mpfr)
+FP_mpir=$(call newest_version,mpir)
+FP_mpmath=$(call newest_version,mpmath)
+FP_networkx=$(call newest_version,networkx)
+FP_ntl=$(call newest_version,ntl)
+FP_numpy=$(call newest_version,numpy)
+FP_palp=$(call newest_version,palp)
+FP_pari=$(call newest_version,pari)
+FP_patch=$(call newest_version,patch)
+FP_pexpect=$(call newest_version,pexpect)
+FP_pil=$(call newest_version,pil)
+FP_polybori=$(call newest_version,polybori)
+FP_polytopes_db=$(call newest_version,polytopes_db)
+FP_ppl=$(call newest_version,ppl)
+FP_pycrypto=$(call newest_version,pycrypto)
+FP_pygments=$(call newest_version,pygments)
+FP_pynac=$(call newest_version,pynac)
+FP_python=$(call newest_version,python)
+FP_r=$(call newest_version,r)
+FP_rpy2=$(call newest_version,rpy2)
+FP_ratpoints=$(call newest_version,ratpoints)
+FP_readline=$(call newest_version,readline)
+FP_rubiks=$(call newest_version,rubiks)
+FP_sagenb=$(call newest_version,sagenb)
+FP_sagetex=$(call newest_version,sagetex)
+FP_scipy=$(call newest_version,scipy)
+FP_scons=$(call newest_version,scons)
+FP_setuptools=$(call newest_version,setuptools)
+FP_singular=$(call newest_version,singular)
+FP_sphinx=$(call newest_version,sphinx)
+FP_sqlalchemy=$(call newest_version,sqlalchemy)
+FP_sqlite=$(call newest_version,sqlite)
+FP_symmetrica=$(call newest_version,symmetrica)
+FP_sympow=$(call newest_version,sympow)
+FP_sympy=$(call newest_version,sympy)
+FP_tachyon=$(call newest_version,tachyon)
+FP_termcap=$(call newest_version,termcap)
+FP_zlib=$(call newest_version,zlib)
+FP_zn_poly=$(call newest_version,zn_poly)
+
 # All targets except for the base packages
-all-sage: \
-     $(INST)/$(ATLAS) \
-     $(INST)/$(BLAS) \
-     $(INST)/$(BOEHM_GC) \
-     $(INST)/$(BOOST_CROPPED) \
-     $(INST)/$(CDDLIB) \
-     $(INST)/$(CEPHES) \
-     $(INST)/$(CLIQUER) \
-     $(INST)/$(CONWAY) \
-     $(INST)/$(CVXOPT) \
-     $(INST)/$(CYTHON) \
-     $(INST)/$(DOCUTILS) \
-     $(INST)/$(ECL) \
-     $(INST)/$(ECLIB) \
-     $(INST)/$(ECM) \
-     $(INST)/$(ELLIPTIC_CURVES) \
-     $(INST)/$(FFLASFFPACK) \
-     $(INST)/$(FLINT) \
-     $(INST)/$(FLINTQS) \
-     $(INST)/$(FPLLL) \
-     $(INST)/$(FREETYPE) \
-     $(INST)/$(GENUS2REDUCTION) \
-     $(INST)/$(GAP) \
-     $(INST)/$(GD) \
-     $(INST)/$(GDMODULE) \
-     $(INST)/$(GFAN) \
-     $(INST)/$(GIVARO) \
-     $(INST)/$(GIT) \
-     $(INST)/$(GLPK) \
-     $(INST)/$(GRAPHS) \
-     $(INST)/$(GSL) \
-     $(INST)/$(ICONV) \
-     $(INST)/$(IML) \
-     $(INST)/$(IPYTHON) \
-     $(INST)/$(JINJA2) \
-     $(INST)/$(JMOL) \
-     $(INST)/$(LAPACK) \
-     $(INST)/$(LCALC) \
-     $(INST)/$(LRCALC) \
-     $(INST)/$(LIBGAP) \
-     $(INST)/$(LIBPNG) \
-     $(INST)/$(LINBOX) \
-     $(INST)/$(M4RI) \
-     $(INST)/$(M4RIE) \
-     $(INST)/$(MATPLOTLIB) \
-     $(INST)/$(MAXIMA) \
-     $(INST)/$(MPC) \
-     $(INST)/$(MPFI) \
-     $(INST)/$(MPFR) \
-     $(INST)/$(MPIR) \
-     $(INST)/$(MPMATH) \
-     $(INST)/$(NETWORKX) \
-     $(INST)/$(NTL) \
-     $(INST)/$(NUMPY) \
-     $(INST)/$(PALP) \
-     $(INST)/$(PARI) \
-     $(INST)/$(PEXPECT) \
-     $(INST)/$(PIL) \
-     $(INST)/$(POLYBORI) \
-     $(INST)/$(POLYTOPES_DB) \
-     $(INST)/$(PPL) \
-     $(INST)/$(PYCRYPTO) \
-     $(INST)/$(PYGMENTS) \
-     $(INST)/$(PYNAC) \
-     $(INST)/$(PYTHON) \
-     $(INST)/$(RATPOINTS) \
-     $(INST)/$(R) \
-     $(INST)/$(RPY) \
-     $(INST)/$(READLINE) \
-     $(INST)/$(RUBIKS) \
-     $(INST)/$(SAGENB) \
-     $(INST)/$(SAGETEX) \
-     $(INST)/$(SCIPY) \
-     $(INST)/$(SCONS) \
-     $(INST)/$(SETUPTOOLS) \
-     $(INST)/$(SINGULAR) \
-     $(INST)/$(SPHINX) \
-     $(INST)/$(SQLALCHEMY) \
-     $(INST)/$(SQLITE) \
-     $(INST)/$(SYMMETRICA) \
-     $(INST)/$(SYMPOW) \
-     $(INST)/$(SYMPY) \
-     $(INST)/$(TACHYON) \
-     $(INST)/$(TERMCAP) \
-     $(INST)/$(ZLIB) \
-     $(INST)/$(ZNPOLY) \
-     scripts \
-     sage \
-     csage \
+# ... generate from configure.ac.
+INSTALL_FP_NAMES = \
+     atlas \
+     blas \
+     boehm_gc \
+     boost_cropped \
+     cddlib \
+     cephes \
+     cliquer \
+     conway_polynomials \
+     cvxopt \
+     cython \
+     docutils \
+     ecl \
+     eclib \
+     ecm \
+     elliptic_curves \
+     fflas_ffpack \
+     flint \
+     flintqs \
+     gf2x \
+     libfplll \
+     freetype \
+     genus2reduction \
+     gap \
+     gd \
+     gdmodule \
+     gfan \
+     givaro \
+     git \
+     glpk \
+     graphs \
+     gsl \
+     iconv \
+     iml \
+     ipython \
+     jinja2 \
+     jmol \
+     lapack \
+     lcalc \
+     lrcalc \
+     libgap \
+     libpng \
+     linbox \
+     libm4ri \
+     libm4rie \
+     matplotlib \
+     maxima \
+     mpc \
+     mpfi \
+     mpfr \
+     mpir \
+     mpmath \
+     networkx \
+     ntl \
+     numpy \
+     palp \
+     pari \
+     pexpect \
+     pil \
+     polybori \
+     polytopes_db \
+     ppl \
+     pycrypto \
+     pygments \
+     pynac \
+     python \
+     ratpoints \
+     r \
+     rpy2 \
+     readline \
+     rubiks \
+     sagenb \
+     sagetex \
+     scipy \
+     scons \
+     setuptools \
+     singular \
+     sphinx \
+     sqlalchemy \
+     sqlite \
+     symmetrica \
+     sympow \
+     sympy \
+     tachyon \
+     termcap \
+     zlib \
+     znpoly
+
+#doesnt work!
+# INSTALL_FP_STAMPS=$(INST)/$(INSTALL_FP_NAMES:%=$$(FP_%))
+
+scripts: $(BIN)
+
+sage-all: $(INSTALL_FP_NAMES:%=%-install) \
+     $(BIN) \
+     $(SAGE) \
+     $(CSAGE) \
      extcode
 
 # TOOLCHAIN consists of dependencies determined by spkg/install,
@@ -129,15 +269,16 @@ toolchain: $(TOOLCHAIN)
 # unconditionally. We still use the dependency checking from $(MAKE),
 # so this will not trigger useless rebuilds.
 # See http://trac.sagemath.org/sage_trac/ticket/14168
+# FIXME, serial rule!
 toolchain-deps:
-	$(MAKE) $(INST)/$(ZLIB)
-	$(MAKE) $(INST)/$(MPIR)
-	$(MAKE) $(INST)/$(MPFR)
-	$(MAKE) $(INST)/$(MPC)
+	test -n @DEP_zlib@ && $(MAKE) @DEP_zlib@
+	test -n @DEP_mpir@ && $(MAKE) @DEP_mpir@
+	test -n @DEP_mpfr@ && $(MAKE) @DEP_mpfr@
+	test -n @DEP_mpc@ && $(MAKE) @DEP_mpc@
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = scripts sage $(INST)/$(SAGENB) $(INST)/$(IPYTHON) $(INST)/$(GAP)
+SAGERUNTIME = $(SCRIPTS) sage @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
 
 ###############################################################################
 # Building the base system
@@ -147,381 +288,277 @@ SAGERUNTIME = scripts sage $(INST)/$(SAGENB) $(INST)/$(IPYTHON) $(INST)/$(GAP)
 # an update of these packages will not trigger a rebuild of every other
 # package during an upgrade, see #13415.
 ###############################################################################
-base: $(INST)/$(PREREQ) $(INST)/$(BZIP2) $(INST)/$(PATCH)
-
-$(INST)/$(PREREQ):
-	$(PIPE) "base/$(PREREQ)-install 2>&1" "tee -a $(SAGE_LOGS)/$(PREREQ).log"
+base: @DEP_bzip2@ @DEP_patch@
 
 # If we are upgrading from a version 4.x of Sage, don't build bzip2.
 # This is because the old sage-spkg script cannot install the new bzip2
 # spkg (which is gzip compressed).  We continue using the old bzip2
 # installation (which is version 1.0.5 since sage-3.3), which is fine.
-$(INST)/$(BZIP2): $(INST)/$(PREREQ)
-	$(PIPE) "$(SAGE_SPKG) $(BZIP2) 2>&1" "tee -a $(SAGE_LOGS)/$(BZIP2).log"; \
+$(INST)/$(FP_bzip2):
 
-$(INST)/$(PATCH): $(INST)/$(BZIP2)
-	+$(PIPE) "$(SAGE_SPKG) $(PATCH) 2>&1" "tee -a $(SAGE_LOGS)/$(PATCH).log"
+$(INST)/$(FP_patch): @DEP_bzip2@
 
 ###############################################################################
 # Building normal packages
 ###############################################################################
-$(INST)/$(ATLAS): $(INST)/$(LAPACK) $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(ATLAS) 2>&1" "tee -a $(SAGE_LOGS)/$(ATLAS).log"
+$(INST)/$(FP_atlas): @DEP_lapack@ @DEP_python@
 
-$(INST)/$(BOEHM_GC):
-	+$(PIPE) "$(SAGE_SPKG) $(BOEHM_GC) 2>&1" "tee -a $(SAGE_LOGS)/$(BOEHM_GC).log"
+$(INST)/$(FP_readline): @DEP_termcap@
 
-$(INST)/$(BOOST_CROPPED):
-	+$(PIPE) "$(SAGE_SPKG) $(BOOST_CROPPED) 2>&1" "tee -a $(SAGE_LOGS)/$(BOOST_CROPPED).log"
+$(INST)/$(FP_docutils): @DEP_python@
 
-$(INST)/$(CLIQUER):
-	+$(PIPE) "$(SAGE_SPKG) $(CLIQUER) 2>&1" "tee -a $(SAGE_LOGS)/$(CLIQUER).log"
+$(INST)/$(FP_elliptic_curves): @DEP_python@ @DEP_sqlite@
 
-$(INST)/$(TERMCAP):
-	+$(PIPE) "$(SAGE_SPKG) $(TERMCAP) 2>&1" "tee -a $(SAGE_LOGS)/$(TERMCAP).log"
-
-$(INST)/$(READLINE): $(INST)/$(TERMCAP)
-	+$(PIPE) "$(SAGE_SPKG) $(READLINE) 2>&1" "tee -a $(SAGE_LOGS)/$(READLINE).log"
-
-$(INST)/$(ICONV):
-	+$(PIPE) "$(SAGE_SPKG) $(ICONV) 2>&1" "tee -a $(SAGE_LOGS)/$(ICONV).log"
-
-$(INST)/$(DOCUTILS): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(DOCUTILS) 2>&1" "tee -a $(SAGE_LOGS)/$(DOCUTILS).log"
-
-$(INST)/$(ELLIPTIC_CURVES): $(INST)/$(PYTHON) $(INST)/$(SQLITE)
-	+$(PIPE) "$(SAGE_SPKG) $(ELLIPTIC_CURVES) 2>&1" "tee -a $(SAGE_LOGS)/$(ELLIPTIC_CURVES).log"
-
-# CONWAY depends on depends on SAGERUNTIME because it runs Sage code to
+# CONWAY depends on SAGERUNTIME because it runs Sage code to
 # generate a Sage object (.sobj).
-$(INST)/$(CONWAY): $(SAGERUNTIME)
-	+$(PIPE) "$(SAGE_SPKG) $(CONWAY) 2>&1" "tee -a $(SAGE_LOGS)/$(CONWAY).log"
+$(INST)/$(FP_conway_polynomials): $(SAGERUNTIME)
 
-$(INST)/$(GRAPHS):
-	+$(PIPE) "$(SAGE_SPKG) $(GRAPHS) 2>&1" "tee -a $(SAGE_LOGS)/$(GRAPHS).log"
-
-$(INST)/$(GLPK): $(INST)/$(MPIR) $(INST)/$(ZLIB)
-	+$(PIPE) "$(SAGE_SPKG) $(GLPK) 2>&1" "tee -a $(SAGE_LOGS)/$(GLPK).log"
+$(INST)/$(FP_glpk): @DEP_mpir@ @DEP_zlib@
 
 # Python links against -lbz2.  Technically speaking, we should add
 # BZIP2 as dependency here.  But we don't do that to avoid needless
 # recompiles of Python when upgrading.  Since bzip2 is part of the
 # "base" target, we are guaranteed anyway that some version of bzip2
 # is present.
-$(INST)/$(PYTHON): $(INST)/$(ZLIB) \
-		   $(INST)/$(READLINE) $(INST)/$(SQLITE) $(INST)/$(LIBPNG)
-	+$(PIPE) "$(SAGE_SPKG) $(PYTHON) 2>&1" "tee -a $(SAGE_LOGS)/$(PYTHON).log"
+$(INST)/$(FP_python): @DEP_zlib@ @DEP_readline@ @DEP_sqlite@ @DEP_libpng@
 
-$(INST)/$(MPIR): $(INST)/$(ICONV)
-	+$(PIPE) "$(SAGE_SPKG) $(MPIR) 2>&1" "tee -a $(SAGE_LOGS)/$(MPIR).log"
+$(INST)/$(FP_mpir): @DEP_iconv@
 
-$(INST)/$(GSL): $(INST)/$(ATLAS)
-	+$(PIPE) "$(SAGE_SPKG) $(GSL) 2>&1" "tee -a $(SAGE_LOGS)/$(GSL).log"
+$(INST)/$(FP_gsl): @DEP_atlas@
 
-$(INST)/$(NTL): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(NTL) 2>&1" "tee -a $(SAGE_LOGS)/$(NTL).log"
+$(INST)/$(FP_ntl): @DEP_mpir@ @DEP_gf2x@
 
-$(INST)/$(FPLLL): $(INST)/$(MPIR) $(INST)/$(MPFR)
-	+$(PIPE) "$(SAGE_SPKG) $(FPLLL) 2>&1" "tee -a $(SAGE_LOGS)/$(FPLLL).log"
+$(INST)/$(FP_libfplll): @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(PARI): $(INST)/$(READLINE) $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(PARI) 2>&1" "tee -a $(SAGE_LOGS)/$(PARI).log"
+$(INST)/$(FP_pari): @DEP_readline@ @DEP_mpir@
 
-$(INST)/$(POLYBORI): $(INST)/$(PYTHON) $(INST)/$(IPYTHON) \
-         $(INST)/$(SCONS) $(INST)/$(BOOST_CROPPED) \
-         $(INST)/$(M4RI) $(INST)/$(GD)
-	+$(PIPE) "$(SAGE_SPKG) $(POLYBORI) 2>&1" "tee -a $(SAGE_LOGS)/$(POLYBORI).log"
+$(INST)/$(FP_polybori): @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
+                   @DEP_libm4ri@ @DEP_gd@
 
-$(INST)/$(POLYTOPES_DB):
-	+$(PIPE) "$(SAGE_SPKG) $(POLYTOPES_DB) 2>&1" "tee -a $(SAGE_LOGS)/$(POLYTOPES_DB).log"
+$(INST)/$(FP_polytopes_db):
 
-$(INST)/$(PPL): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(PPL) 2>&1" "tee -a $(SAGE_LOGS)/$(PPL).log"
+$(INST)/$(FP_ppl): @DEP_mpir@
 
-$(INST)/$(MPC): $(INST)/$(MPIR) $(INST)/$(MPFR)
-	+$(PIPE) "$(SAGE_SPKG) $(MPC) 2>&1" "tee -a $(SAGE_LOGS)/$(MPC).log"
+$(INST)/$(FP_mpc): @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(MPFR): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(MPFR) 2>&1" "tee -a $(SAGE_LOGS)/$(MPFR).log"
+$(INST)/$(FP_mpfr): @DEP_mpir@
 
-$(INST)/$(MPFI): $(INST)/$(MPIR) $(INST)/$(MPFR)
-	+$(PIPE) "$(SAGE_SPKG) $(MPFI) 2>&1" "tee -a $(SAGE_LOGS)/$(MPFI).log"
+$(INST)/$(FP_mpfi): @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(GIVARO): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(GIVARO) 2>&1" "tee -a $(SAGE_LOGS)/$(GIVARO).log"
+$(INST)/$(FP_givaro): @DEP_mpir@
 
-$(INST)/$(GIT): $(INST)/$(ZLIB) $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(GIT) 2>&1" "tee -a $(SAGE_LOGS)/$(GIT).log"
+# $(INST)/$(FP_git): @DEP_zlib@ @DEP_python@
 
-$(INST)/$(FFLASFFPACK): $(INST)/$(MPIR) $(INST)/$(GIVARO) \
-	$(INST)/$(GSL) $(INST)/$(ATLAS)
-	+$(PIPE) "$(SAGE_SPKG) $(FFLASFFPACK) 2>&1" "tee -a $(SAGE_LOGS)/$(FFLASFFPACK).log"
+$(INST)/$(FP_fflas_ffpack): @DEP_mpir@ @DEP_givaro@ @DEP_gsl@ @DEP_atlas@
 
-$(INST)/$(LINBOX): $(INST)/$(MPIR) $(INST)/$(NTL) $(INST)/$(GIVARO) \
-                   $(INST)/$(MPFR) $(INST)/$(FPLLL) $(INST)/$(IML) \
-                   $(INST)/$(M4RI) $(INST)/$(M4RIE) $(INST)/$(FFLASFFPACK)
-	+$(PIPE) "$(SAGE_SPKG) $(LINBOX) 2>&1" "tee -a $(SAGE_LOGS)/$(LINBOX).log"
+$(INST)/$(FP_linbox): @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
+                      @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
+                      @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@
 
-$(INST)/$(IML): $(INST)/$(MPIR) $(INST)/$(GSL) $(INST)/$(ATLAS)
-	+$(PIPE) "$(SAGE_SPKG) $(IML) 2>&1" "tee -a $(SAGE_LOGS)/$(IML).log"
+$(INST)/$(FP_iml): @DEP_mpir@ @DEP_gsl@ @DEP_atlas@
 
-$(INST)/$(ECLIB): $(INST)/$(MPIR) $(INST)/$(PARI) $(INST)/$(NTL)
-	+$(PIPE) "$(SAGE_SPKG) $(ECLIB) 2>&1" "tee -a $(SAGE_LOGS)/$(ECLIB).log"
+$(INST)/$(FP_eclib): @DEP_mpir@ @DEP_pari@ @DEP_ntl@
 
-$(INST)/$(GENUS2REDUCTION): $(INST)/$(PARI)
-	+$(PIPE) "$(SAGE_SPKG) $(GENUS2REDUCTION) 2>&1" "tee -a $(SAGE_LOGS)/$(GENUS2REDUCTION).log"
+$(INST)/$(FP_genus2reduction): @DEP_pari@
 
-$(INST)/$(PALP):
-	+$(PIPE) "$(SAGE_SPKG) $(PALP) 2>&1" "tee -a $(SAGE_LOGS)/$(PALP).log"
+$(INST)/$(FP_lcalc): @DEP_pari@ @DEP_mpfr@
 
-$(INST)/$(LCALC): $(INST)/$(PARI) $(INST)/$(MPFR)
-	+$(PIPE) "$(SAGE_SPKG) $(LCALC) 2>&1" "tee -a $(SAGE_LOGS)/$(LCALC).log"
+$(INST)/$(FP_pynac): @DEP_python@
 
-$(INST)/$(LRCALC):
-	+$(PIPE) "$(SAGE_SPKG) $(LRCALC) 2>&1" "tee -a $(SAGE_LOGS)/$(LRCALC).log"
+$(INST)/$(FP_gap): @DEP_termcap@ @DEP_readline@ @DEP_mpir@
 
-$(INST)/$(PYNAC): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(PYNAC) 2>&1" "tee -a $(SAGE_LOGS)/$(PYNAC).log"
+$(INST)/$(FP_libgap): @DEP_gap@
 
-$(INST)/$(SYMPOW):
-	+$(PIPE) "$(SAGE_SPKG) $(SYMPOW) 2>&1" "tee -a $(SAGE_LOGS)/$(SYMPOW).log"
+$(INST)/$(FP_ipython): @DEP_python@
 
-$(INST)/$(SYMMETRICA):
-	+$(PIPE) "$(SAGE_SPKG) $(SYMMETRICA) 2>&1" "tee -a $(SAGE_LOGS)/$(SYMMETRICA).log"
+$(INST)/$(FP_pexpect): @DEP_python@
 
-$(INST)/$(GAP): $(INST)/$(TERMCAP) $(INST)/$(READLINE) $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(GAP) 2>&1" "tee -a $(SAGE_LOGS)/$(GAP).log"
+$(INST)/$(FP_gd): @DEP_libpng@ @DEP_freetype@ @DEP_iconv@
 
-$(INST)/$(LIBGAP): $(INST)/$(GAP)
-	+$(PIPE) "$(SAGE_SPKG) $(LIBGAP) 2>&1" "tee -a $(SAGE_LOGS)/$(LIBGAP).log"
+$(INST)/$(FP_gdmodule): @DEP_python@ @DEP_gd@ @DEP_iconv@
 
-$(INST)/$(IPYTHON): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(IPYTHON) 2>&1" "tee -a $(SAGE_LOGS)/$(IPYTHON).log"
+$(INST)/$(FP_scons): @DEP_python@
 
-$(INST)/$(PEXPECT): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(PEXPECT) 2>&1" "tee -a $(SAGE_LOGS)/$(PEXPECT).log"
+$(INST)/$(FP_rubiks):
 
-$(INST)/$(GD): $(INST)/$(LIBPNG) $(INST)/$(FREETYPE) $(INST)/$(ICONV)
-	+$(PIPE) "$(SAGE_SPKG) $(GD) 2>&1" "tee -a $(SAGE_LOGS)/$(GD).log"
-
-$(INST)/$(GDMODULE): $(INST)/$(PYTHON) $(INST)/$(GD) $(INST)/$(ICONV)
-	+$(PIPE) "$(SAGE_SPKG) $(GDMODULE) 2>&1" "tee -a $(SAGE_LOGS)/$(GDMODULE).log"
-
-$(INST)/$(SCONS): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(SCONS) 2>&1" "tee -a $(SAGE_LOGS)/$(SCONS).log"
-
-$(INST)/$(RUBIKS):
-	+$(PIPE) "$(SAGE_SPKG) $(RUBIKS) 2>&1" "tee -a $(SAGE_LOGS)/$(RUBIKS).log"
-
-$(INST)/$(SQLITE): $(INST)/$(READLINE)
-	+$(PIPE) "$(SAGE_SPKG) $(SQLITE) 2>&1" "tee -a $(SAGE_LOGS)/$(SQLITE).log"
+$(INST)/$(FP_sqlite): @DEP_readline@
 
 # To build SageTeX, you just need Python, but to test (SAGE_CHECK=yes)
 # SageTeX, you actually need to run sage, produce plots,...
-$(INST)/$(SAGETEX): $(INST)/$(PYTHON) \
-                    $(SAGERUNTIME) $(INST)/$(MAXIMA) $(INST)/$(SCIPY) \
-                    $(INST)/$(MATPLOTLIB) $(INST)/$(PIL) $(INST)/$(TACHYON)
-	+$(PIPE) "$(SAGE_SPKG) $(SAGETEX) 2>&1" "tee -a $(SAGE_LOGS)/$(SAGETEX).log"
+$(INST)/$(FP_sagetex): @DEP_python@ $(SAGERUNTIME) @DEP_maxima@ @DEP_scipy@ \
+                       @DEP_matplotlib@ @DEP_pil@ @DEP_tachyon@
 
-$(INST)/$(SETUPTOOLS): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(SETUPTOOLS) 2>&1" "tee -a $(SAGE_LOGS)/$(SETUPTOOLS).log"
+$(INST)/$(FP_setuptools): @DEP_python@
 
-$(INST)/$(SINGULAR): $(INST)/$(MPIR) $(INST)/$(NTL) \
-		     $(INST)/$(READLINE) $(INST)/$(MPFR)
-	+$(PIPE) "$(SAGE_SPKG) $(SINGULAR) 2>&1" "tee -a $(SAGE_LOGS)/$(SINGULAR).log"
+$(INST)/$(FP_singular): @DEP_mpir@ @DEP_ntl@ @DEP_readline@ @DEP_mpfr@
 
-$(INST)/$(PYCRYPTO): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(PYCRYPTO) 2>&1" "tee -a $(SAGE_LOGS)/$(PYCRYPTO).log"
+$(INST)/$(FP_pycrypto): @DEP_python@
 
-$(INST)/$(NETWORKX): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(NETWORKX) 2>&1" "tee -a $(SAGE_LOGS)/$(NETWORKX).log"
+$(INST)/$(FP_networkx): @DEP_python@
 
-$(INST)/$(MPMATH): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(MPMATH) 2>&1" "tee -a $(SAGE_LOGS)/$(MPMATH).log"
+$(INST)/$(FP_mpmath): @DEP_python@
 
-$(INST)/$(ZLIB):
-	+$(PIPE) "$(SAGE_SPKG) $(ZLIB) 2>&1" "tee -a $(SAGE_LOGS)/$(ZLIB).log"
+$(INST)/$(FP_jmol): @DEP_sagenb@
 
-$(INST)/$(JMOL): $(INST)/$(SAGENB)
-	+$(PIPE) "$(SAGE_SPKG) $(JMOL) 2>&1" "tee -a $(SAGE_LOGS)/$(JMOL).log"
+$(INST)/$(FP_libpng): @DEP_zlib@
 
-$(INST)/$(FREETYPE):
-	+$(PIPE) "$(SAGE_SPKG) $(FREETYPE) 2>&1" "tee -a $(SAGE_LOGS)/$(FREETYPE).log"
+$(INST)/$(FP_matplotlib): \
+    @DEP_python@ @DEP_numpy@ @DEP_freetype@ @DEP_libpng@ \
+    @DEP_gdmodule@
 
-$(INST)/$(LIBPNG): $(INST)/$(ZLIB)
-	+$(PIPE) "$(SAGE_SPKG) $(LIBPNG) 2>&1" "tee -a $(SAGE_LOGS)/$(LIBPNG).log"
+$(INST)/$(FP_cddlib): @DEP_mpir@
 
-$(INST)/$(MATPLOTLIB): $(INST)/$(PYTHON) $(INST)/$(NUMPY) \
-		       $(INST)/$(FREETYPE) $(INST)/$(LIBPNG) \
-		       $(INST)/$(GDMODULE)
-	+$(PIPE) "$(SAGE_SPKG) $(MATPLOTLIB) 2>&1" "tee -a $(SAGE_LOGS)/$(MATPLOTLIB).log"
+$(INST)/$(FP_gfan): @DEP_mpir@ @DEP_cddlib@
 
-$(INST)/$(CDDLIB): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(CDDLIB) 2>&1" "tee -a $(SAGE_LOGS)/$(CDDLIB).log"
+$(INST)/$(FP_tachyon): @DEP_libpng@
 
-$(INST)/$(GFAN): $(INST)/$(MPIR) $(INST)/$(CDDLIB)
-	+$(PIPE) "$(SAGE_SPKG) $(GFAN) 2>&1" "tee -a $(SAGE_LOGS)/$(GFAN).log"
+$(INST)/$(FP_ecm): @DEP_mpir@
 
-$(INST)/$(TACHYON): $(INST)/$(LIBPNG)
-	+$(PIPE) "$(SAGE_SPKG) $(TACHYON) 2>&1" "tee -a $(SAGE_LOGS)/$(TACHYON).log"
+$(INST)/$(FP_ratpoints): @DEP_mpir@
 
-$(INST)/$(ECM): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(ECM) 2>&1" "tee -a $(SAGE_LOGS)/$(ECM).log"
+$(INST)/$(FP_ecl): @DEP_mpir@ @DEP_readline@ @DEP_boehm_gc@
 
-$(INST)/$(RATPOINTS): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(RATPOINTS) 2>&1" "tee -a $(SAGE_LOGS)/$(RATPOINTS).log"
+$(INST)/$(FP_maxima): @DEP_ecl@
 
-$(INST)/$(ECL): $(INST)/$(MPIR) $(INST)/$(READLINE) $(INST)/$(BOEHM_GC)
-	+$(PIPE) "$(SAGE_SPKG) $(ECL) 2>&1" "tee -a $(SAGE_LOGS)/$(ECL).log"
+$(INST)/$(FP_r): @DEP_atlas@ @DEP_iconv@ @DEP_readline@
 
-$(INST)/$(MAXIMA): $(INST)/$(ECL)
-	+$(PIPE) "$(SAGE_SPKG) $(MAXIMA) 2>&1" "tee -a $(SAGE_LOGS)/$(MAXIMA).log"
+$(INST)/$(FP_rpy2): @DEP_python@ @DEP_r@
 
-$(INST)/$(R): $(INST)/$(ATLAS) $(INST)/$(ICONV) $(INST)/$(READLINE)
-	+$(PIPE) "$(SAGE_SPKG) $(R) 2>&1" "tee -a $(SAGE_LOGS)/$(R).log"
+$(INST)/$(FP_sympy): @DEP_python@
 
-$(INST)/$(RPY): $(INST)/$(PYTHON) $(INST)/$(R)
-	+$(PIPE) "$(SAGE_SPKG) $(RPY) 2>&1" "tee -a $(SAGE_LOGS)/$(RPY).log"
+$(INST)/$(FP_cython): @DEP_python@
 
-$(INST)/$(SYMPY): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(SYMPY) 2>&1" "tee -a $(SAGE_LOGS)/$(SYMPY).log"
+$(INST)/$(FP_flintqs): @DEP_mpir@
 
-$(INST)/$(CYTHON): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(CYTHON) 2>&1" "tee -a $(SAGE_LOGS)/$(CYTHON).log"
+$(INST)/$(FP_flint): @DEP_mpir@ @DEP_mpfr@ @DEP_ntl@
 
-$(INST)/$(FLINTQS): $(INST)/$(MPIR)
-	+$(PIPE) "$(SAGE_SPKG) $(FLINTQS) 2>&1" "tee -a $(SAGE_LOGS)/$(FLINTQS).log"
+$(INST)/$(FP_libm4ri): @DEP_libpng@
 
-$(INST)/$(FLINT): $(INST)/$(MPIR) $(INST)/$(MPFR) $(INST)/$(NTL)
-	+$(PIPE) "$(SAGE_SPKG) $(FLINT) 2>&1" "tee -a $(SAGE_LOGS)/$(FLINT).log"
-
-$(INST)/$(M4RI): $(INST)/$(LIBPNG)
-	+$(PIPE) "$(SAGE_SPKG) $(M4RI) 2>&1" "tee -a $(SAGE_LOGS)/$(M4RI).log"
-
-$(INST)/$(M4RIE): $(INST)/$(M4RI) $(INST)/$(GIVARO) $(INST)/$(NTL)
-	+$(PIPE) "$(SAGE_SPKG) $(M4RIE) 2>&1" "tee -a $(SAGE_LOGS)/$(M4RIE).log"
+$(INST)/$(FP_libm4rie): @DEP_libm4ri@ @DEP_givaro@ @DEP_ntl@
 
 # zn_poly really does depend on Python, despite this is far from obvious.
 # The 'configure' script in zn_poly calls Python to make a 'makefile'.
-$(INST)/$(ZNPOLY): $(INST)/$(MPIR) $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(ZNPOLY) 2>&1" "tee -a $(SAGE_LOGS)/$(ZNPOLY).log"
+$(INST)/$(FP_zn_poly): @DEP_mpir@ @DEP_python@
 
-$(INST)/$(SAGENB): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(PEXPECT) \
-                   $(INST)/$(JINJA2) $(INST)/$(SPHINX) $(INST)/$(DOCUTILS)
-	+$(PIPE) "$(SAGE_SPKG) $(SAGENB) 2>&1" "tee -a $(SAGE_LOGS)/$(SAGENB).log"
+$(INST)/$(FP_sagenb): @DEP_python@ @DEP_setuptools@ @DEP_pexpect@ \
+                      @DEP_jinja2@ @DEP_sphinx@ @DEP_docutils@
 
-$(INST)/$(SQLALCHEMY): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS)
-	+$(PIPE) "$(SAGE_SPKG) $(SQLALCHEMY) 2>&1" "tee -a $(SAGE_LOGS)/$(SQLALCHEMY).log"
+$(INST)/$(FP_sqlalchemy): @DEP_python@ @DEP_setuptools@
 
-$(INST)/$(SPHINX): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(DOCUTILS) \
-                   $(INST)/$(JINJA2) $(INST)/$(PYGMENTS)
-	+$(PIPE) "$(SAGE_SPKG) $(SPHINX) 2>&1" "tee -a $(SAGE_LOGS)/$(SPHINX).log"
+$(INST)/$(FP_sphinx): @DEP_python@ @DEP_setuptools@ @DEP_docutils@ \
+                      @DEP_jinja2@ @DEP_pygments@
 
-$(INST)/$(JINJA2): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(DOCUTILS) \
+$(INST)/$(FP_jinja2): @DEP_python@ @DEP_setuptools@ @DEP_docutils@
 
-	+$(PIPE) "$(SAGE_SPKG) $(JINJA2) 2>&1" "tee -a $(SAGE_LOGS)/$(JINJA2).log"
-
-$(INST)/$(PYGMENTS): $(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS)
-	+$(PIPE) "$(SAGE_SPKG) $(PYGMENTS) 2>&1" "tee -a $(SAGE_LOGS)/$(PYGMENTS).log"
+$(INST)/$(FP_pygments): @DEP_python@ @DEP_setuptools@
 
 # List all *build-time* dependencies of the Sage library.  These are,
 # on the one hand, programs needed for the build/install process of the
 # Sage library (e.g. JINJA2), and on the
 # other hand all dependencies for Cython files (e.g. PARI, NTL, MPIR).
-sage: \
-		 $(INST)/$(ATLAS) \
-		 $(INST)/$(CEPHES) \
-		 $(INST)/$(CLIQUER) \
-		 $(INST)/$(CYTHON) \
-		 $(INST)/$(ECL) \
-		 $(INST)/$(ECLIB) \
-		 $(INST)/$(ECM) \
-		 $(INST)/$(FLINT) \
-		 $(INST)/$(FPLLL) \
-		 $(INST)/$(GD) \
-		 $(INST)/$(GIVARO) \
-		 $(INST)/$(GLPK) \
-		 $(INST)/$(GSL) \
-		 $(INST)/$(IML) \
-		 $(INST)/$(JINJA2) \
-		 $(INST)/$(LCALC) \
-		 $(INST)/$(LIBGAP) \
-		 $(INST)/$(LIBPNG) \
-		 $(INST)/$(LINBOX) \
-		 $(INST)/$(M4RI) \
-		 $(INST)/$(M4RIE) \
-		 $(INST)/$(MPC) \
-		 $(INST)/$(MPFI) \
-		 $(INST)/$(MPFR) \
-		 $(INST)/$(MPIR) \
-		 $(INST)/$(NTL) \
-		 $(INST)/$(NUMPY) \
-		 $(INST)/$(PARI) \
-		 $(INST)/$(POLYBORI) \
-		 $(INST)/$(PPL) \
-		 $(INST)/$(PYNAC) \
-		 $(INST)/$(PYTHON) \
-		 $(INST)/$(RATPOINTS) \
-		 $(INST)/$(READLINE) \
-		 $(INST)/$(SINGULAR) \
-		 $(INST)/$(SYMMETRICA) \
-		 $(INST)/$(ZNPOLY) \
-		 csage
-	+$(PIPE) "{ if [ -z $(SAGE_INSTALL_FETCH_ONLY) ]; then  cd $(SAGE_SRC) && . ./bin/sage-env && time python setup.py install; fi; } 2>&1" "tee -a $(SAGE_LOGS)/sage-$(SAGE_VERSION).log"
+src/sage-configure-stamp: $(CSAGE)
 
-scripts: $(SCRIPT_TARGETS)
+src/c_lib-configure-stamp: \
+    @DEP_atlas@ \
+    @DEP_cephes@ \
+    @DEP_cliquer@ \
+    @DEP_cython@ \
+    @DEP_ecl@ \
+    @DEP_eclib@ \
+    @DEP_ecm@ \
+    @DEP_flint@ \
+    @DEP_libfplll@ \
+    @DEP_gd@ \
+    @DEP_givaro@ \
+    @DEP_glpk@ \
+    @DEP_gsl@ \
+    @DEP_iml@ \
+    @DEP_jinja2@ \
+    @DEP_lcalc@ \
+    @DEP_libgap@ \
+    @DEP_libpng@ \
+    @DEP_linbox@ \
+    @DEP_libm4ri@ \
+    @DEP_libm4rie@ \
+    @DEP_mpc@ \
+    @DEP_mpfi@ \
+    @DEP_mpfr@ \
+    @DEP_mpir@ \
+    @DEP_ntl@ \
+    @DEP_numpy@ \
+    @DEP_pari@ \
+    @DEP_polybori@ \
+    @DEP_ppl@ \
+    @DEP_pynac@ \
+    @DEP_python@ \
+    @DEP_ratpoints@ \
+    @DEP_readline@ \
+    @DEP_singular@ \
+    @DEP_symmetrica@ \
+    @DEP_znpoly@
 
 extcode: $(EXTCODE_TARGETS)
 
-csage: $(INST)/$(SCONS) \
-       $(INST)/$(MPIR) \
-       $(INST)/$(NTL) \
-       $(INST)/$(PARI) \
-       $(INST)/$(POLYBORI) \
-       $(INST)/$(PYNAC) \
-       $(INST)/$(PYTHON)
-	+$(PIPE) "{ if [ -z $(SAGE_INSTALL_FETCH_ONLY) ]; then cd $(SAGE_SRC)/c_lib && . ../bin/sage-env && time scons -Q install; fi; } 2>&1" "tee -a $(SAGE_LOGS)/csage-$(SAGE_VERSION).log"
+# lib_c
+$(CSAGE): @DEP_scons@ @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ @DEP_pynac@ \
+          @DEP_python@
 
-$(INST)/ccache: $(BASE) $(INST)/$(ZLIB)
+$(INST)/ccache: $(BASE) @DEP_zlib)
 	+$(PIPE) "$(SAGE_SPKG) ccache 2>&1" "tee -a $(SAGE_LOGS)/ccache.log"
 	touch $(INST)/ccache
 
-$(INST)/$(GCC): $(INST)/$(MPIR) $(INST)/$(MPFR) $(INST)/$(MPC) \
-                $(INST)/$(ZLIB)
-	+$(PIPE) "$(SAGE_SPKG) $(GCC) 2>&1" "tee -a $(SAGE_LOGS)/$(GCC).log"
+$(INST)/$(FP_gcc): @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@ @DEP_zlib@
 
-$(INST)/$(PIL): $(INST)/$(PYTHON)
-	+$(PIPE) "$(SAGE_SPKG) $(PIL) 2>&1" "tee -a $(SAGE_LOGS)/$(PIL).log"
+$(INST)/$(FP_pil): @DEP_python@
 
-$(INST)/$(LAPACK):
-	+$(PIPE) "$(SAGE_SPKG) $(LAPACK) 2>&1" "tee -a $(SAGE_LOGS)/$(LAPACK).log"
+$(INST)/$(FP_numpy): @DEP_python@ @DEP_lapack@ @DEP_blas@ @DEP_atlas@
 
-$(INST)/$(BLAS):
-	+$(PIPE) "$(SAGE_SPKG) $(BLAS) 2>&1" "tee -a $(SAGE_LOGS)/$(BLAS).log"
-
-$(INST)/$(NUMPY): $(INST)/$(PYTHON) \
-		  $(INST)/$(LAPACK) $(INST)/$(BLAS) $(INST)/$(ATLAS)
-	+$(PIPE) "$(SAGE_SPKG) $(NUMPY) 2>&1" "tee -a $(SAGE_LOGS)/$(NUMPY).log"
-
-$(INST)/$(SCIPY): $(INST)/$(LAPACK) $(INST)/$(BLAS) $(INST)/$(NUMPY)
-	+$(PIPE) "$(SAGE_SPKG) $(SCIPY) 2>&1" "tee -a $(SAGE_LOGS)/$(SCIPY).log"
+$(INST)/$(FP_scipy): @DEP_lapack@ @DEP_blas@ @DEP_numpy@
 
 # matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
-$(INST)/$(CVXOPT): \
-		   $(INST)/$(LAPACK) $(INST)/$(BLAS) $(INST)/$(NUMPY) \
-		   $(INST)/$(ATLAS) $(INST)/$(CEPHES) \
-		   $(INST)/$(GSL) $(INST)/$(GLPK) $(INST)/$(MATPLOTLIB)
-	+$(PIPE) "$(SAGE_SPKG) $(CVXOPT) 2>&1" "tee -a $(SAGE_LOGS)/$(CVXOPT).log"
+@SAGE_CHECK_TRUE@$(INST)/$(FP_cvxopt): @DEP_matplotlib@
 
-$(INST)/$(CEPHES):
-	+$(PIPE) "$(SAGE_SPKG) $(CEPHES) 2>&1" "tee -a $(SAGE_LOGS)/$(CEPHES).log"
+$(INST)/$(FP_cvxopt): \
+    @DEP_lapack@ @DEP_blas@ @DEP_numpy@ \
+    @DEP_atlas@ @DEP_cephes@ @DEP_gsl@ \
+    @DEP_glpk@
+
+$(INST)/$(FP_cephes):
 
 ###############################################################################
 
 # setuptools forgets to update easy-install.pth during parallel
 # builds, so we build the relevant packages serially.
 
-$(INST)/$(PYGMENTS): $(INST)/$(SQLALCHEMY)
-$(INST)/$(JINJA2): $(INST)/$(PYGMENTS)
-$(INST)/$(SPHINX): $(INST)/$(JINJA2)
-$(INST)/$(SAGENB): $(INST)/$(SPHINX)
+$(INST)/$(FP_pygments): @DEP_sqlalchemy@
+$(INST)/$(FP_jinja2): @DEP_pygments@
+$(INST)/$(FP_sphinx): @DEP_jinja2@
+$(INST)/$(FP_sagenb): @DEP_sphinx@
+
+# direct phony targets: (FIXME: not phony yet)
+.SECONDEXPANSION:
+$(INSTALL_FP_NAMES:%=%-install): %-install: $(INST)/$$(FP_$$*)
+
+$(INSTALL_FP_NAMES:%=%-uninstall): %-uninstall:
+	@echo not implemented
+
+# convenience rules
+#incomplete/under construction (necessary?)
+$(INSTALL_FP_NAMES:%=%-configure): %-configure: build/pkgs/%/src
+	path=build/pkgs/$*;\
+	export SAGE_LOCAL="$(abs_builddir)/local" CC="@CC@" CFLAGS="@CFLAGS@" \
+	       MAKE=$(MAKE) UNAME="@UNAME@" PATH=$(abs_builddir)/local/bin:$$PATH \
+	       LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH" \
+	       srcdir="$(abs_top_srcdir)/$$path"; \
+	       PYTHONHOME="$(abs_builddir)/local"; \
+	$(MAKE) -f$(abs_top_srcdir)/build/pkgs/$*/spkg-install -Cbuild/pkgs/$* configure
+
+# just remove it...
+$(INSTALL_FP_NAMES:%=%-clean): %-clean:
+	rm -rf build/pkgs/$*/src
+	rm -rf build/pkgs/$*/*-stamp
+
+debugcheck:
+	echo $(FP_ntl) $(DEP_libm4rie)
+	echo @DEP_ntl@ @DEP_libm4rie@
+	echo $(INST)
