@@ -1,0 +1,19 @@
+# this file is part of Sage
+# (c) 2013 Felix Salfelder
+# license: gplv3+
+#
+include $(top_srcdir)/common.mk
+calculusdir = $(pythondir)/sage/calculus
+calculus_PYTHON = \
+    wester.py __init__.py tests.py functional.py all.py test_sympy.py functions.py \
+    predefined.py desolvers.py calculus.py
+
+calculus_LTLIBRARIES = interpolators.la riemann.la var.la
+
+interpolators_la_CPPFLAGS = $(AM_CPPFLAGS) -I@numpy_include_dir@
+
+riemann_la_CPPFLAGS = $(AM_CPPFLAGS) -I@numpy_include_dir@
+riemann_la_LIBADD = -lcsage
+
+.pyx.c:
+	$(cython_call)
