@@ -18,11 +18,16 @@ if [ $DO_BUILD_ALL = 1 ]; then
     find "$SAGE_SRC"/sage -name "*.pyx" | xargs touch 2>/dev/null
 fi
 
-# exit on failures
 set -e
 
+#build "sage"
+# FIXME: what does "build" really mean?
+# wrapping to "install" for now. just build would be useless.
+
+# FIXME: uuh ooh. need sage ("the distribution") unpacked to build.
+
 # build c_lib
-$MAKE -C $SAGE_SRC/c_lib
+make -C "$SAGE_ROOT" src/c_lib-install
 
 # build sage library
-$MAKE -C $SAGE_SRC/sage
+make -C "$SAGE_ROOT" src/sage-install
