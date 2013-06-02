@@ -24,7 +24,7 @@ include 'sage/modules/vector_rational_sparse_c.pxi'
 include 'sage/modules/vector_modn_sparse_h.pxi'
 include 'sage/modules/vector_modn_sparse_c.pxi'
 
-cdef extern from "../ext/multi_modular.h":
+cdef extern from "sage/ext/multi_modular.h":
     ctypedef unsigned long mod_int
     mod_int MOD_INT_OVERFLOW
 

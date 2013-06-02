@@ -4,7 +4,7 @@ Dense Matrix Template for C/C++ Library Interfaces
 
 cimport matrix_dense
 
-cdef extern from "../ext/multi_modular.h":
+cdef extern from "sage/ext/multi_modular.h":
     ctypedef unsigned long mod_int
     mod_int MOD_INT_OVERFLOW
 
