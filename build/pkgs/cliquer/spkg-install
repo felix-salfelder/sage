@@ -179,7 +179,6 @@ cd src
 patch -p1 <../patches/Makefile.patch
 
 # Add to the source the code we need
-patch <../patches/graph.c.patch
 patch <../patches/cl.c.patch
 cp ../patches/cl.h .
 
