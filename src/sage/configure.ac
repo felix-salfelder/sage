@@ -28,6 +28,10 @@ AC_ARG_VAR(LDFLAGS, ldflags)
 AC_ARG_VAR(PATH, path)
 AC_ARG_VAR(PYTHONPATH, pythonpath)
 
+sage_local=$prefix
+test "x$prefix" = xNONE &&  sage_local=$ac_default_prefix
+AC_SUBST(SAGE_LOCAL, $sage_local)
+
 ## VPATH
 AM_CONDITIONAL([VPATH_BUILD], [test ! x$srcdir = "x."])
 
@@ -43,8 +47,8 @@ AC_SUBST(VPATH_FALSE)
 ## defaults
 AC_SUBST(AM_LDFLAGS, "-module -avoid-version")
 
-python_version_required=2.7
 ## python stuff
+python_version_required=2.7
 AM_PATH_PYTHON([$python_version_required])
 if ! test x$PYTHON_VERSION = x"$python_version_required"; then
    AC_MSG_ERROR([python $PYTHON_VERSION is not $python_version_required])
@@ -100,6 +104,8 @@ if test ! -e $SINGULAR_SHARE/algebra.lib; then
 	AC_MSG_NOTICE([unexpected singular install, cannot find share])
 fi
 AC_SUBST([SINGULAR_SHARE])
+SINGULAR_BIN=`dirname $SINGULAR`
+AC_SUBST([SINGULAR_BIN])
 
 # singular needs singular and factory
 OLDCPPFLAGS=$CPPFLAGS
@@ -109,9 +115,19 @@ SINGULAR_INCLUDES=$CPPFLAGS
 AC_SUBST([SINGULAR_INCLUDES])
 CPPFLAGS=$OLDCPPFLAGS
 
+print currently $CPPFLAGS
+
 # just check, for now
 AC_CHECK_HEADER([cliquer/cliquer.h],,[AC_MSG_ERROR(cannot find cliquer header)])
 AC_CHECK_HEADER([flint/fmpz.h],,[AC_MSG_ERROR(cannot find flint header)])
+AC_CHECK_HEADER([zn_poly/zn_poly.h],,[AC_MSG_ERROR(cannot find zn_poly header)])
+
+
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER([fplll.h],,[AC_MSG_ERROR(cannot find fplll header)])
+AC_CHECK_HEADER([fplll/fplll.h],,[AC_MSG_ERROR(cannot find fplll header)])
+AC_LANG_POP
+AC_SUBST([FPLLL_INCLUDES]) dnl currently unneeded
 # not yet
 # AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
 
@@ -124,9 +140,19 @@ AC_CHECK_HEADER([fes.h], [HAVE_LIBFES=1], [HAVE_LIBFES=0])
 AC_SUBST([HAVE_LIBFES])
 AM_CONDITIONAL([USE_LIBFES], [ test $HAVE_LIBFES -eq 1 ])
 
-AC_CHECK_HEADER([lrcalc/vector.h], [HAVE_LIBLRCALC=1], [HAVE_LIBLRCALC=0])
+# this is a hack, better use AC_ARG_WITH (?)
+AC_MSG_CHECKING("lrcalc includedir")
+AS_IF([test -f $sage_local/include/lrcalc/vector.h],
+      [LIBLRCALC_INCLUDES="-I$sage_local/include/lrcalc"
+      AC_MSG_RESULT([$sage_local/include/lrcalc/])],
+      [AC_MSG_RESULT([nothing special])])
+CPPFLAGS_SAVE=$CPPFLAGS
+CPPFLAGS+=" $LIBLRCALC_INCLUDES"
+AC_CHECK_HEADER([symfcn.h], [HAVE_LIBLRCALC=1], [HAVE_LIBLRCALC=0])
+CPPFLAGS=$CPPFLAGS_SAVE
 AC_SUBST([HAVE_LIBLRCALC])
 AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC -eq 1 ])
+AC_SUBST([LIBLRCALC_INCLUDES])
 
 AC_CHECK_HEADER([gurobi.h], [HAVE_LIBGUROBI=1], [HAVE_LIBGUROBI=0])
 AC_SUBST([HAVE_LIBGUROBI])
@@ -222,12 +248,12 @@ fi
 #     m4ri_extra_compile_args.extend( [flag.strip() for flag in m4ri_sse2_cflags.split(" ") if flag.strip()] )
 #     break
 
+PKG_CHECK_MODULES([M4RI],[m4ri],,AC_MSG_ERROR([no m4ri config found]))
+M4RI_CFLAGS+=" -std=c99"
+AC_SUBST([M4RI_CFLAGS])
+
 AC_SUBST(BLAS, ${blas})
 AC_SUBST(BLAS2, ${blas2})
-
-sage_local=$prefix
-test "x$prefix" = xNONE &&  sage_local=$ac_default_prefix
-AC_SUBST(SAGE_LOCAL, $sage_local)
 
 # ouch?
 my_CPPFLAGS+=' -I$(top_srcdir)/..'
@@ -252,6 +278,39 @@ SAGE_DIR=$srcdir
 AC_SUBST(SAGE_DIR)
 
 AS_AC_EXPAND(SAGE_ETC, $sysconfdir)
+
+# additional packages
+AS_IF([test -d $sage_local/share/conway_polynomials],
+      [CONWAY_DATA_DIR=$sage_local/share/conway_polynomials],
+      [test -d /usr/share/sagemath/conway_polynomials],
+      [CONWAY_DATA_DIR=/usr/share/sagemath/conway_polynomials],
+      [CONWAY_DATA_DIR=/usr/share/conway_polynomials])
+AC_SUBST([CONWAY_DATA_DIR])
+AM_SUBST_NOTMAKE([CONWAY_DATA_DIR])
+
+AS_IF([test -d $sage_local/share/graphs],
+      [GRAPHS_DATA_DIR=$sage_local/share/graphs],
+      [test -d /usr/share/sagemath/graphs],
+      [GRAPHS_DATA_DIR=/usr/share/sagemath/graphs],
+      [AC_MSG_ERROR([cannot find graphs database])])
+AC_SUBST([GRAPHS_DATA_DIR])
+AM_SUBST_NOTMAKE([GRAPHS_DATA_DIR])
+
+AS_IF([test -d $sage_local/share/reflexive_polytopes],
+      [POLYTOPE_DATA_DIR=$sage_local/share/reflexive_polytopes],
+      [test -d /usr/share/sagemath/reflexive_polytopes],
+      [POLYTOPE_DATA_DIR=/usr/share/sagemath/reflexive_polytopes],
+      [AC_MSG_ERROR([cannot find polytopes database])])
+AC_SUBST([POLYTOPE_DATA_DIR])
+AM_SUBST_NOTMAKE([POLYTOPE_DATA_DIR])
+
+AS_IF([test -d $sage_local/share/ellvurves],
+      [ELLCURVE_DATA_DIR=$sage_local/share/ellcurves],
+      [test -d /usr/share/sagemath/ellcurves],
+      [ELLCURVE_DATA_DIR=/usr/share/sagemath/ellcurves],
+      [AC_MSG_ERROR([cannot find elliptic curves])])
+AC_SUBST([ELLCURVE_DATA_DIR])
+AM_SUBST_NOTMAKE([ELLCURVE_DATA_DIR])
 
 m4ri_extra_compile_args=
 AC_SUBST(m4ri_extra_compile_args)
