@@ -16,8 +16,6 @@ SAGE_INC = os.path.join('@SAGE_LOCAL@', 'include')
 
 # configure.ac sets @BLAS@ and @BLAS2@
 
-
-
 #########################################################
 ### Commonly used definitions
 #########################################################
@@ -51,7 +49,6 @@ givaro_extra_compile_args =['-D__STDC_LIMIT_MACROS']
 
 polybori_extra_compile_args = []
 polybori_major_version = '0.8'
-
 
 #############################################################
 ### List of modules
@@ -671,7 +668,7 @@ ext_modules = [
               libraries = ['pari', 'gmp']),
 
     Extension('sage.libs.ppl',
-              sources = ['sage/libs/ppl.pyx', 'sage/libs/ppl_shim.cc'],
+              sources = ['sage/libs/ppl.pyxx', 'sage/libs/ppl_shim.cc'],
               libraries = ['ppl', 'gmpxx', 'gmp', 'm'],
               language="c++",
               depends = [SAGE_INC + "/ppl.hh"]),
@@ -682,7 +679,7 @@ ext_modules = [
               libraries = ["ratpoints", "gmp"]),
 
     Extension('sage.libs.singular.singular',
-              sources = ['sage/libs/singular/singular.pyx'],
+              sources = ['sage/libs/singular/singular.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -690,7 +687,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.libs.singular.polynomial',
-              sources = ['sage/libs/singular/polynomial.pyx'],
+              sources = ['sage/libs/singular/polynomial.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -698,7 +695,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.libs.singular.ring',
-              sources = ['sage/libs/singular/ring.pyx'],
+              sources = ['sage/libs/singular/ring.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -706,7 +703,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.libs.singular.groebner_strategy',
-              sources = ['sage/libs/singular/groebner_strategy.pyx'],
+              sources = ['sage/libs/singular/groebner_strategy.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -714,7 +711,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.libs.singular.function',
-              sources = ['sage/libs/singular/function.pyx'],
+              sources = ['sage/libs/singular/function.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -722,7 +719,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.libs.singular.option',
-              sources = ['sage/libs/singular/option.pyx'],
+              sources = ['sage/libs/singular/option.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -784,7 +781,7 @@ ext_modules = [
         ###################################
 
     Extension('sage.libs.cremona.homspace',
-              sources = ["sage/libs/cremona/homspace.pyx"],
+              sources = ["sage/libs/cremona/homspace.pyxx"],
               libraries = ['ec', 'ntl', 'pari',
                            'gmpxx', 'gmp', 'm', 'stdc++'],
               language='c++',
@@ -795,7 +792,7 @@ ext_modules = [
                         ]),
 
     Extension('sage.libs.cremona.mat',
-              sources = ["sage/libs/cremona/mat.pyx"],
+              sources = ["sage/libs/cremona/mat.pyxx"],
               libraries = ['ec', 'ntl', 'pari',
                            'gmpxx', 'gmp', 'm', 'stdc++'],
               language='c++',
@@ -806,7 +803,7 @@ ext_modules = [
                         ]),
 
     Extension('sage.libs.cremona.newforms',
-              sources = ["sage/libs/cremona/newforms.pyx"],
+              sources = ["sage/libs/cremona/newforms.pyxx"],
               libraries = ['ec', 'ntl', 'pari',
                            'gmpxx', 'gmp', 'm', 'stdc++'],
               language='c++',
@@ -827,97 +824,97 @@ ext_modules = [
     # first library listed for all ntl extensions below.
 
     Extension('sage.libs.ntl.ntl_GF2',
-              sources = ["sage/libs/ntl/ntl_GF2.pyx"],
+              sources = ["sage/libs/ntl/ntl_GF2.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_GF2E',
-              sources = ["sage/libs/ntl/ntl_GF2E.pyx"],
+              sources = ["sage/libs/ntl/ntl_GF2E.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_GF2EContext',
-              sources = ["sage/libs/ntl/ntl_GF2EContext.pyx"],
+              sources = ["sage/libs/ntl/ntl_GF2EContext.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_GF2EX',
-              sources = ["sage/libs/ntl/ntl_GF2EX.pyx"],
+              sources = ["sage/libs/ntl/ntl_GF2EX.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_GF2X',
-              sources = ["sage/libs/ntl/ntl_GF2X.pyx"],
+              sources = ["sage/libs/ntl/ntl_GF2X.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_lzz_p',
-              sources = ["sage/libs/ntl/ntl_lzz_p.pyx"],
+              sources = ["sage/libs/ntl/ntl_lzz_p.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_lzz_pContext',
-              sources = ["sage/libs/ntl/ntl_lzz_pContext.pyx"],
+              sources = ["sage/libs/ntl/ntl_lzz_pContext.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_lzz_pX',
-              sources = ["sage/libs/ntl/ntl_lzz_pX.pyx"],
+              sources = ["sage/libs/ntl/ntl_lzz_pX.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_mat_GF2',
-              sources = ["sage/libs/ntl/ntl_mat_GF2.pyx"],
+              sources = ["sage/libs/ntl/ntl_mat_GF2.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_mat_GF2E',
-              sources = ["sage/libs/ntl/ntl_mat_GF2E.pyx"],
+              sources = ["sage/libs/ntl/ntl_mat_GF2E.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_mat_ZZ',
-              sources = ["sage/libs/ntl/ntl_mat_ZZ.pyx"],
+              sources = ["sage/libs/ntl/ntl_mat_ZZ.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ',
-              sources = ["sage/libs/ntl/ntl_ZZ.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZX',
-              sources = ["sage/libs/ntl/ntl_ZZX.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZX.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_p',
-              sources = ["sage/libs/ntl/ntl_ZZ_p.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_p.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_pContext',
-              sources = ["sage/libs/ntl/ntl_ZZ_pContext.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_pContext.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_pE',
-              sources = ["sage/libs/ntl/ntl_ZZ_pE.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_pE.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_pEContext',
-              sources = ["sage/libs/ntl/ntl_ZZ_pEContext.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_pEContext.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_pEX',
-              sources = ["sage/libs/ntl/ntl_ZZ_pEX.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_pEX.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
     Extension('sage.libs.ntl.ntl_ZZ_pX',
-              sources = ["sage/libs/ntl/ntl_ZZ_pX.pyx"],
+              sources = ["sage/libs/ntl/ntl_ZZ_pX.pyxx"],
               libraries = ["csage", "ntl", "gmp", "gmpxx", "m", "stdc++"],
               language='c++'),
 
@@ -1018,13 +1015,13 @@ ext_modules = [
               libraries = ['gmp']),
 
     Extension('sage.matrix.matrix_modn_dense_float',
-              sources = ['sage/matrix/matrix_modn_dense_float.pyx'],
+              sources = ['sage/matrix/matrix_modn_dense_float.pyxx'],
               language="c++",
               libraries = ['linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp', '@BLAS@', '@BLAS2@'],
               extra_compile_args = ['-DDISABLE_COMMENTATOR'] + givaro_extra_compile_args),
 
     Extension('sage.matrix.matrix_modn_dense_double',
-              sources = ['sage/matrix/matrix_modn_dense_double.pyx'],
+              sources = ['sage/matrix/matrix_modn_dense_double.pyxx'],
               language="c++",
 				  define_macros = module_bounds,
               libraries = ['linbox', 'givaro', 'mpfr', 'gmpxx', 'gmp', '@BLAS@', '@BLAS2@'],
@@ -1035,7 +1032,7 @@ ext_modules = [
               libraries = ['gmp']),
 
     Extension('sage.matrix.matrix_mpolynomial_dense',
-              sources = ['sage/matrix/matrix_mpolynomial_dense.pyx'],
+              sources = ['sage/matrix/matrix_mpolynomial_dense.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -1195,7 +1192,7 @@ ext_modules = [
               sources = ['sage/modular/arithgroup/congroup_pyx.pyx']),
 
     Extension('sage.modular.arithgroup.farey_symbol',
-              sources = ['sage/modular/arithgroup/farey_symbol.pyx',
+              sources = ['sage/modular/arithgroup/farey_symbol.pyxx',
                          'sage/modular/arithgroup/farey.cpp',
                          'sage/modular/arithgroup/sl2z.cpp'],
               libraries = ['gmpxx', 'gmp'],
@@ -1208,7 +1205,7 @@ ext_modules = [
               depends = flint_depends),
 
     Extension('sage.modular.modsym.apply',
-              sources = ['sage/modular/modsym/apply.pyx'],
+              sources = ['sage/modular/modsym/apply.pyxx'],
               libraries = ["csage", "flint", "gmp", "gmpxx", "m", "stdc++"],
               extra_compile_args=["-std=c99",  "-D_XPG6"],
               depends = flint_depends),
@@ -1217,7 +1214,7 @@ ext_modules = [
               sources = ['sage/modular/modsym/relation_matrix_pyx.pyx']),
 
     Extension('sage.modular.modsym.heilbronn',
-              sources = ['sage/modular/modsym/heilbronn.pyx'],
+              sources = ['sage/modular/modsym/heilbronn.pyxx'],
               libraries = ["csage", "flint", "gmp", "gmpxx", "m", "stdc++"],
               extra_compile_args=["-std=c99", "-D_XPG6"],
               depends = flint_depends),
@@ -1305,18 +1302,18 @@ ext_modules = [
               libraries=["csage", "stdc++"]),
 
     Extension("sage.numerical.backends.glpk_backend",
-              ["sage/numerical/backends/glpk_backend.pyx"],
+              ["sage/numerical/backends/glpk_backend.pyxx"],
               include_dirs = ['@C_LIB_INCLUDE@'],
               language = 'c++',
               libraries=["csage", "stdc++", "glpk", "gmp", "z"]),
 
     Extension("sage.numerical.backends.ppl_backend",
-              ["sage/numerical/backends/ppl_backend.pyx"],
+              ["sage/numerical/backends/ppl_backend.pyxx"],
               include_dirs = ['@C_LIB_INCLUDE@'],
               libraries=["csage", "stdc++"]),
 
     Extension("sage.numerical.backends.glpk_graph_backend",
-              ["sage/numerical/backends/glpk_graph_backend.pyx"],
+              ["sage/numerical/backends/glpk_graph_backend.pyxx"],
               include_dirs = ['@C_LIB_INCLUDE@'],
               language = 'c++',
               libraries=["csage", "stdc++", "glpk", "gmp", "z"]),
@@ -1524,7 +1521,7 @@ ext_modules = [
 
     Extension('sage.rings.finite_rings.element_givaro',
               define_macros = module_bounds,
-              sources = ["sage/rings/finite_rings/element_givaro.pyx"],
+              sources = ["sage/rings/finite_rings/element_givaro.pyxx"],
               # this order is needed to compile under windows.
               libraries = ['givaro', 'ntl', 'gmpxx', 'gmp', 'm', 'stdc++', ],
               language='c++',
@@ -1532,7 +1529,7 @@ ext_modules = [
 
     Extension('sage.rings.finite_rings.element_ntl_gf2e',
               define_macros = module_bounds,
-              sources = ['sage/rings/finite_rings/element_ntl_gf2e.pyx'],
+              sources = ['sage/rings/finite_rings/element_ntl_gf2e.pyxx'],
               libraries = ['ntl', 'gmp'],
               language = 'c++'),
 
@@ -1665,7 +1662,7 @@ ext_modules = [
               sources = ['sage/rings/polynomial/multi_polynomial.pyx']),
 
     Extension('sage.rings.polynomial.multi_polynomial_ideal_libsingular',
-              sources = ['sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyx'],
+              sources = ['sage/rings/polynomial/multi_polynomial_ideal_libsingular.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -1681,7 +1678,7 @@ ext_modules = [
               extra_compile_args = givaro_extra_compile_args),
 
     Extension('sage.rings.polynomial.multi_polynomial_libsingular',
-              sources = ['sage/rings/polynomial/multi_polynomial_libsingular.pyx'],
+              sources = ['sage/rings/polynomial/multi_polynomial_libsingular.pyxx'],
               libraries = singular_libs,
               language="c++",
               include_dirs = ['@SAGE_INC@/singular', '@SAGE_INC@/factory'],
@@ -1702,7 +1699,7 @@ ext_modules = [
               depends = numpy_depends),
 
     Extension('sage.rings.polynomial.polynomial_gf2x',
-              sources = ['sage/rings/polynomial/polynomial_gf2x.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_gf2x.pyxx'],
               libraries = ['ntl', 'stdc++', 'gmp'],
               extra_compile_args = ["@M4RI_CFLAGS@"],
               language = 'c++',
@@ -1710,31 +1707,31 @@ ext_modules = [
               include_dirs = ['@SAGE_DIR@/libs/ntl/']),
 
     Extension('sage.rings.polynomial.polynomial_zz_pex',
-              sources = ['sage/rings/polynomial/polynomial_zz_pex.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_zz_pex.pyxx'],
               libraries = ['ntl', 'stdc++', 'gmp'],
               language = 'c++',
               include_dirs = ['@SAGE_DIR@/libs/ntl']),
 
     Extension('sage.rings.polynomial.polynomial_zmod_flint',
-              sources = ['sage/rings/polynomial/polynomial_zmod_flint.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_zmod_flint.pyxx'],
               libraries = ["csage", "flint", "gmp", "gmpxx", "ntl", "zn_poly"],
               language = 'c++',
               depends = flint_depends),
 
     Extension('sage.rings.polynomial.polynomial_integer_dense_flint',
-              sources = ['sage/rings/polynomial/polynomial_integer_dense_flint.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_integer_dense_flint.pyxx'],
               language = 'c++',
               libraries = ["csage", "flint", "ntl", "gmpxx", "gmp"],
               depends = flint_depends),
 
     Extension('sage.rings.polynomial.polynomial_integer_dense_ntl',
-              sources = ['sage/rings/polynomial/polynomial_integer_dense_ntl.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_integer_dense_ntl.pyxx'],
               libraries = ['ntl', 'stdc++', 'gmp'],
               language = 'c++',
               include_dirs = ['@SAGE_DIR@/libs/ntl']),
 
     Extension('sage.rings.polynomial.polynomial_rational_flint',
-              sources = ['sage/rings/polynomial/polynomial_rational_flint.pyx'],
+              sources = ['sage/rings/polynomial/polynomial_rational_flint.pyxx'],
               libraries = ["csage", "flint", "ntl", "gmpxx", "gmp"],
               language = 'c++',
               depends = flint_depends),
@@ -1941,7 +1938,7 @@ ext_modules = [
               sources = ['sage/tests/interrupt.pyx', 'sage/tests/c_lib.c']),
 
     Extension('sage.tests.stl_vector',
-              sources = ['sage/tests/stl_vector.pyx'],
+              sources = ['sage/tests/stl_vector.pyxx'],
               libraries = ['gmp'],
               language = 'c++'),
 
