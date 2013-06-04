@@ -33,7 +33,7 @@ from sage.libs.linbox.fflas cimport ModDouble_fgemm as Mod_fgemm, ModDouble_fgem
 
 MAX_MODULUS = 2**23
 
-cdef extern from "../rings/finite_rings/stdint.h":
+cdef extern from "stdint.h":
     ctypedef int int_fast32_t
     ctypedef int int_fast64_t
     int_fast32_t INTEGER_MOD_INT32_LIMIT
