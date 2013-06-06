@@ -76,7 +76,7 @@ AUTHORS:
 
 
 from tri_plot import TrianglePlot
-from index_face_set import IndexFaceSet
+from sage.plot.plot3d.index_face_set import IndexFaceSet
 from shapes import arrow3d
 from base import Graphics3dGroup
 from sage.plot.colors import rainbow

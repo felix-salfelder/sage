@@ -2492,7 +2492,7 @@ from sage.rings.complex_double cimport ComplexDoubleElement
 import sage.rings.complex_double
 cdef object CDF = sage.rings.complex_double.CDF
 
-cdef extern from "solaris_fixes.h": pass
+cdef extern from "sage/ext/solaris_fixes.h": pass
 
 # Cython does not (yet) support complex numbers natively, so this is a bit hackish.
 cdef extern from "complex.h":
