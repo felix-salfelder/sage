@@ -4,3 +4,12 @@
 /modular/arithgroup/farey_symbol.h
 /rings/real_mpfi.h
 /symbolic/pynac.h
+
+Makefile.in
+Makefile
+.deps
+py-compile
+depcomp
+
+# temporary
+Makefile.am.auto
