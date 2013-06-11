@@ -1,0 +1,15 @@
+diff -rup singular-orig/omalloc/Makefile.in singular-3.1.5.p7/omalloc/Makefile.in
+--- singular-orig/omalloc/Makefile.in	2013-06-25 18:52:22.528038072 +0200
++++ singular-3.1.5.p7/omalloc/Makefile.in	2013-06-25 18:53:57.210288805 +0200
+@@ -188,9 +188,9 @@ install install-libsingular: all
+ 	$(MKINSTALLDIRS) $(libdir)
+ 	$(MKINSTALLDIRS) $(includedir)
+ 	$(INSTALL_DATA) libomalloc.a $(libdir)
+-	$(RANLIB) $(libdir)/libomalloc.a
++	$(RANLIB) $(DESTDIR)$(libdir)/libomalloc.a
+ 	$(INSTALL_DATA) libomalloc_ndebug.a $(libdir)
+-	$(RANLIB) $(libdir)/libomalloc_ndebug.a
++	$(RANLIB) $(DESTDIR)$(libdir)/libomalloc_ndebug.a
+ 	$(INSTALL_DATA) omalloc.o $(libdir)
+ 	$(INSTALL_DATA) omalloc_debug.o $(libdir)
+ 	$(INSTALL_DATA) omalloc.h $(includedir)

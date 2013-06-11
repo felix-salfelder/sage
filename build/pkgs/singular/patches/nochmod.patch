@@ -1,0 +1,22 @@
+diff -rup singular-orig/Singular/Makefile.in singular-3.1.5.p7/Singular/Makefile.in
+--- singular-orig/Singular/Makefile.in	2013-06-25 07:50:02.000000000 +0200
++++ singular-3.1.5.p7/Singular/Makefile.in	2013-06-25 07:51:34.000000000 +0200
+@@ -568,7 +568,7 @@ installbin: ${SING_EXEC} libparse ESingu
+ 	${INSTALL_PROGRAM} libparse ${RUN_SINGULARS} ${bindir}
+ 	${INSTALL_PROGRAM} ESingular TSingular ${bindir}
+ 	${INSTALL_PROGRAM} surfex ${bindir}
+-	chmod a+x ${SINGULAR}
++	#chmod a+x ${SINGULAR}
+ 	rm -f ${bindir}/${SING_EXEC}${EXEC_EXT}
+ 	cd ${bindir}; ${LN_S} ${SINGULAR} Singular${EXEC_EXT};
+ 
+@@ -580,7 +580,7 @@ installbin-nolns: ${SING_EXEC} libparse
+ 	done
+ 	${INSTALL_PROGRAM} libparse ${RUN_SINGULARS} ${bindir}
+ 	${INSTALL_PROGRAM} ESingular TSingular ${DL_LIBS} ${bindir}
+-	chmod a+x ${SINGULAR}
++	#chmod a+x ${SINGULAR}
+ 	rm -f ${bindir}/${SING_EXEC}${EXEC_EXT}
+ 	${INSTALL_PROGRAM} ${SINGULAR} ${bindir}/Singular${EXEC_EXT};
+ 
+Only in singular-3.1.5.p7/Singular: Makefile.in~

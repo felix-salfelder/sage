@@ -1,0 +1,12 @@
+diff -rup singular-orig/factory/GNUmakefile.in singular-3.1.5.p7/factory/GNUmakefile.in
+--- singular-orig/factory/GNUmakefile.in	2013-06-25 19:28:05.234588232 +0200
++++ singular-3.1.5.p7/factory/GNUmakefile.in	2013-06-25 19:28:26.759094022 +0200
+@@ -557,7 +557,7 @@ installcf:	cf
+ 		  $(INSTALL_DATA) $(srcdir)/templates/$$file $(templatedir)/$$file; \
+ 		done
+ # we run `ranlib' another time for SUN machines
+-		$(RANLIB) $(libdir)/$(libfactory)
++		$(RANLIB) $(DESTDIR)$(libdir)/$(libfactory)
+ 
+ installmem:	mem
+ 		$(MKINSTALLDIRS) $(libdir)

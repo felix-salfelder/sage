@@ -1,0 +1,13 @@
+diff -rup src.orig/kernel/Makefile.in src/kernel/Makefile.in
+--- src.orig/kernel/Makefile.in	2013-06-11 20:48:37.000000000 +0200
++++ src/kernel/Makefile.in	2013-06-11 20:49:39.000000000 +0200
+@@ -48,7 +48,7 @@ PIPE		= @PIPE@
+ CFLAGS		= @CFLAGS@ ${PIPE} 
+ CXXFLAGS	= @CXXFLAGS@ ${PIPE} 
+ CXXTEMPLFLAGS	= @CXXTEMPLFLAGS@
+-CPPFLAGS	= -I${srcdir} -I.. -I@prefix@  @CPPFLAGS@ 
++CPPFLAGS	= -I${srcdir} -I.. -I../factory  @CPPFLAGS@ #missing: @FACTORY_INCLUDES@
+ DEFS		= -DNDEBUG -DOM_NDEBUG -D@SING_UNAME@ @DEFS@
+ LDFLAGS		= @LDFLAGS@
+ LD_DYN_FLAGS	= @LD_DYN_FLAGS@
+Only in src/kernel: Makefile.in~
