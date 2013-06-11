@@ -1,0 +1,19 @@
+diff -rup singular-orig/Singular/Makefile.in singular-3.1.5.p7/Singular/Makefile.in
+--- singular-orig/Singular/Makefile.in	2013-06-25 09:56:22.000000000 +0200
++++ singular-3.1.5.p7/Singular/Makefile.in	2013-06-25 09:57:43.000000000 +0200
+@@ -665,11 +665,11 @@ install-bindist: $(HEADERS) $(SOURCES) M
+ 
+ install-sharedist: ${SLIBS_FILES} LIB/gftables
++	chmod +rX ${SLIBS_FILES} ${GFTABLES}
+ 	${MKINSTALLDIRS} ${install_slibdir}
+-	cp ${SLIBS_FILES} ${install_slibdir}
++	${INSTALL_DATA} ${SLIBS_FILES} ${install_slibdir}
+ 	${MKINSTALLDIRS} ${install_slibdir}/gftables
+-	cp ${GFTABLES} ${install_slibdir}/gftables
++	${INSTALL_DATA} ${GFTABLES} ${install_slibdir}/gftables
+ 	${MKINSTALLDIRS} ${install_slibdir}/surfex
+-	cp LIB/surfex/surfex.jar ${install_slibdir}/surfex
++	${INSTALL_DATA} LIB/surfex/surfex.jar ${install_slibdir}/surfex
+-	chmod -R +rX ${install_slibdir}/*
+ 
+ tar:
