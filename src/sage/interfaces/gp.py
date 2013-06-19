@@ -10,8 +10,8 @@ string using Gp (and get the result back as a string).
 EXAMPLES: We illustrate objects that wrap GP objects (gp is the
 PARI interpreter)::
 
-    sage: from sage.env import SAGE_LOCAL
-    sage: f=os.path.join(SAGE_LOCAL, 'etc', 'gprc.expect')
+    sage: from sage.env import SAGE_ETC
+    sage: f=os.path.join(SAGE_ETC, 'gprc.expect')
     sage: os.path.exists(f)
     True
 
@@ -984,11 +984,11 @@ def is_GpElement(x):
     """
     return isinstance(x, GpElement)
 
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.env import DOT_SAGE, SAGE_ETC
 import os
 
-# Set GPRC environment variable to $SAGE_LOCAL/etc/gprc.expect
-os.environ["GPRC"] = os.path.join(SAGE_LOCAL, 'etc', 'gprc.expect')
+# Set GPRC environment variable to $SAGE_ETC/gprc.expect
+os.environ["GPRC"] = os.path.join(SAGE_ETC, 'gprc.expect')
 
 # An instance
 gp = Gp(logfile=os.path.join(DOT_SAGE,'gp-expect.log')) # useful for debugging!
