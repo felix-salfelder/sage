@@ -54,7 +54,6 @@ all-sage: \
      $(INST)/$(GD) \
      $(INST)/$(GDMODULE) \
      $(INST)/$(GFAN) \
-     $(INST)/$(GF2X) \
      $(INST)/$(GIVARO) \
      $(INST)/$(GIT) \
      $(INST)/$(GLPK) \
@@ -129,13 +128,12 @@ toolchain: $(TOOLCHAIN)
 # reinstalled. Since system GCCs might use Sage's libraries, we do this
 # unconditionally. We still use the dependency checking from $(MAKE),
 # so this will not trigger useless rebuilds.
-# See #14168 and #14232.
+# See http://trac.sagemath.org/sage_trac/ticket/14168
 toolchain-deps:
 	$(MAKE) $(INST)/$(ZLIB)
 	$(MAKE) $(INST)/$(MPIR)
 	$(MAKE) $(INST)/$(MPFR)
 	$(MAKE) $(INST)/$(MPC)
-	$(MAKE) $(INST)/$(PPL)
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
@@ -167,7 +165,6 @@ $(INST)/$(PATCH): $(INST)/$(BZIP2)
 ###############################################################################
 # Building normal packages
 ###############################################################################
-
 $(INST)/$(ATLAS): $(INST)/$(LAPACK) $(INST)/$(PYTHON)
 	+$(PIPE) "$(SAGE_SPKG) $(ATLAS) 2>&1" "tee -a $(SAGE_LOGS)/$(ATLAS).log"
 
@@ -221,10 +218,7 @@ $(INST)/$(MPIR): $(INST)/$(ICONV)
 $(INST)/$(GSL): $(INST)/$(ATLAS)
 	+$(PIPE) "$(SAGE_SPKG) $(GSL) 2>&1" "tee -a $(SAGE_LOGS)/$(GSL).log"
 
-$(INST)/$(GF2X):
-	+$(PIPE) "$(SAGE_SPKG) $(GF2X) 2>&1" "tee -a $(SAGE_LOGS)/$(GF2X).log"
-
-$(INST)/$(NTL): $(INST)/$(MPIR) $(INST)/$(GF2X)
+$(INST)/$(NTL): $(INST)/$(MPIR)
 	+$(PIPE) "$(SAGE_SPKG) $(NTL) 2>&1" "tee -a $(SAGE_LOGS)/$(NTL).log"
 
 $(INST)/$(FPLLL): $(INST)/$(MPIR) $(INST)/$(MPFR)
@@ -241,7 +235,7 @@ $(INST)/$(POLYBORI): $(INST)/$(PYTHON) $(INST)/$(IPYTHON) \
 $(INST)/$(POLYTOPES_DB):
 	+$(PIPE) "$(SAGE_SPKG) $(POLYTOPES_DB) 2>&1" "tee -a $(SAGE_LOGS)/$(POLYTOPES_DB).log"
 
-$(INST)/$(PPL): $(INST)/$(MPIR) $(INST)/$(GLPK)
+$(INST)/$(PPL): $(INST)/$(MPIR)
 	+$(PIPE) "$(SAGE_SPKG) $(PPL) 2>&1" "tee -a $(SAGE_LOGS)/$(PPL).log"
 
 $(INST)/$(MPC): $(INST)/$(MPIR) $(INST)/$(MPFR)
@@ -499,10 +493,7 @@ $(INST)/$(GCC): $(INST)/$(MPIR) $(INST)/$(MPFR) $(INST)/$(MPC) \
 $(INST)/$(PIL): $(INST)/$(PYTHON)
 	+$(PIPE) "$(SAGE_SPKG) $(PIL) 2>&1" "tee -a $(SAGE_LOGS)/$(PIL).log"
 
-# Lapack depends on SAGE_ROOT_REPO because it *executes* Fortran code at
-# build time.  Therefore, it needs an up-to-date version of sage-env
-# which adds $SAGE_LOCAL/lib64 to the LD_LIBRARY_PATH.
-$(INST)/$(LAPACK): $(INST)/$(SAGE_ROOT_REPO)
+$(INST)/$(LAPACK):
 	+$(PIPE) "$(SAGE_SPKG) $(LAPACK) 2>&1" "tee -a $(SAGE_LOGS)/$(LAPACK).log"
 
 $(INST)/$(BLAS):
