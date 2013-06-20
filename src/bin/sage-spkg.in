@@ -133,10 +133,11 @@ fi
 # The following sets environment variables for building packages.
 # Since this is sourced, it returns a non-zero value on errors rather
 # than exiting.  Using dot suggested by W. Cheung.
-. "${0%spkg}env"
+SAGE_ETC=${SAGE_ETC:-@sysconfdir@}
+. $SAGE_ETC/env.sh
 
 if [ $? -ne 0 ]; then
-    echo >&2 "Error setting environment variables by sourcing '$SAGE_ROOT/spkg/bin/sage-env';"
+    echo >&2 "Error setting environment variables by sourcing '$SAGE_ETC/env.sh';"
     echo >&2 "possibly contact sage-devel (see http://groups.google.com/group/sage-devel)."
     exit 1
 fi
