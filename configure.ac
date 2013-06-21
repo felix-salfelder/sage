@@ -175,6 +175,23 @@ AC_FUNC_MKTIME
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([endgrent endpwent floor getcwd inet_ntoa memset mkdir pathconf setenv sqrt strchr strdup strstr uname utime])
 
+AC_CHECK_PROG(GIT,git,yes)
+if test x"$GIT" = "xyes" && test -d .git; then
+   have_git_repo=yes
+else
+   have_git_repo=no
+fi
+
+## options
+AC_ARG_ENABLE([keepbuild], AS_HELP_STRING([--enable-keepbuild], [Clean after build]),
+ [case "${enableval}" in
+  yes) $1=true ;;
+  no)  $1=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-keepbuild]) ;;
+ esac],[keepbuild=$have_git_repo])
+AM_CONDITIONAL([KEEPBUILD],[test $keepbuild=yes])
+AC_SUBST([KEEPBUILD],$keepbuild)
+
 ## sage foreign package in/exclusion
 # base packages
 # checks for packages
@@ -223,6 +240,7 @@ AC_FOREIGN_PACKAGE([gap])
 AC_FOREIGN_PACKAGE([gcc])
 AC_FOREIGN_PACKAGE([gd])
 AC_FOREIGN_PACKAGE([gdmodule])
+AC_FOREIGN_PACKAGE([gf2x])
 AC_FOREIGN_PACKAGE([gfan])
 AC_FOREIGN_PACKAGE([givaro])
 AC_FOREIGN_PACKAGE([git])

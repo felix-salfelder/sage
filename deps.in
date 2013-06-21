@@ -253,11 +253,13 @@ INSTALL_FP_NAMES = \
 
 scripts: $(BIN)
 
-sage-all: $(INSTALL_FP_NAMES:%=%-install) \
+all-local: $(INSTALL_FP_NAMES:%=%-install) \
      $(BIN) \
      $(SAGE) \
      $(CSAGE) \
-     extcode
+     $(EXTCODE)
+
+EXTCODE = src/ext-install-stamp
 
 # TOOLCHAIN consists of dependencies determined by spkg/install,
 # including for example the GCC package.
@@ -542,20 +544,9 @@ $(INSTALL_FP_NAMES:%=%-install): %-install: $(INST)/$$(FP_$$*)
 $(INSTALL_FP_NAMES:%=%-uninstall): %-uninstall:
 	@echo not implemented
 
-# convenience rules
-#incomplete/under construction (necessary?)
-$(INSTALL_FP_NAMES:%=%-configure): %-configure: build/pkgs/%/src
-	path=build/pkgs/$*;\
-	export SAGE_LOCAL="$(abs_builddir)/local" CC="@CC@" CFLAGS="@CFLAGS@" \
-	       MAKE=$(MAKE) UNAME="@UNAME@" PATH=$(abs_builddir)/local/bin:$$PATH \
-	       LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH" \
-	       srcdir="$(abs_top_srcdir)/$$path"; \
-	       PYTHONHOME="$(abs_builddir)/local"; \
-	$(MAKE) -f$(abs_top_srcdir)/build/pkgs/$*/spkg-install -Cbuild/pkgs/$* configure
-
 # just remove it...
 $(INSTALL_FP_NAMES:%=%-clean): %-clean:
-	rm -rf build/pkgs/$*/src
+	rm -rf build/pkgs/$*/src-*
 	rm -rf build/pkgs/$*/*-stamp
 
 debugcheck:

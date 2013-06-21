@@ -20,8 +20,6 @@ V_1 = 1
 # need absolute path, passed to other build scripts.
 SAGE_LOGS=@abs_top_builddir@/pkgs/logs
 
-all: start doc  # indirectly depends on build
-
 CORE_MODULES=src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
 CORE_ENV=LDFLAGS="-L$(prefix)/lib $$LDFLAGS" PATH="$(exec_prefix)/bin:$$PATH"
 CORE_OPTS=--prefix="@prefix@"
@@ -168,6 +166,19 @@ $(INSTALL_FP_NAMES:%=%-info): %-info: build/pkgs/%/package-version.txt
 		[ -n "$$unp" ] && echo -n unpacked: ; \
 	    for i in $$unp; do echo -n " "$$( basename $$i ); done;\
 		 echo
+
+# convenience rules
+#incomplete/under construction (necessary?)
+DISABLED$(INSTALL_FP_NAMES:%=%-configure): %-configure: build/pkgs/%/src
+	path=build/pkgs/$*;\
+	export SAGE_LOCAL="$(abs_builddir)/local" CC="@CC@" CFLAGS="@CFLAGS@" \
+	       MAKE=$(MAKE) UNAME="@UNAME@" PATH=$(abs_builddir)/local/bin:$$PATH \
+	       LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH" \
+	       srcdir="$(abs_top_srcdir)/$$path"; \
+	       PYTHONHOME="$(abs_builddir)/local"; \
+	$(MAKE) -f$(abs_top_srcdir)/build/pkgs/$*/spkg-install -Cbuild/pkgs/$* configure
+
+
 
 p=%
 define unpack
