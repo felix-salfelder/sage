@@ -135,10 +135,14 @@ SAGE_LOCAL=@abs_top_builddir@/local
 ### generic build stamp rule
 # FIXME: use more env.sh
 # FIXME: pass FILELIST
+# FIXME: PYTHONPATH must not be here
+# FIXME: SINGULARPATH must not be here
+# (source local/etc/env.d/*.sh from dist?)
+#$(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src-$$(lastword $$(subst -, ,$$*)) | $(SAGE_LOGS) $(INST) $(PKGSDIR)
 .SECONDEXPANSION:
-$(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src | $(SAGE_LOGS) $(INST) $(PKGSDIR)
+$(INST)/%: $(PKGSDIR)/%-unpack-stamp | $(SAGE_LOGS) $(INST) $(PKGSDIR)
 	path=$(PKGSDIR)/$(firstword $(subst -, ,$*)); \
-	[ -d $$path/patches -o -h $$path/patches ] || ln -s $(abs_top_srcdir)/$$path/patches $$path;\
+	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       MAKE=$(MAKE) UNAME="@UNAME@" \
 	       srcdir="$(abs_top_srcdir)/$$path" \
@@ -148,10 +152,22 @@ $(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src | $(SAGE_LOGS) $(INST)
 	       SINGULAR_EXECUTABLE="$(SAGE_LOCAL)/bin/Singular"; \
 	source dist/etc/env.sh; \
 	cd $$path; \
+	rm -rf src; \
+	$(LN_S) src-$(lastword $(subst -, ,$*)) src || exit 1; \
 	echo "$(abs_top_srcdir)/$$path/spkg-install" ;\
 	$(PIPE) "$(abs_top_srcdir)/$$path/spkg-install" 'tee -a $(SAGE_LOGS)/$*.log'
 	touch $@
 
+.SECONDEXPANSION:
+$(INSTALL_FP_NAMES:%=%-info): %-info: build/pkgs/%/package-version.txt
+	@echo "selected:  $*-$$(cat $<)"
+	@inst=$$( ls $(INST)/$*-* ); \
+		[ -f $$inst ] && echo installed: $$( basename $$inst )
+
+	@unp=$$( ls -d $(PKGSDIR)/$*/src-* 2>/dev/null ); \
+		[ -n "$$unp" ] && echo -n unpacked: ; \
+	    for i in $$unp; do echo -n " "$$( basename $$i ); done;\
+		 echo
 
 p=%
 define unpack
@@ -159,15 +175,31 @@ define unpack
 # hmm, call clean?
 	rm -rf $(PKGSDIR)/$*/src $(PKGSDIR)/$*/*-stamp
 	mkdir -p $(PKGSDIR)/$*
-	cd $(PKGSDIR)/$*; tar -xf $(abs_top_builddir)/$|
+	cd $(PKGSDIR)/$*; @TAR@ -xf $(abs_top_builddir)/$|
 	@a="$(FP_$*)"; shopt -s extglob; \
 	  $(call unat,mv $(PKGSDIR)/$*/$${a%.p[0-9]?([0-9])} $@)
+endef
+
+define unpackwithversion
+	@echo unpacking $@
+	mkdir -p $(PKGSDIR)/$(firstword $(subst -, ,$*))
+	cd $(PKGSDIR)/$(firstword $(subst -, ,$*)); @TAR@ -xf $(abs_top_builddir)/$|
+	@a="$*"; shopt -s extglob; \
+	  $(call unat,mv $(PKGSDIR)/$(firstword $(subst -, ,$*))/$${a%.p[0-9]?([0-9])} \
+	                 $(PKGSDIR)/$(firstword $(subst -, ,$*))/src-$(lastword $(subst -, ,$*)))
 endef
 
 .SECONDEXPANSION:
 $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
                   $$(shell echo >&2 $$* to2 $$(FP_$$*))
 	$(unpack)
+
+# hmm, for now. better wihout stamp (?)
+# actually need $(PKGSDIR)/<pkgname>/src-<versionno>
+.SECONDEXPANSION:
+$(PKGSDIR)/%-unpack-stamp: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
+	$(unpackwithversion)
+	touch $@
 
 .SECONDEXPANSION:
 $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
@@ -334,7 +366,7 @@ install-broken:
 	mkdir -p "$(DESTDIR)"/bin
 	cp -Rp * "$(DESTDIR)"/sage
 	rm -f "$(DESTDIR)"/bin/sage
-	ln -s ../sage/sage "$(DESTDIR)"/bin/sage
+	$(LN_S) -s ../sage/sage "$(DESTDIR)"/bin/sage
 	"$(DESTDIR)"/bin/sage -c # Run sage-location
 
 .PHONY: all build build-serial start install \
