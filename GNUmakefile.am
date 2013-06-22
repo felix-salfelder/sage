@@ -140,7 +140,7 @@ SAGE_LOCAL=@abs_top_builddir@/local
 # (source local/etc/env.d/*.sh from dist?)
 #$(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src-$$(lastword $$(subst -, ,$$*)) | $(SAGE_LOGS) $(INST) $(PKGSDIR)
 .SECONDEXPANSION:
-$(INST)/%: $(PKGSDIR)/%-unpack-stamp | $(SAGE_LOGS) $(INST) $(PKGSDIR)
+$(INST)/%: $(PKGSDIR)/% | $(SAGE_LOGS) $(INST) $(PKGSDIR)
 	path=$(PKGSDIR)/$(firstword $(subst -, ,$*)); \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
@@ -153,7 +153,7 @@ $(INST)/%: $(PKGSDIR)/%-unpack-stamp | $(SAGE_LOGS) $(INST) $(PKGSDIR)
 	source dist/etc/env.sh; \
 	cd $$path; \
 	rm -rf src; \
-	$(LN_S) src-$(lastword $(subst -, ,$*)) src || exit 1; \
+	$(LN_S) ../$* src || exit 1; \
 	echo "$(abs_top_srcdir)/$$path/spkg-install" ;\
 	$(PIPE) "$(abs_top_srcdir)/$$path/spkg-install" 'tee -a $(SAGE_LOGS)/$*.log'
 	touch $@
@@ -181,12 +181,9 @@ define unpack
 endef
 
 define unpackwithversion
+	mkdir -p $(PKGSDIR)/$*
 	@echo unpacking $@
-	mkdir -p $(PKGSDIR)/$(firstword $(subst -, ,$*))
-	cd $(PKGSDIR)/$(firstword $(subst -, ,$*)); @TAR@ -xf $(abs_top_builddir)/$|
-	@a="$*"; shopt -s extglob; \
-	  $(call unat,mv $(PKGSDIR)/$(firstword $(subst -, ,$*))/$${a%.p[0-9]?([0-9])} \
-	                 $(PKGSDIR)/$(firstword $(subst -, ,$*))/src-$(lastword $(subst -, ,$*)))
+	cd $(PKGSDIR)/$*; @TAR@ --strip-components=1 -xf $(abs_top_builddir)/$|
 endef
 
 .SECONDEXPANSION:
@@ -197,9 +194,8 @@ $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo
 # hmm, for now. better wihout stamp (?)
 # actually need $(PKGSDIR)/<pkgname>/src-<versionno>
 .SECONDEXPANSION:
-$(PKGSDIR)/%-unpack-stamp: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
+$(PKGSDIR)/%: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
 	$(unpackwithversion)
-	touch $@
 
 .SECONDEXPANSION:
 $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
@@ -376,6 +372,9 @@ install-broken:
 	PTESt ptestoptional ptestall ptestlong ptestoptionallong ptestallong
 
 @dotPRECIOUS@: local/var/lib/sage/installed/%
+
+# don't delete intermediate files (e.g. stamps)
+.SECONDARY:
 
 include deps.in
 
