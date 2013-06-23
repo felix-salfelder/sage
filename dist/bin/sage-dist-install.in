@@ -6,9 +6,9 @@
 # this is intended for installation within spkg-install
 #
 # same functionality as install-sh, but also
-# -F FILELIST append target filenames into filelist
-# -D DESTDIR  prepend destdir before copy
-# -v          verbose output
+# -F|--record FILELIST append target filenames into filelist
+# -D DESTDIR           prepend destdir before copy
+# -v                   verbose output
 #
 # EXAMPLES
 #
@@ -23,7 +23,7 @@
 #
 ## completely broken makefile, just calls install,
 ## lets inject parameters through environment
-# (export PATH=... DESTDIR_BYPASS=... FILELIST_BYPASS=...; make install)
+# (export PATH=... DESTDIR_BYPASS=... FILELIST=...; make install)
 #
 ## distutils (don't know yet)
 # ...
@@ -32,14 +32,14 @@ args=
 verbose=$INSTALL_DEBUG
 # query env, as it may be not possible to fix install call
 destdir=$DESTDIR_BYPASS
-filelist=$FILELIST_BYPASS
+filelist=$FILELIST
 
 while test $# -ne 0; do
   case $1 in
     -D)
       shift; destdir=$1; shift
       ;;
-    -F)
+    -F|--record)
       shift; filelist=$1; shift
       ;;
     -v)
@@ -109,10 +109,10 @@ esac
 
 if test -n "$filelist"; then
   set -C
-  until 2> /dev/null > .$filelist.lock; do :; done
-  trap 'rm -f .$filelist.lock; exit $?' INT TERM EXIT
+  trap 'rm -f $filelist.lock; exit $?' INT TERM EXIT
+  until 2> /dev/null > $filelist.lock; do :; done
   set +C
-endif
+fi
 
 # $@ holds the list of files
 for src in $@; do
@@ -120,18 +120,19 @@ for src in $@; do
     echo "..." $src
   fi
 
-  dst=$dst_arg/`basename "$src"`
+  dst=$dst_arg
+  [ -d $dst_arg ] && dst=$dst_arg/`basename "$src"`
   args="$args $1"
   if test -n "$filelist"; then
     if test x$verbose = xyes; then
-      echo "recording $dst_arg/$dst to $filelist"
+      echo "recording $dst to $filelist"
     fi
-    echo $dst_arg/$dst >> $filelist
+    echo $destdir$dst >> $filelist
   fi
   shift
 done
 
-cmd="@INSTALL@ $args $@ $extra_destarg"
+cmd="@INSTALL@ -C $args $@ $extra_destarg"
 if test x$verbose = xyes; then
   echo calling $cmd
 fi

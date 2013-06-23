@@ -1,19 +1,44 @@
-
-FC is required (should not)
-
 paths are suboptimal.
 /build/pkgs should be /pkgs
-/build/etc should be /dist/etc (done?)
-/build/bin should be /dist/bin (done?)
+/build/etc should be /dist/etc (maybe not?)
+/build/bin should be /dist/bin (maybe not?)
+/src should be pkgs/libsage or sagelib
 
-dependencies should be where packages are, not in "deps"
+fix package staging (dont use the term "install" for not installing)
+
+fix package uninstall
+
+dependencies must be where packages are, not in "deps"
 
 PYTHON dependency, currently using SAGE_LOCAL/bin/python unconditionally
+(do it like singular)
 
-CORE_MODULES should be built with VPATH.
+CORE_MODULES should be built with VPATH (?) but with spkg-install
 
 uninstall before fresh install
 
-src must be <packagename>-<version> or src-<version>, hmmm #17495
+hook sage -b etc.
+
+BUG: do git hopping, make
+../configure: line 5703: syntax error near unexpected token `Cython,CHK_cython=negative'
+../configure: line 5703: `   SAGE_CHECK_PYTHON_MODULE(Cython,CHK_cython=negative)'
+make: *** [config.status] Error 2
+toplevel ./autogen.sh repairs this
 
 remove this file
+
+installation: can be implemented as follows:
+- make DESTDIR work (e.g. through sage-dist-install)
+- configure sage (the distribution) with a prefix, as usual
+- build sage (will install with DESTDIR=@top_builddir@/.local
+- @top_builddir@/local symlinks to .local/$prefix
+- "make install" now just installs everything
+
+
+other things:
+
+In other words, it does not work to do:
+          $(LN_S) foo /x/bar
+Instead, do:
+          (cd /x && $(LN_S) foo bar)
+

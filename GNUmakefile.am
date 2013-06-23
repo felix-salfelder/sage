@@ -7,7 +7,7 @@
 # See below for targets to build the documentation in other formats,
 # to run various types of test suites, and to remove parts of the build etc.
 #
-SUBDIRS = dist build
+SUBDIRS = dist
 
 # just pkgs?
 PKGSDIR=build/pkgs
@@ -18,11 +18,11 @@ V_0 = 0
 V_1 = 1
 
 # need absolute path, passed to other build scripts.
-SAGE_LOGS=@abs_top_builddir@/pkgs/logs
+SAGE_LOGS = @abs_top_builddir@/pkgs/logs
 
-CORE_MODULES=src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
-CORE_ENV=LDFLAGS="-L$(prefix)/lib $$LDFLAGS" PATH="$(exec_prefix)/bin:$$PATH"
-CORE_OPTS=--prefix="@prefix@"
+CORE_MODULES = src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
+CORE_ENV =
+CORE_OPTS = --prefix="@prefix@" --with-dbdir="@prefix@/share"
 
 ### CORE_MODULE build implementation ###
 # FIXME: treat all modules the same?
@@ -30,27 +30,46 @@ CORE_OPTS=--prefix="@prefix@"
 $(CORE_MODULES:%=%-configure): %-configure: %-configure-stamp
 $(CORE_MODULES:%=%-configure-stamp): %-configure-stamp: $(abs_srcdir)/%/configure
 	-mkdir -p $*
-	cd $*; $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
+	source $(ENV_SH); cd $*; \
+	    $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
 	touch $@
 
+$(CORE_MODULES:%=%-reconfigure): %-reconfigure: $(abs_srcdir)/%/configure
+	-mkdir -p $*
+	source $(ENV_SH); cd $*; \
+	    $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
+	touch $(dirname $@/$*-configure-stamp)
+
+# FIXME: use more env.sh
 $(CORE_MODULES:%=%-build): %-build: %-build-stamp
 $(CORE_MODULES:%=%-build-stamp): %-build-stamp: %-configure-stamp
 	export $(CORE_ENV); \
+	source $(ENV_SH); \
+	$(MAKE) -C$* V=$(V_$(V)) $(BUILDTARGET)
+
+src/sage-build-stamp: BUILDTARGET = py
+
+# hack, just bypass all stamps. don't use!
+$(CORE_MODULES:%=%-build-bypass): %-build-bypass:
+	export $(CORE_ENV); \
+	source $(ENV_SH); \
 	$(MAKE) -C$* V=$(V_$(V))
-	touch $@
 
-$(CORE_MODULES:%=%-install-stamp): %-install-stamp: %-install
-	touch $@
+$(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
 
-$(CORE_MODULES:%=%-install): %-install: %-build-stamp
+$(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
+	@echo $@ ...
 	$(MAKE) -C$* install
+	touch $@
 
 # distribute core modules as tarballs
 # (probably unneeded)
-EXTRA_DIST=$(CORE_MODULES:%=%-builtin.tar.gz)
-$(CORE_MODULES:%=%-builtin.tar.gz): %-builtin.tar.gz: %-configure-stamp
-	$(MAKE) -C$* dist PACKAGE=internal VERSION=builtin
-	mv $*/internal-builtin.tar.gz $*-builtin.tar.gz
+#EXTRA_DIST=$(CORE_MODULES:%=%-builtin.tar.gz)
+#$(CORE_MODULES:%=%-builtin.tar.gz): %-builtin.tar.gz: %-configure-stamp
+#	$(MAKE) -C$* dist PACKAGE=internal VERSION=builtin
+#	mv $*/internal-builtin.tar.gz $*-builtin.tar.gz
+#
+EXTRA_DIST=Makefile
 
 # add submodule contents to dist (much better)
 @distdir_subs@
@@ -59,24 +78,18 @@ $(CORE_MODULES:%=%-builtin.tar.gz): %-builtin.tar.gz: %-configure-stamp
 # FIXME: build src/sage out of tree
 # in src/build/sage/cythonized?!
 
-.PHONY: $(CORE_MODULES:%=%-configure) \
-        $(CORE_MODULES:%=%-build) \
-        $(CORE_MODULES:%=%-install)
-
 ### core module dependencies ###
 
-src/doc-configure-stamp: # src/sage-install-stamp
+#FIXME: install takes ages, shouldnt be necessary
+src/doc-configure-stamp: src/sage-build
+
 src/sage-configure-stamp: # src/c_lib-build-stamp
 
-PYTHON ?= $(abs_top_builddir)/local/bin/python
-
-src/sage-configure-stamp: CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
-src/sage-configure-stamp: CORE_ENV+= PYTHON="$(PYTHON)"
+src/sage-configure-stamp: # no CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
 src/sage-configure-stamp: CORE_ENV+= PKG_CONFIG_LIBDIR="$(abs_top_builddir)/local/lib/pkgconfig"
 src/sage-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
 
-src/c_lib-configure-stamp: CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
-src/c_lib-configure-stamp: CORE_ENV+= PYTHON="$(PYTHON)"
+src/c_lib-configure-stamp: # no CORE_ENV+= CPPFLAGS="-I$(abs_builddir)/local/include -I$(abs_builddir)/src/c_lib/include $$CPPFLAGS"
 src/c_lib-configure-stamp: CORE_ENV+= PKG_CONFIG_LIBDIR="$(abs_top_builddir)/local/lib/pkgconfig"
 src/c_lib-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
 
@@ -89,31 +102,33 @@ src/sage-build-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD
 
 #c_lib depends from deps.in
 src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
-                           @DEP_pynac@ @DEP_python@
+                           @DEP_pynac@ @DEP_python@ @DEP_singular@
 
-BIN=src/bin-install-stamp
-CSAGE=src/c_lib-install-stamp
-SAGE=src/sage-install-stamp
+# doesn't make any sense to stage these, just build
+DOC = src/doc-build
+SAGE = src/sage-build-stamp
 
-sage-stuff: $(SAGE)
-
-## install the core library parts
-core-install: $(CORE_MODULES:%=%-install)
+# doesn't make any sense to stage these, currently required
+BIN = src/bin-stage-stamp
+CSAGE = src/c_lib-stage-stamp
+EXTCODE = src/ext-stage-stamp
 
 ## foreign module stuff
 
-# this is the install-stamp location
+# this is the stage-stamp location
 INST = local/var/lib/sage/installed
 
-LOCKFILE=$(abs_builddir)/.dllock
+LOCKFILE = $(abs_builddir)/.dllock
 
 packagename = $(firstword $(subst -, ,$1))
 unat = echo "$1"; $1
 
+# waiting for a lock avoids concurrent downloads in case of -j
+# unfortunately, make starts with all the downloads...
 define downloadit
 	@set -C; \
-	trap 'rm -f $(LOCKFILE); exit $?' INT TERM EXIT;\
 	until 2> /dev/null > $(LOCKFILE); do :; done
+	trap 'rm -f $(LOCKFILE); exit $?' INT TERM EXIT;\
 	mkdir -p @UPSTREAM@; cd @UPSTREAM@;\
 	$(call unat,@URL_GRABBER@ @DOWNLOAD_URL@/$(call packagename,$*)/$(notdir $@))
 endef
@@ -124,61 +139,179 @@ endef
 @UPSTREAM@/%.gz:
 	$(downloadit)
 
-@dotPRECIOUS@: @UPSTREAM@/%.bz2 @UPSTREAM@/%.gz
+@UPSTREAM@/pkgconfig-0.18.tar.gz:
+	wget http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz
+# FIXME: checksum
+	mv pkconfig-0.18.tar.gz @UPSTREAM@
 
 # FIXME: decruft environment!!!1
 # this apparently is *not* prefix
-SAGE_LOCAL=@abs_top_builddir@/local
+SAGE_LOCAL = @abs_top_builddir@/local
+ENV_SH = dist/etc/env.sh
 
 ### generic build stamp rule
-# FIXME: use more env.sh
-# FIXME: pass FILELIST
-# FIXME: PYTHONPATH must not be here
-# FIXME: SINGULARPATH must not be here
-# (source local/etc/env.d/*.sh from dist?)
-#$(INST)/%: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/src-$$(lastword $$(subst -, ,$$*)) | $(SAGE_LOGS) $(INST) $(PKGSDIR)
+# FIXME: call $(MAKE) -f spkg-install (after transition?)
+# FIXME: don't export FILELIST
+# FIXME: don't export srcdir
+$(INST)/%: FILELIST = $(abs_top_builddir)/$@
+
+# default prefix for packages
+$(INST)/%: SAGE_PREFIX = $(SAGE_LOCAL)
+$(INST)/%: SAGE_ETC = $(SAGE_LOCAL)/etc
+
+INST_VERSION_ALL = $(VERSION_ALL:%=$(INST)/%)
+version-info:
+	@for i in $(VERSION_ALL); do echo $$i; done
+
+# FIXME: don't use $SAGE_LOCAL here
 .SECONDEXPANSION:
-$(INST)/%: $(PKGSDIR)/% | $(SAGE_LOGS) $(INST) $(PKGSDIR)
-	path=$(PKGSDIR)/$(firstword $(subst -, ,$*)); \
+$(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
+           $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR)
+	@echo "==== staging $* ===="
+	@path=$(PKGSDIR)/$*; \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       MAKE=$(MAKE) UNAME="@UNAME@" \
-	       srcdir="$(abs_top_srcdir)/$$path" \
-	       PYTHONHOME="$(abs_builddir)/local" \
-	       PYTHONPATH="$(abs_builddir)/$$path" \
-	       SINGULARPATH="$(SAGE_LOCAL)/share/singular" \
-	       SINGULAR_EXECUTABLE="$(SAGE_LOCAL)/bin/Singular"; \
-	source dist/etc/env.sh; \
+	       srcdir="$(abs_top_srcdir)/$$path"; \
+	source $(ENV_SH); \
 	cd $$path; \
-	rm -rf src; \
-	$(LN_S) ../$* src || exit 1; \
-	echo "$(abs_top_srcdir)/$$path/spkg-install" ;\
-	$(PIPE) "$(abs_top_srcdir)/$$path/spkg-install" 'tee -a $(SAGE_LOGS)/$*.log'
-	touch $@
+	echo "$(abs_top_srcdir)/$$path/spkg-install FILELIST=\"$@\"" ;\
+	export FILELIST="$(FILELIST)"; \
+	export SAGE_ETC="$(SAGE_ETC)"; \
+	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
+	$(PIPE) "./spkg-install $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	if [ $$? -ne 0 ]; then \
+		echo $@ failed, deleting; \
+		rm -f $(abs_top_builddir)/$@; \
+		exit 1; \
+	else \
+		echo $@ succeeded; \
+		touch $(abs_top_builddir)/$@; \
+	fi
+	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! (ignored)" || :
+
+# HACK: sagelib is not ready yet
+$(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
+	@echo "==== staging sagelib (hack) ===="
+	@path=$(PKGSDIR)/sagelib; \
+	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	       MAKE=$(MAKE) UNAME="@UNAME@" \
+	       srcdir="$(abs_top_srcdir)/$$path"; \
+	source $(ENV_SH); \
+	cd $$path; \
+	$(PIPE) "$(abs_top_builddir)/$< $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	if [ $$? -ne 0 ]; then \
+		echo $@ failed, deleting; \
+		rm -f $(abs_top_builddir)/$@; \
+		exit 1; \
+	else \
+		echo $@ succeeded; \
+		touch $(abs_top_builddir)/$@; \
+	fi
+	@[ -s "$(abs_top_builddir)/$@" ] || echo "BUG, empty filelist?! (ignored)" || :
+
+# temporary, treat as the others eventually
+# no version number?
+# FP_sagelib=sagelib
 
 .SECONDEXPANSION:
-$(INSTALL_FP_NAMES:%=%-info): %-info: build/pkgs/%/package-version.txt
-	@echo "selected:  $*-$$(cat $<)"
-	@inst=$$( ls $(INST)/$*-* ); \
-		[ -f $$inst ] && echo installed: $$( basename $$inst )
+$(FOREIGN_ALL:%=%-stage): %-stage: $(INST)/$$(FP_$$*)
 
-	@unp=$$( ls -d $(PKGSDIR)/$*/src-* 2>/dev/null ); \
-		[ -n "$$unp" ] && echo -n unpacked: ; \
-	    for i in $$unp; do echo -n " "$$( basename $$i ); done;\
-		 echo
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-restage): %-restage:
+	rm -f $(INST)/$(FP_$*)
+	$(MAKE) $*-stage
+
+# the diff command needs work
+# e.g. it must not be pedantic with directories in the right way
+# FIXME: don't use $SAGE_LOCAL here
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-distcheck): %-distcheck: $$($$*_DEPS)
+	DESTDIR=$$( mktemp --tmpdir -d DESTDIR-$*.XXXXXX ); \
+	FILELIST=$$( mktemp --tmpdir FILELIST-$*.XXXXXX ); \
+	T="$(INST)/$(FP_$*)"; \
+	rm "$$T"X -f; \
+	[ -f $$T ] && mv $$T "$$T"X; \
+	export FILELIST="$$FILELIST"; \
+	export SAGE_PREFIX="$(SAGE_LOCAL)"; \
+	$(MAKE) $$T FILELIST="$$FILELIST" DESTDIR="$$DESTDIR"; \
+	[ -f "$$T"X ] && mv "$$T"X $$T; \
+	sort $$FILELIST > $$FILELIST.sorted; \
+	sort -uc $$FILELIST.sorted; \
+	if (diff <(sort -u $$FILELIST.sorted) <(find $$DESTDIR -type f | sort ) | \
+	   tee $@.log; exit $${PIPESTATUS[0]}) && \
+	   [ -s "$$FILELIST" ]; then \
+	      echo $* passed distcheck; \
+	   if [ ! x"$(NODELETE)" = xyes ]; then \
+	     rm -rf $$FILELIST $$FILELIST.sorted $$DESTDIR; \
+		else \
+	     echo not deleting $$FILELIST and $$DESTDIR; \
+		fi \
+	else \
+	   echo BUG: $$FILELIST $$DESTDIR differ; \
+	fi
+
+$(FOREIGN_ALL:%=%-binary): SAGE_ETC=@prefix@/etc
+
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-binary): %-binary: $$($$*_DEPS)
+	DESTDIR=$$( mktemp --tmpdir -d DESTDIR-$*.XXXXXX ); \
+	T="$(INST)/$(FP_$*)"; \
+	rm "$$T"X -f; \
+	[ -f $$T ] && mv $$T "$$T"X; \
+	fakeroot \
+	$(MAKE) $$T FILELIST="@abs_top_builddir@/$*.list" \
+	            DESTDIR="$$DESTDIR" \
+	            SAGE_PREFIX="@prefix@" \
+	            SAGE_ETC="$(SAGE_ETC)"; \
+	[ -f "$$T"X ] && mv "$$T"X $$T; \
+	(cd $$DESTDIR; fakeroot tar -czf @abs_top_builddir@/$(FP_$*)-binary.tbz2 *); \
+	rm -r $$DESTDIR
+
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-info): %-info: build/pkgs/%/package-version.txt
+	@echo === $* ===
+	@not=; test -z "$(DEP_$*)" && not="not "; \
+	echo "version:  $$(cat $<)" "($${not}enabled)"
+	@unp=$$( shopt -s nullglob; echo $(PKGSDIR)/$*-* ); \
+	  if test -n "$$unp"; then\
+	    echo -n unpacked: ; \
+	    ( shopt -s nullglob; \
+	      for i in $(PKGSDIR)/$*-*; do echo -n " "$$( basename $$i ); done ); \
+	    echo; \
+	else echo not unpacked; fi
+	@inst=$$( shopt -s nullglob; echo $(INST)/$*-* ); \
+		[ -n "$$inst" ] && echo "staged:   $$( basename $$inst ) ($$( wc -l $$inst | cut -d" " -f1 ) files)" || echo not staged
 
 # convenience rules
 #incomplete/under construction (necessary?)
-DISABLED$(INSTALL_FP_NAMES:%=%-configure): %-configure: build/pkgs/%/src
+DISABLED$(FOREIGN_ALL:%=%-configure): %-configure: build/pkgs/%/src
 	path=build/pkgs/$*;\
 	export SAGE_LOCAL="$(abs_builddir)/local" CC="@CC@" CFLAGS="@CFLAGS@" \
 	       MAKE=$(MAKE) UNAME="@UNAME@" PATH=$(abs_builddir)/local/bin:$$PATH \
 	       LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH" \
 	       srcdir="$(abs_top_srcdir)/$$path"; \
-	       PYTHONHOME="$(abs_builddir)/local"; \
 	$(MAKE) -f$(abs_top_srcdir)/build/pkgs/$*/spkg-install -Cbuild/pkgs/$* configure
 
+# unstage all installations of $*. shouldn't be more than one at a time.
+$(FOREIGN_ALL:%=%-unstage): %-unstage:
+	@if test -n "$$(shopt -s nullglob; echo $(INST)/$*-*)"; then \
+	  dirs=;\
+	  while read f; do \
+	    [ -n "$${f/\/*/}" ] && \
+		   echo "BUG in $* filelist: relative path: $$f" && continue; \
+	    [ -d $$f ] && dirs+="$$f" || rm $$f; \
+	  done < $(INST)/$*-*; \
+	  for i in $$dirs; do \
+	    rmdir $$i; \
+	  done; \
+	  rm $(INST)/$*-*; \
+	else \
+	  echo "no $* staged..."; \
+	fi
 
+UNINSTALL_FP = @FOREIGN_DISABLED@ @FOREIGN_AVAILABLE@
+stage-decruft: $(UNINSTALL_FP:%=%-unstage)
 
 p=%
 define unpack
@@ -192,9 +325,11 @@ define unpack
 endef
 
 define unpackwithversion
-	mkdir -p $(PKGSDIR)/$*
 	@echo unpacking $@
-	cd $(PKGSDIR)/$*; @TAR@ --strip-components=1 -xf $(abs_top_builddir)/$|
+	$(MKDIR_P) $(PKGSDIR)/$*/src
+	cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
+	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .
+	cd $(PKGSDIR)/$*/src; @TAR@ --strip-components=1 -xf $(abs_top_builddir)/$|
 endef
 
 .SECONDEXPANSION:
@@ -207,6 +342,13 @@ $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo
 .SECONDEXPANSION:
 $(PKGSDIR)/%: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
 	$(unpackwithversion)
+
+# no need to download exception
+$(PKGSDIR)/%-builtin:
+	$(MKDIR_P) $(PKGSDIR)/$*-builtin/src
+	cd $(abs_top_builddir)/$(PKGSDIR)/$*-builtin; \
+	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$*/* .
+	
 
 .SECONDEXPANSION:
 $(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
@@ -250,7 +392,7 @@ build-serial: SAGE_PARALLEL_SPKG_BUILD = no
 build-serial: build
 
 # Start Sage if the file local/etc/sage-started.txt does not exist
-# (i.e. when we just installed Sage for the first time).
+# (i.e. when we just built Sage for the first time).
 start: build
 	[ -f local/etc/sage-started.txt ] || local/bin/sage-starts
 
@@ -266,8 +408,19 @@ start: build
 # $ ./sage --docbuild -H
 doc: doc-html
 
-doc-html: build
-	$(PIPE) "./sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
+src/doc-configure-stamp: $(doc-symlink)
+
+docsymlink = $(SAGE_LOCAL)/share/doc/sage
+# this is required, as docs wont get staged by default.
+# relocation changes abs_top_builddir :|
+# lets just recreate the link (instead of pointing to ../../../../.....)
+$(docsymlink):
+	rm -f $@
+	$(LN_S) $(abs_top_srcdir)/src/doc/output $@
+
+doc-html: src/doc-build
+
+#$(PIPE) "./sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
 
 doc-html-mathjax: build
 	$(PIPE) "./sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS) 2>&1" "tee -a logs/dochtml.log"
@@ -286,8 +439,9 @@ clean-local:
 	@echo "Deleting package build directories..."
 	rm -rf local/var/tmp/sage/build
 
-	make -C src/c_lib clean
-	make -C src/sage clean
+	for i in $(CORE_MODULES); do \
+	  [ -f $$i/Makefile ] && make -C $$i clean; \
+	done
 # FIXME:
 # also remove foreign package src
 
@@ -357,11 +511,16 @@ ptestoptional: ptestall # just an alias
 
 ptestoptionallong: ptestalllong # just an alias
 
-# this is pretty much 'incomplete'.
-install-broken:
+@noinstall@
+install-doesntwork:
+	@echo installation is NOT supported, probably not intended either
+	@echo use the "copy" target to copy the source tree
+	@exit 1
+
+copy:
 	echo "Experimental use only!"
 	if [ "$(DESTDIR)" = "" ]; then \
-		echo >&2 "Set the environment variable DESTDIR to the install path."; \
+		echo >&2 "Set the environment variable DESTDIR to the destination path."; \
 		exit 1; \
 	fi
 # Make sure we remove only an existing directory. If $(DESTDIR)/sage is
@@ -376,18 +535,42 @@ install-broken:
 	$(LN_S) -s ../sage/sage "$(DESTDIR)"/bin/sage
 	"$(DESTDIR)"/bin/sage -c # Run sage-location
 
-.PHONY: all build build-serial start install \
+.PHONY: all build build-serial start \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-clean clean lib-clean bdist-clean distclean micro_release \
 	test check testoptional testall testlong testoptionallong testallong \
-	PTESt ptestoptional ptestall ptestlong ptestoptionallong ptestallong
+	PTESt ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
+   $(FOREIGN_ALL:%=%-clean) \
+   $(FOREIGN_ALL:%=%-restage) \
+   $(FOREIGN_ALL:%=%-stage) \
+   $(FOREIGN_ALL:%=%-binary) \
+   $(FOREIGN_ALL:%=%-distcheck) \
+   $(FOREIGN_ALL:%=%-info) \
+   unstage-clean \
+   $(UNINSTALL_FP:%=%-unstage) \
+   $(INSTALL_FP_NAMES:%=%-distcheck) \
+   $(CORE_MODULES:%=%-configure) \
+   $(CORE_MODULES:%=%-build) \
+   $(CORE_MODULES:%=%-stage) \
+   $(CORE_MODULES:%=%-clean)
 
-@dotPRECIOUS@: local/var/lib/sage/installed/%
+@dotPRECIOUS@: local/var/lib/sage/installed/% \
+               @UPSTREAM@/%.bz2 @UPSTREAM@/%.gz
 
 # don't delete intermediate files (e.g. stamps)
 .SECONDARY:
 
 include deps.in
 
-uninstall-local:
+unstage-local:
 	rm -rf src/*-stamp
+
+# just remove it...
+$(FOREIGN_ALL:%=%-clean): %-clean:
+	rm -rf build/pkgs/$*/src-*
+	rm -rf build/pkgs/$*-*
+	rm -rf build/pkgs/$*/*-stamp
+	@VPATH_BUILD_TRUE@rm -rf build/pkgs/$*
+
+#making all installs explicit
+$(INST_VERSION_ALL):

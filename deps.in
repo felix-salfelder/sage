@@ -66,200 +66,20 @@ $(shell \
     fi;)
 endef
 
-# Standard foreign packages
-# FIXME: autogenerate
-FP_atlas=$(call newest_version,atlas)
-FP_blas=$(call newest_version,blas)
-FP_boehm_gc=$(call newest_version,boehm_gc)
-FP_boost_cropped=$(call newest_version,boost_cropped)
-FP_bzip2=$(call newest_version,bzip2)
-FP_cddlib=$(call newest_version,cddlib)
-FP_cephes=$(call newest_version,cephes)
-FP_cliquer=$(call newest_version,cliquer)
-FP_conway_polynomials=$(call newest_version,conway_polynomials)
-FP_cvxopt=$(call newest_version,cvxopt)
-FP_cython=$(call newest_version,cython)
-FP_docutils=$(call newest_version,docutils)
-FP_ecl=$(call newest_version,ecl)
-FP_eclib=$(call newest_version,eclib)
-FP_ecm=$(call newest_version,ecm)
-FP_elliptic_curves=$(call newest_version,elliptic_curves)
-FP_fflas_ffpack=$(call newest_version,fflas_ffpack)
-FP_flint=$(call newest_version,flint)
-FP_flintqs=$(call newest_version,flintqs)
-FP_libfplll=$(call newest_version,libfplll)
-FP_freetype=$(call newest_version,freetype)
-FP_gap=$(call newest_version,gap)
-FP_gcc=$(call newest_version,gcc)
-FP_gd=$(call newest_version,gd)
-FP_gdmodule=$(call newest_version,gdmodule)
-FP_genus2reduction=$(call newest_version,genus2reduction)
-FP_gfan=$(call newest_version,gfan)
-# FP_git=$(call newest_version,git)
-FP_givaro=$(call newest_version,givaro)
-FP_glpk=$(call newest_version,glpk)
-FP_graphs=$(call newest_version,graphs)
-FP_gf2x=$(call newest_version,gf2x)
-FP_gsl=$(call newest_version,gsl)
-FP_iconv=$(call newest_version,iconv)
-FP_iml=$(call newest_version,iml)
-FP_ipython=$(call newest_version,ipython)
-FP_jinja2=$(call newest_version,jinja2)
-FP_jmol=$(call newest_version,jmol)
-FP_lapack=$(call newest_version,lapack)
-FP_lcalc=$(call newest_version,lcalc)
-FP_lrcalc=$(call newest_version,lrcalc)
-FP_libgap=$(call newest_version,libgap)
-FP_libpng=$(call newest_version,libpng)
-FP_linbox=$(call newest_version,linbox)
-FP_libm4ri=$(call newest_version,libm4ri)
-FP_libm4rie=$(call newest_version,libm4rie)
-FP_matplotlib=$(call newest_version,matplotlib)
-FP_maxima=$(call newest_version,maxima)
-FP_mpc=$(call newest_version,mpc)
-FP_mpfi=$(call newest_version,mpfi)
-FP_mpfr=$(call newest_version,mpfr)
-FP_mpir=$(call newest_version,mpir)
-FP_mpmath=$(call newest_version,mpmath)
-FP_networkx=$(call newest_version,networkx)
-FP_ntl=$(call newest_version,ntl)
-FP_numpy=$(call newest_version,numpy)
-FP_palp=$(call newest_version,palp)
-FP_pari=$(call newest_version,pari)
-FP_patch=$(call newest_version,patch)
-FP_pexpect=$(call newest_version,pexpect)
-FP_pil=$(call newest_version,pil)
-FP_polybori=$(call newest_version,polybori)
-FP_polytopes_db=$(call newest_version,polytopes_db)
-FP_ppl=$(call newest_version,ppl)
-FP_pycrypto=$(call newest_version,pycrypto)
-FP_pygments=$(call newest_version,pygments)
-FP_pynac=$(call newest_version,pynac)
-FP_python=$(call newest_version,python)
-FP_r=$(call newest_version,r)
-FP_rpy2=$(call newest_version,rpy2)
-FP_ratpoints=$(call newest_version,ratpoints)
-FP_readline=$(call newest_version,readline)
-FP_rubiks=$(call newest_version,rubiks)
-FP_sagenb=$(call newest_version,sagenb)
-FP_sagetex=$(call newest_version,sagetex)
-FP_scipy=$(call newest_version,scipy)
-FP_scons=$(call newest_version,scons)
-FP_setuptools=$(call newest_version,setuptools)
-FP_singular=$(call newest_version,singular)
-FP_sphinx=$(call newest_version,sphinx)
-FP_sqlalchemy=$(call newest_version,sqlalchemy)
-FP_sqlite=$(call newest_version,sqlite)
-FP_symmetrica=$(call newest_version,symmetrica)
-FP_sympow=$(call newest_version,sympow)
-FP_sympy=$(call newest_version,sympy)
-FP_tachyon=$(call newest_version,tachyon)
-FP_termcap=$(call newest_version,termcap)
-FP_zlib=$(call newest_version,zlib)
-FP_zn_poly=$(call newest_version,zn_poly)
+# Standard foreign package versions
+@FP_VERSIONS@
 
 # All targets except for the base packages
 # ... generate from configure.ac.
-INSTALL_FP_NAMES = \
-     atlas \
-     blas \
-     boehm_gc \
-     boost_cropped \
-     cddlib \
-     cephes \
-     cliquer \
-     conway_polynomials \
-     cvxopt \
-     cython \
-     docutils \
-     ecl \
-     eclib \
-     ecm \
-     elliptic_curves \
-     fflas_ffpack \
-     flint \
-     flintqs \
-     gf2x \
-     libfplll \
-     freetype \
-     genus2reduction \
-     gap \
-     gd \
-     gdmodule \
-     gfan \
-     givaro \
-     git \
-     glpk \
-     graphs \
-     gsl \
-     iconv \
-     iml \
-     ipython \
-     jinja2 \
-     jmol \
-     lapack \
-     lcalc \
-     lrcalc \
-     libgap \
-     libpng \
-     linbox \
-     libm4ri \
-     libm4rie \
-     matplotlib \
-     maxima \
-     mpc \
-     mpfi \
-     mpfr \
-     mpir \
-     mpmath \
-     networkx \
-     ntl \
-     numpy \
-     palp \
-     pari \
-     pexpect \
-     pil \
-     polybori \
-     polytopes_db \
-     ppl \
-     pycrypto \
-     pygments \
-     pynac \
-     python \
-     ratpoints \
-     r \
-     rpy2 \
-     readline \
-     rubiks \
-     sagenb \
-     sagetex \
-     scipy \
-     scons \
-     setuptools \
-     singular \
-     sphinx \
-     sqlalchemy \
-     sqlite \
-     symmetrica \
-     sympow \
-     sympy \
-     tachyon \
-     termcap \
-     zlib \
-     znpoly
-
-#doesnt work!
-# INSTALL_FP_STAMPS=$(INST)/$(INSTALL_FP_NAMES:%=$$(FP_%))
 
 scripts: $(BIN)
 
-all-local: $(INSTALL_FP_NAMES:%=%-install) \
-     $(BIN) \
-     $(SAGE) \
-     $(CSAGE) \
-     $(EXTCODE)
-
-EXTCODE = src/ext-install-stamp
+all-local: \
+    $(FOREIGN_DEP) \
+    $(BIN) \
+    $(SAGE) \
+    $(CSAGE) \
+    $(EXTCODE)
 
 # TOOLCHAIN consists of dependencies determined by spkg/install,
 # including for example the GCC package.
@@ -280,7 +100,7 @@ toolchain-deps:
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = $(SCRIPTS) sage @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
+SAGERUNTIME = $(BIN) $(SAGE) $(CSAGE) $(EXTCODE) @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
 
 ###############################################################################
 # Building the base system
@@ -296,171 +116,187 @@ base: @DEP_bzip2@ @DEP_patch@
 # This is because the old sage-spkg script cannot install the new bzip2
 # spkg (which is gzip compressed).  We continue using the old bzip2
 # installation (which is version 1.0.5 since sage-3.3), which is fine.
-$(INST)/$(FP_bzip2):
+bzip2):
 
-$(INST)/$(FP_patch): @DEP_bzip2@
+patch_DEPS = @DEP_bzip2@
 
 ###############################################################################
 # Building normal packages
 ###############################################################################
-$(INST)/$(FP_atlas): @DEP_lapack@ @DEP_python@
+atlas_DEPS = @DEP_lapack@ @DEP_python@
 
-$(INST)/$(FP_readline): @DEP_termcap@
+# HACK?
+$(INST)/$(FP_atlas): @UPSTREAM@/lapack-3.4.2.tar
 
-$(INST)/$(FP_docutils): @DEP_python@
+@UPSTREAM@/lapack-3.4.2.tar:
+	@echo "cannot create $@, please download manually. (sorry)"
+	@exit 1
 
-$(INST)/$(FP_elliptic_curves): @DEP_python@ @DEP_sqlite@
+readline_DEPS = @DEP_termcap@
+
+docutils_DEPS = @DEP_python@
+
+elliptic_curves_DEPS = @DEP_python@ @DEP_sqlite@
+
+# HACK.
+$(PKGSDIR)/$(FP_elliptic_curves): elliptic_curves-clean
 
 # CONWAY depends on SAGERUNTIME because it runs Sage code to
 # generate a Sage object (.sobj).
-$(INST)/$(FP_conway_polynomials): $(SAGERUNTIME)
+conway_polynomials_DEPS = $(SAGERUNTIME)
 
-$(INST)/$(FP_glpk): @DEP_mpir@ @DEP_zlib@
+glpk_DEPS = @DEP_mpir@ @DEP_zlib@
 
 # Python links against -lbz2.  Technically speaking, we should add
 # BZIP2 as dependency here.  But we don't do that to avoid needless
 # recompiles of Python when upgrading.  Since bzip2 is part of the
 # "base" target, we are guaranteed anyway that some version of bzip2
 # is present.
-$(INST)/$(FP_python): @DEP_zlib@ @DEP_readline@ @DEP_sqlite@ @DEP_libpng@
+python_DEPS = @DEP_zlib@ @DEP_readline@ @DEP_sqlite@ @DEP_libpng@
 
-$(INST)/$(FP_mpir): @DEP_iconv@
+mpir_DEPS = @DEP_iconv@
 
-$(INST)/$(FP_gsl): @DEP_atlas@
+gsl_DEPS = @DEP_atlas@
 
-$(INST)/$(FP_ntl): @DEP_mpir@ @DEP_gf2x@
+ntl_DEPS = @DEP_mpir@ @DEP_gf2x@
 
-$(INST)/$(FP_libfplll): @DEP_mpir@ @DEP_mpfr@
+libfplll_DEPS = @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(FP_pari): @DEP_readline@ @DEP_mpir@
+pari_DEPS = @DEP_readline@ @DEP_mpir@
 
-$(INST)/$(FP_polybori): @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
+polybori_DEPS = @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
                    @DEP_libm4ri@ @DEP_gd@
 
-$(INST)/$(FP_polytopes_db):
+polytopes_db):
 
-$(INST)/$(FP_ppl): @DEP_mpir@
+ppl_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_mpc): @DEP_mpir@ @DEP_mpfr@
+mpc_DEPS = @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(FP_mpfr): @DEP_mpir@
+mpfr_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_mpfi): @DEP_mpir@ @DEP_mpfr@
+mpfi_DEPS = @DEP_mpir@ @DEP_mpfr@
 
-$(INST)/$(FP_givaro): @DEP_mpir@
+givaro_DEPS = @DEP_mpir@
 
-# $(INST)/$(FP_git): @DEP_zlib@ @DEP_python@
+# git_DEPS = @DEP_zlib@ @DEP_python@
 
-$(INST)/$(FP_fflas_ffpack): @DEP_mpir@ @DEP_givaro@ @DEP_gsl@ @DEP_atlas@
+fflas_ffpack_DEPS = @DEP_mpir@ @DEP_givaro@ @DEP_gsl@ @DEP_atlas@
 
-$(INST)/$(FP_linbox): @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
+linbox_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
                       @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
                       @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@
 
-$(INST)/$(FP_iml): @DEP_mpir@ @DEP_gsl@ @DEP_atlas@
+iml_DEPS = @DEP_mpir@ @DEP_gsl@ @DEP_atlas@
 
-$(INST)/$(FP_eclib): @DEP_mpir@ @DEP_pari@ @DEP_ntl@
+eclib_DEPS = @DEP_mpir@ @DEP_pari@ @DEP_ntl@
 
-$(INST)/$(FP_genus2reduction): @DEP_pari@
+genus2reduction_DEPS = @DEP_pari@
 
-$(INST)/$(FP_lcalc): @DEP_pari@ @DEP_mpfr@
+lcalc_DEPS = @DEP_pari@ @DEP_mpfr@
 
-$(INST)/$(FP_pynac): @DEP_python@
+pynac_DEPS = @DEP_python@
 
-$(INST)/$(FP_gap): @DEP_termcap@ @DEP_readline@ @DEP_mpir@
+gap_DEPS = @DEP_termcap@ @DEP_readline@ @DEP_mpir@
 
-$(INST)/$(FP_libgap): @DEP_gap@
+libgap_DEPS = @DEP_gap@
 
-$(INST)/$(FP_ipython): @DEP_python@
+ipython_DEPS = @DEP_python@
 
-$(INST)/$(FP_pexpect): @DEP_python@
+pexpect_DEPS = @DEP_python@
 
-$(INST)/$(FP_gd): @DEP_libpng@ @DEP_freetype@ @DEP_iconv@
+gd_DEPS = @DEP_libpng@ @DEP_freetype@ @DEP_iconv@
 
-$(INST)/$(FP_gdmodule): @DEP_python@ @DEP_gd@ @DEP_iconv@
+gdmodule_DEPS = @DEP_python@ @DEP_gd@ @DEP_iconv@
 
-$(INST)/$(FP_scons): @DEP_python@
+scons_DEPS = @DEP_python@
 
-$(INST)/$(FP_rubiks):
+rubiks):
 
-$(INST)/$(FP_sqlite): @DEP_readline@
+sqlite_DEPS = @DEP_readline@
 
 # To build SageTeX, you just need Python, but to test (SAGE_CHECK=yes)
 # SageTeX, you actually need to run sage, produce plots,...
-$(INST)/$(FP_sagetex): @DEP_python@ $(SAGERUNTIME) @DEP_maxima@ @DEP_scipy@ \
-                       @DEP_matplotlib@ @DEP_pil@ @DEP_tachyon@
+sagetex_DEPS = @DEP_python@ $(SAGERUNTIME) @DEP_maxima@ @DEP_scipy@ \
+               @DEP_matplotlib@ @DEP_pil@ @DEP_tachyon@
 
-$(INST)/$(FP_setuptools): @DEP_python@
+setuptools_DEPS = @DEP_python@
 
-$(INST)/$(FP_singular): @DEP_mpir@ @DEP_ntl@ @DEP_readline@ @DEP_mpfr@
+singular_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_readline@ @DEP_mpfr@
 
-$(INST)/$(FP_pycrypto): @DEP_python@
+pycrypto_DEPS = @DEP_python@
 
-$(INST)/$(FP_networkx): @DEP_python@
+networkx_DEPS = @DEP_python@
 
-$(INST)/$(FP_mpmath): @DEP_python@
+mpmath_DEPS = @DEP_python@
 
-$(INST)/$(FP_jmol): @DEP_sagenb@
+jmol_DEPS = @DEP_sagenb@
 
-$(INST)/$(FP_libpng): @DEP_zlib@
+libpng_DEPS = @DEP_zlib@
 
-$(INST)/$(FP_matplotlib): \
+matplotlib_DEPS = \
     @DEP_python@ @DEP_numpy@ @DEP_freetype@ @DEP_libpng@ \
     @DEP_gdmodule@
 
-$(INST)/$(FP_cddlib): @DEP_mpir@
+cddlib_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_gfan): @DEP_mpir@ @DEP_cddlib@
+gfan_DEPS = @DEP_mpir@ @DEP_cddlib@
 
-$(INST)/$(FP_tachyon): @DEP_libpng@
+tachyon_DEPS = @DEP_libpng@
 
-$(INST)/$(FP_ecm): @DEP_mpir@
+ecm_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_ratpoints): @DEP_mpir@
+ratpoints_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_ecl): @DEP_mpir@ @DEP_readline@ @DEP_boehm_gc@
+ecl_DEPS = @DEP_mpir@ @DEP_readline@ @DEP_boehm_gc@
 
-$(INST)/$(FP_maxima): @DEP_ecl@
+maxima_DEPS = @DEP_ecl@
 
-$(INST)/$(FP_r): @DEP_atlas@ @DEP_iconv@ @DEP_readline@
+r_DEPS = @DEP_atlas@ @DEP_iconv@ @DEP_readline@
 
-$(INST)/$(FP_rpy2): @DEP_python@ @DEP_r@
+rpy2_DEPS = @DEP_python@ @DEP_r@
+rpy2_DEPS+= @DEP_python@ @DEP_r@
 
-$(INST)/$(FP_sympy): @DEP_python@
+sympy_DEPS = @DEP_python@
 
-$(INST)/$(FP_cython): @DEP_python@
+cython_DEPS = @DEP_python@
 
-$(INST)/$(FP_flintqs): @DEP_mpir@
+flintqs_DEPS = @DEP_mpir@
 
-$(INST)/$(FP_flint): @DEP_mpir@ @DEP_mpfr@ @DEP_ntl@
+flint_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_ntl@
 
-$(INST)/$(FP_libm4ri): @DEP_libpng@
+libm4ri_DEPS = @DEP_libpng@
 
-$(INST)/$(FP_libm4rie): @DEP_libm4ri@ @DEP_givaro@ @DEP_ntl@
+libm4rie_DEPS = @DEP_libm4ri@ @DEP_givaro@ @DEP_ntl@
 
 # zn_poly really does depend on Python, despite this is far from obvious.
 # The 'configure' script in zn_poly calls Python to make a 'makefile'.
-$(INST)/$(FP_zn_poly): @DEP_mpir@ @DEP_python@
+zn_poly_DEPS = @DEP_mpir@ @DEP_python@
 
-$(INST)/$(FP_sagenb): @DEP_python@ @DEP_setuptools@ @DEP_pexpect@ \
-                      @DEP_jinja2@ @DEP_sphinx@ @DEP_docutils@
+sagenb_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_pexpect@ \
+              @DEP_jinja2@ @DEP_sphinx@ @DEP_docutils@
+sagenb_DEPS+= @DEP_sphinx@
 
-$(INST)/$(FP_sqlalchemy): @DEP_python@ @DEP_setuptools@
+sqlalchemy_DEPS = @DEP_python@ @DEP_setuptools@
 
-$(INST)/$(FP_sphinx): @DEP_python@ @DEP_setuptools@ @DEP_docutils@ \
-                      @DEP_jinja2@ @DEP_pygments@
+sphinx_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_docutils@ \
+              @DEP_jinja2@ @DEP_pygments@
 
-$(INST)/$(FP_jinja2): @DEP_python@ @DEP_setuptools@ @DEP_docutils@
+jinja2_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_docutils@
+jinja2_DEPS+= @DEP_pygments@
 
-$(INST)/$(FP_pygments): @DEP_python@ @DEP_setuptools@
+pygments_DEPS = @DEP_python@ @DEP_setuptools@
+pygments_DEPS+= @DEP_sqlalchemy@
 
 # List all *build-time* dependencies of the Sage library.  These are,
 # on the one hand, programs needed for the build/install process of the
 # Sage library (e.g. JINJA2), and on the
 # other hand all dependencies for Cython files (e.g. PARI, NTL, MPIR).
-src/sage-configure-stamp: $(CSAGE)
+#
+# this is unneeded.
+# src/sage-configure-stamp: src/c_lib-build
 
-src/c_lib-configure-stamp: \
+scripts_DEPS = \
     @DEP_atlas@ \
     @DEP_cephes@ \
     @DEP_cliquer@ \
@@ -497,57 +333,52 @@ src/c_lib-configure-stamp: \
     @DEP_readline@ \
     @DEP_singular@ \
     @DEP_symmetrica@ \
-    @DEP_znpoly@
+    @DEP_zn_poly@
+
+src/c_lib-configure-stamp: $(csage_DEPS)
+src/bin-configure-stamp: $(scripts_DEPS)
+src/sage-configure-stamp: @DEP_cython@ src/c_lib-configure-stamp \
+                          @DEP_elliptic_curves@ \
+                          @DEP_graphs@ \
+                          @DEP_polytopes_db@ \
+                          $(scripts_DEPS) @DEP_libgap@
 
 extcode: $(EXTCODE_TARGETS)
 
 # lib_c
-$(CSAGE): @DEP_scons@ @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ @DEP_pynac@ \
-          @DEP_python@
+$(CSAGE): $(csage_DEPS)
+csage_DEPS = @DEP_scons@ @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ @DEP_pynac@ \
+             @DEP_python@ $(scripts_DEPS)
 
-$(INST)/ccache: $(BASE) @DEP_zlib)
+#FIXME:
+$(INST)/ccache: $(BASE) @DEP_zlib@
 	+$(PIPE) "$(SAGE_SPKG) ccache 2>&1" "tee -a $(SAGE_LOGS)/ccache.log"
 	touch $(INST)/ccache
 
-$(INST)/$(FP_gcc): @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@ @DEP_zlib@
+gcc_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@ @DEP_zlib@
 
-$(INST)/$(FP_pil): @DEP_python@
+pil_DEPS = @DEP_python@
 
-$(INST)/$(FP_numpy): @DEP_python@ @DEP_lapack@ @DEP_blas@ @DEP_atlas@
+numpy_DEPS = @DEP_python@ @DEP_lapack@ @DEP_blas@ @DEP_atlas@
 
-$(INST)/$(FP_scipy): @DEP_lapack@ @DEP_blas@ @DEP_numpy@
+scipy_DEPS = @DEP_lapack@ @DEP_blas@ @DEP_numpy@
 
 # matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
-@SAGE_CHECK_TRUE@$(INST)/$(FP_cvxopt): @DEP_matplotlib@
+@SAGE_CHECK_TRUE@cvxopt_DEPS = @DEP_matplotlib@
 
-$(INST)/$(FP_cvxopt): \
+cvxopt_DEPS = \
     @DEP_lapack@ @DEP_blas@ @DEP_numpy@ \
     @DEP_atlas@ @DEP_cephes@ @DEP_gsl@ \
     @DEP_glpk@
 
-$(INST)/$(FP_cephes):
+cephes):
 
 ###############################################################################
 
 # setuptools forgets to update easy-install.pth during parallel
 # builds, so we build the relevant packages serially.
 
-$(INST)/$(FP_pygments): @DEP_sqlalchemy@
-$(INST)/$(FP_jinja2): @DEP_pygments@
-$(INST)/$(FP_sphinx): @DEP_jinja2@
-$(INST)/$(FP_sagenb): @DEP_sphinx@
-
-# direct phony targets: (FIXME: not phony yet)
-.SECONDEXPANSION:
-$(INSTALL_FP_NAMES:%=%-install): %-install: $(INST)/$$(FP_$$*)
-
-$(INSTALL_FP_NAMES:%=%-uninstall): %-uninstall:
-	@echo not implemented
-
-# just remove it...
-$(INSTALL_FP_NAMES:%=%-clean): %-clean:
-	rm -rf build/pkgs/$*/src-*
-	rm -rf build/pkgs/$*/*-stamp
+# (FIXME)
 
 debugcheck:
 	echo $(FP_ntl) $(DEP_libm4rie)

@@ -1,7 +1,7 @@
 dnl a macro to register foreigns.
-dnl dnl  AC_FOREIGN_PACKAGE([name])
+dnl dnl  SAGE_FOREIGN_PACKAGE([name])
 dnl
-AC_DEFUN([AC_FOREIGN_PACKAGE],
+AC_DEFUN([SAGE_FOREIGN_PACKAGE],
  [AC_ARG_ENABLE([$1], AS_HELP_STRING([--enable-$1], [Build $1]),
  [case "${enableval}" in
   yes) $1=true ;;
@@ -39,4 +39,9 @@ AC_DEFUN([AC_FOREIGN_PACKAGE],
  # this is not currently used. might be helpful...
  AM_CONDITIONAL([SAGE_OWN_]uppercase, [test x$$1 = xtrue])
  m4_popdef([uppercase])
+ FOREIGN_DEP+=' $(DEP_$1)'
+ FOREIGN_ALL+=" $1"
+ VERSION_ALL+=' $(FP_$1)'
+ FP_VERSIONS+='
+FP_$1=$(call newest_version,$1)'
  ])

@@ -2,14 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sage], [5.9-autotools], [sage-devel@googlegroups.com])
+AC_INIT([sage], [5.11.beta3], [sage-support@googlegroups.com])
 AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability silent-rules])
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
 
+AC_CANONICAL_BUILD
+
 # `pwd` resolves $abs_top_builddir
 # abs_top_builddir is not available here.
 AC_PREFIX_DEFAULT(`pwd`/local)
+
+# VPATH
+AM_CONDITIONAL([VPATH_BUILD], [test ! x$srcdir = "x."])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -22,6 +27,12 @@ AC_PROG_MAKE_SET
 AC_PROG_GREP     # required to build singular
 AC_PROG_SED      # used here and there.
 
+PKG_PROG_PKG_CONFIG
+CHK_pkgconfig=negative
+if test -n "$PKG_CONFIG"; then
+   CHK_pkgconfig=positive
+fi
+
 # install GCC when needed.
 # FIXME: override this (former SAGE_INSTALL_GCC environment)
 CHK_gcc=positive
@@ -29,63 +40,91 @@ CHK_gcc=positive
 # Check whether $CC is some version of GCC.  If it's a different
 # compiler, install GCC locally.
 # CCtype=`testcc.sh $CC`
-if test ! "$CC" = gcc; then
-  AC_MSG_NOTICE([Installing GCC because your '$CC' isn't GCC (GNU CC) but $CC.])
-  CHK_gcc=negative
-else
-  # $CC points to some version of GCC, find out which version.
-  GCCVERSION=`$CC -dumpversion`
-  case $GCCVERSION in
-      [0-3].*|4.[0-3]|4.[0-3].*)
-          # Install our own GCC if the system-provided one is older than gcc-4.4.
-          # * gcc-4.2.4 compiles a slow IML:
-          # https://groups.google.com/forum/?fromgroups#!topic/sage-devel/Ux3t0dW2FSI
-          # * gcc-4.3 might have trouble building ATLAS:
-          # https://groups.google.com/forum/?fromgroups#!topic/sage-devel/KCeFqQ_w2FE
-          AC_MSG_NOTICE([Installing GCC because you have $CC version $GCCVERSION, which is quite old.])
-          CHK_gcc=negative;;
-      4.4*|4.5*)
-          # GCC 4.4.x and GCC 4.5.x fail to compile PARI/GP on ia64:
-          # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46044
-          if test x`uname -m` = xia64; then
-              AC_MSG_NOTICE([Installing GCC because you have $CC version $GCCVERSION on ia64.])
-              AC_MSG_NOTICE([gcc <= 4.5 fails to compile PARI/GP on ia64.])
-              CHK_gcc=negative
-          fi;;
-      4.6.[01])
-          # Also install GCC if we have version 4.6.0 or 4.6.1, which is
-          # known to give trouble within Sage:
-          # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
-          # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48774
-          AC_MSG_NOTICE([Installing GCC because you have $CC version $GCCVERSION.])
-          AC_MSG_NOTICE([gcc-4.6.0 and gcc-4.6.1 have known bugs affecting Sage.])
-          CHK_gcc=negative;;
-      4.6*)
-          # GCC 4.6.x doesn't compile ECL on Cygwin:
-          # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52061
-          if uname | grep CYGWIN >/dev/null; then
-              AC_MSG_NOTICE([Installing GCC because you have $CC version $GCCVERSION on Cygwin.])
-              AC_MSG_NOTICE([gcc-4.6.x fails to compile ECL on Cygwin.])
-              CHK_gcc=negative
-          fi;;
-      4.7.0)
-          # GCC 4.7.0 is very broken on ia64, see
-          # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48496
-          # This is fixed in GCC 4.7.1.
-          if test x`uname -m` = xia64; then
-              AC_MSG_NOTICE([Installing GCC because you have $CC version $GCCVERSION on ia64.])
-              AC_MSG_NOTICE([gcc-4.7.0 has a serious bug on ia64.])
-              CHK_gcc=negative
-          fi;;
-  esac
-fi
+
+AS_IF([test "x$CC" = x],
+      [AC_MSG_ERROR([No C compiler found in your path.
+         Install a C compiler or set the environment variable CC to point to one.])]
+     )
+
+AS_IF([test "x$GCC" != xyes],[
+    AC_MSG_NOTICE([Rejecting '$CC', it's not GNU gcc.])
+    CHK_gcc=negative
+],[
+    build_gcc_version=`$CC -dumpversion`
+
+    dnl Install our own GCC if the system-provided one is older than gcc-4.4.
+    dnl * gcc-4.2.4 compiles a slow IML:
+    dnl https://groups.google.com/forum/?fromgroups#!topic/sage-devel/Ux3t0dW2FSI
+    dnl * gcc-4.3 might have trouble building ATLAS:
+    dnl https://groups.google.com/forum/?fromgroups#!topic/sage-devel/KCeFqQ_w2FE
+    AS_VERSION_COMPARE(["$build_gcc_version"],[4.4],[
+        AC_MSG_NOTICE([Rejecting GCC. Your $CC ($build_gcc_version) is too old.])
+        CHK_gcc=negative
+    ])
+
+    AS_IF([test "x$build_cpu" = "xia64"],[
+        dnl GCC 4.4.x and GCC 4.5.x fail to compile PARI/GP on ia64:
+        dnl * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=46044
+        AS_VERSION_COMPARE(["$build_gcc_version"],[4.6],[
+            AC_MSG_NOTICE([Rejecting GCC. Your $CC ($build_gcc_version)
+                           will fail to compile PARI/GP on ia64.])
+            CHK_gcc=negative
+        ])
+        dnl GCC 4.7.0 is very broken on ia64, see
+        dnl http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48496
+        AS_VERSION_COMPARE(["$build_gcc_version"],[4.7.0],[
+            AC_MSG_NOTICE([Rejecting GCC. Your $CC ($build_gcc_version)
+                           is known not to work on ia64.])
+            CHK_gcc=negative
+        ])
+    ])
+
+    dnl Also install GCC if we have version 4.6.0 or 4.6.1, which is
+    dnl known to give trouble within Sage:
+    dnl * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48702
+    dnl * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=48774
+    AS_CASE([$build_gcc_version],[4.6.@<:@01@:>@],[
+        AC_MSG_NOTICE([Rejecting GCC. Your $CC ($build_gcc_version)
+                       has known bugs affecting Sage.])
+    ])
+
+    dnl GCC 4.6.x doesn't compile ECL on Cygwin:
+    dnl * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52061
+    AS_CASE([$build_os],[*cygwin*],[
+        AS_CASE([$build_gcc_version],[4.6*],[
+            AC_MSG_NOTICE([Rejecting GCC. Your $CC ($build_gcc_version)
+                           will fail to compile ECL on Cygwin.])
+           CHK_gcc=negative
+        ])
+    ])
+])
+
+# package checks
+CHK_cliquer=
+AC_CHECK_HEADER([cliquer/cliquer.h],,[CHK_cliquer=negative])
+
+python_version_required=2.7
+AM_PATH_PYTHON([$python_version_required])
+AS_VAR_IF([PYTHON_VERSION],[$python_version_required],[dnl
+   # whitelist python if desired:
+   # CHK_python=positive
+   SAGE_CHECK_PYTHON_MODULE([Cython],[CHK_cython=negative])
+   SAGE_CHECK_PYTHON_MODULE([something],[CHK_something=negative])
+   # AS_VERSION_COMPARE(["$SAGE_Cython_Module"],[0.6],
+   #                    [CHK_Cython=negative], dnl too old
+   #                    [CHK_Cython=positive], dnl exact version match
+   #                    [CHK_Cython=negative]) dnl version too big
+],[dnl
+   AC_MSG_NOTICE([python $PYTHON_VERSION is not $python_version_required])
+   # blacklist everything
+   CHK_python=negative
+   CHK_cython=negative
+])
 
 # try to guess SAGE_* stuff
-sage_local=$prefix
-if test "x$prefix" = xNONE; then
-    sage_local=$ac_default_prefix
-else
-    AC_MSG_ERROR([custom prefix is not implementable yet.])
+sage_local=`pwd`/local
+if test ! "x$prefix" = xNONE; then
+    AC_MSG_NOTICE([custom prefix is pretty much experimental.])
 fi
 
 AC_SUBST(SAGE_LOCAL, $sage_local)
@@ -96,11 +135,12 @@ if test -z "$CXX"; then
   need_to_install_gcc=yes
 fi
 
-if test -z "$FC"; then
-  echo >&2 "Installing GCC because a Fortran compiler is missing."
-  need_to_install_gcc=yes
-fi
+AS_IF([test "x$FC" = x],[
+    AC_MSG_NOTICE([Installing GCC because a Fortran compiler is missing.])
+    CHK_gcc=negative
+])
 
+# FIXME: we have to set FC,GCC,... if need_to_install_gcc=yes - why should we only set FC?
 if test "$need_to_install_gcc" = yes -o -x "$sage_local/bin/gfortran"; then
     FC=gfortran
     unset SAGE_FORTRAN_LIB
@@ -210,103 +250,125 @@ esac
 AC_ARG_VAR([FOREIGN_DEFAULT])
 FOREIGN_DEFAULT=${FOREIGN_DEFAULT:-auto}
 
+dnl these packages are available on the host system
 FOREIGN_AVAILABLE=
+dnl these packages have been explicitely disabled
 FOREIGN_DISABLED=
+dnl these packages have been explicitely enabled
 FOREIGN_ENABLED=
+dnl all package dependencies
+FOREIGN_DEP=
+dnl all package dependencies
+VERSION_ALL=
+dnl generated version assignments
+FP_VERSIONS=
 
-AC_FOREIGN_PACKAGE([atlas])
-AC_FOREIGN_PACKAGE([cliquer])
-AC_FOREIGN_PACKAGE([blas])
-AC_FOREIGN_PACKAGE([boehm_gc])
-AC_FOREIGN_PACKAGE([boost_cropped])
-AC_FOREIGN_PACKAGE([cddlib])
-AC_FOREIGN_PACKAGE([cephes])
-AC_FOREIGN_PACKAGE([cliquer])
-AC_FOREIGN_PACKAGE([conway_polynomials])
-AC_FOREIGN_PACKAGE([cvxopt])
-AC_FOREIGN_PACKAGE([cython])
-AC_FOREIGN_PACKAGE([docutils])
-AC_FOREIGN_PACKAGE([ecl])
-AC_FOREIGN_PACKAGE([eclib])
-AC_FOREIGN_PACKAGE([ecm])
-AC_FOREIGN_PACKAGE([elliptic_curves])
-AC_FOREIGN_PACKAGE([fflas_ffpack])
-AC_FOREIGN_PACKAGE([flint])
-AC_FOREIGN_PACKAGE([flintqs])
-AC_FOREIGN_PACKAGE([libfplll])
-AC_FOREIGN_PACKAGE([freetype])
-AC_FOREIGN_PACKAGE([genus2reduction])
-AC_FOREIGN_PACKAGE([gap])
-AC_FOREIGN_PACKAGE([gcc])
-AC_FOREIGN_PACKAGE([gd])
-AC_FOREIGN_PACKAGE([gdmodule])
-AC_FOREIGN_PACKAGE([gf2x])
-AC_FOREIGN_PACKAGE([gfan])
-AC_FOREIGN_PACKAGE([givaro])
-AC_FOREIGN_PACKAGE([git])
-AC_FOREIGN_PACKAGE([glpk])
-AC_FOREIGN_PACKAGE([graphs])
-AC_FOREIGN_PACKAGE([gsl])
-AC_FOREIGN_PACKAGE([iconv])
-AC_FOREIGN_PACKAGE([iml])
-AC_FOREIGN_PACKAGE([ipython])
-AC_FOREIGN_PACKAGE([jinja2])
-AC_FOREIGN_PACKAGE([jmol])
-AC_FOREIGN_PACKAGE([lapack])
-AC_FOREIGN_PACKAGE([lcalc])
-AC_FOREIGN_PACKAGE([lrcalc])
-AC_FOREIGN_PACKAGE([libgap])
-AC_FOREIGN_PACKAGE([libpng])
-AC_FOREIGN_PACKAGE([linbox])
-AC_FOREIGN_PACKAGE([libm4ri])
-AC_FOREIGN_PACKAGE([libm4rie])
-AC_FOREIGN_PACKAGE([matplotlib])
-AC_FOREIGN_PACKAGE([maxima])
-AC_FOREIGN_PACKAGE([mpc])
-AC_FOREIGN_PACKAGE([mpfi])
-AC_FOREIGN_PACKAGE([mpfr])
-AC_FOREIGN_PACKAGE([mpir])
-AC_FOREIGN_PACKAGE([mpmath])
-AC_FOREIGN_PACKAGE([networkx])
-AC_FOREIGN_PACKAGE([ntl])
-AC_FOREIGN_PACKAGE([numpy])
-AC_FOREIGN_PACKAGE([palp])
-AC_FOREIGN_PACKAGE([pari])
-AC_FOREIGN_PACKAGE([pexpect])
-AC_FOREIGN_PACKAGE([pil])
-AC_FOREIGN_PACKAGE([polybori])
-AC_FOREIGN_PACKAGE([polytopes_db])
-AC_FOREIGN_PACKAGE([ppl])
-AC_FOREIGN_PACKAGE([pycrypto])
-AC_FOREIGN_PACKAGE([pygments])
-AC_FOREIGN_PACKAGE([pynac])
-AC_FOREIGN_PACKAGE([python])
-AC_FOREIGN_PACKAGE([ratpoints])
-AC_FOREIGN_PACKAGE([r])
-AC_FOREIGN_PACKAGE([rpy2])
-AC_FOREIGN_PACKAGE([readline])
-AC_FOREIGN_PACKAGE([rubiks])
-AC_FOREIGN_PACKAGE([sagenb])
-AC_FOREIGN_PACKAGE([sagetex])
-AC_FOREIGN_PACKAGE([scipy])
-AC_FOREIGN_PACKAGE([scons])
-AC_FOREIGN_PACKAGE([setuptools])
-AC_FOREIGN_PACKAGE([singular])
-AC_FOREIGN_PACKAGE([sphinx])
-AC_FOREIGN_PACKAGE([sqlalchemy])
-AC_FOREIGN_PACKAGE([sqlite])
-AC_FOREIGN_PACKAGE([symmetrica])
-AC_FOREIGN_PACKAGE([sympow])
-AC_FOREIGN_PACKAGE([sympy])
-AC_FOREIGN_PACKAGE([tachyon])
-AC_FOREIGN_PACKAGE([termcap])
-AC_FOREIGN_PACKAGE([zlib])
-AC_FOREIGN_PACKAGE([znpoly])
+SAGE_FOREIGN_PACKAGE([atlas])
+SAGE_FOREIGN_PACKAGE([cliquer])
+SAGE_FOREIGN_PACKAGE([blas])
+SAGE_FOREIGN_PACKAGE([boehm_gc])
+SAGE_FOREIGN_PACKAGE([boost_cropped])
+SAGE_FOREIGN_PACKAGE([cddlib])
+SAGE_FOREIGN_PACKAGE([cephes])
+SAGE_FOREIGN_PACKAGE([conway_polynomials])
+SAGE_FOREIGN_PACKAGE([cvxopt])
+SAGE_FOREIGN_PACKAGE([cython])
+SAGE_FOREIGN_PACKAGE([docutils])
+SAGE_FOREIGN_PACKAGE([ecl])
+SAGE_FOREIGN_PACKAGE([eclib])
+SAGE_FOREIGN_PACKAGE([ecm])
+SAGE_FOREIGN_PACKAGE([elliptic_curves])
+SAGE_FOREIGN_PACKAGE([fflas_ffpack])
+SAGE_FOREIGN_PACKAGE([flint])
+SAGE_FOREIGN_PACKAGE([flintqs])
+SAGE_FOREIGN_PACKAGE([libfplll])
+SAGE_FOREIGN_PACKAGE([freetype])
+SAGE_FOREIGN_PACKAGE([genus2reduction])
+SAGE_FOREIGN_PACKAGE([gap])
+SAGE_FOREIGN_PACKAGE([gcc])
+SAGE_FOREIGN_PACKAGE([gd])
+SAGE_FOREIGN_PACKAGE([gdmodule])
+SAGE_FOREIGN_PACKAGE([gf2x])
+SAGE_FOREIGN_PACKAGE([gfan])
+SAGE_FOREIGN_PACKAGE([givaro])
+# SAGE_FOREIGN_PACKAGE([git])
+SAGE_FOREIGN_PACKAGE([glpk])
+SAGE_FOREIGN_PACKAGE([graphs])
+SAGE_FOREIGN_PACKAGE([gsl])
+SAGE_FOREIGN_PACKAGE([iconv])
+SAGE_FOREIGN_PACKAGE([iml])
+SAGE_FOREIGN_PACKAGE([ipython])
+SAGE_FOREIGN_PACKAGE([jinja2])
+SAGE_FOREIGN_PACKAGE([jmol])
+SAGE_FOREIGN_PACKAGE([lapack])
+SAGE_FOREIGN_PACKAGE([lcalc])
+SAGE_FOREIGN_PACKAGE([lrcalc])
+SAGE_FOREIGN_PACKAGE([libgap])
+SAGE_FOREIGN_PACKAGE([libpng])
+SAGE_FOREIGN_PACKAGE([linbox])
+SAGE_FOREIGN_PACKAGE([libm4ri])
+SAGE_FOREIGN_PACKAGE([libm4rie])
+SAGE_FOREIGN_PACKAGE([matplotlib])
+SAGE_FOREIGN_PACKAGE([maxima])
+SAGE_FOREIGN_PACKAGE([mpc])
+SAGE_FOREIGN_PACKAGE([mpfi])
+SAGE_FOREIGN_PACKAGE([mpfr])
+SAGE_FOREIGN_PACKAGE([mpir])
+SAGE_FOREIGN_PACKAGE([mpmath])
+SAGE_FOREIGN_PACKAGE([networkx])
+SAGE_FOREIGN_PACKAGE([ntl])
+SAGE_FOREIGN_PACKAGE([numpy])
+SAGE_FOREIGN_PACKAGE([palp])
+SAGE_FOREIGN_PACKAGE([pari])
+SAGE_FOREIGN_PACKAGE([pexpect])
+SAGE_FOREIGN_PACKAGE([pil])
+SAGE_FOREIGN_PACKAGE([pkgconfig])
+SAGE_FOREIGN_PACKAGE([polybori])
+SAGE_FOREIGN_PACKAGE([polytopes_db])
+SAGE_FOREIGN_PACKAGE([ppl])
+SAGE_FOREIGN_PACKAGE([pycrypto])
+SAGE_FOREIGN_PACKAGE([pygments])
+SAGE_FOREIGN_PACKAGE([pynac])
+SAGE_FOREIGN_PACKAGE([python])
+SAGE_FOREIGN_PACKAGE([ratpoints])
+SAGE_FOREIGN_PACKAGE([r])
+SAGE_FOREIGN_PACKAGE([rpy2])
+SAGE_FOREIGN_PACKAGE([readline])
+SAGE_FOREIGN_PACKAGE([rubiks])
+# sagelib here, remove CORE_MODULES in the end
+# (not yet, requires proper staging)
+SAGE_FOREIGN_PACKAGE([sagelib])
+SAGE_FOREIGN_PACKAGE([sagenb])
+SAGE_FOREIGN_PACKAGE([sagetex])
+SAGE_FOREIGN_PACKAGE([scipy])
+SAGE_FOREIGN_PACKAGE([scons])
+SAGE_FOREIGN_PACKAGE([setuptools])
+SAGE_FOREIGN_PACKAGE([singular])
+SAGE_FOREIGN_PACKAGE([sphinx])
+SAGE_FOREIGN_PACKAGE([sqlalchemy])
+SAGE_FOREIGN_PACKAGE([sqlite])
+SAGE_FOREIGN_PACKAGE([symmetrica])
+SAGE_FOREIGN_PACKAGE([sympow])
+SAGE_FOREIGN_PACKAGE([sympy])
+SAGE_FOREIGN_PACKAGE([tachyon])
+SAGE_FOREIGN_PACKAGE([termcap])
+SAGE_FOREIGN_PACKAGE([zlib])
+SAGE_FOREIGN_PACKAGE([zn_poly])
+
+AC_SUBST([FP_VERSIONS])
+AC_SUBST([VERSION_ALL])
+# AM_SUBST_NOTMAKE([FP_VERSIONS])
 
 # include submodules in dist tarball
 distdir_subs='distdir: DIST_SUBDIRS+=$(CORE_MODULES)'
 AC_SUBST([distdir_subs])
 AM_SUBST_NOTMAKE([distdir_subs])
+
+# disable the installation target.
+# it simply doesnt make any sense right now.
+noinstall='install-am install-recursive: install-doesntwork'
+AC_SUBST([noinstall])
+AM_SUBST_NOTMAKE([noinstall])
 
 # misc
 dotPRECIOUS='.PRECIOUS'
@@ -317,8 +379,9 @@ AC_SUBST(UNAME, `uname`)
 AC_CONFIG_FILES([GNUmakefile
                  deps
                  dist/spkg.mk
-                 dist/bin/Makefile
                  dist/Makefile
+                 dist/bin/Makefile
+                 dist/etc/Makefile
                  dist/etc/env.sh])
 
 AC_CONFIG_FILES([dist/bin/sage-dist-install],
@@ -336,6 +399,11 @@ AC_CONFIG_FILES([sage],
 # AC_CONFIG_SUBDIRS([src/bin])
 
 AC_OUTPUT
+AC_SUBST([FOREIGN_ALL])
+AC_SUBST([FOREIGN_DEP])
+AC_SUBST([FOREIGN_AVAILABLE])
+AC_SUBST([FOREIGN_DISABLED])
+AC_SUBST([FOREIGN_ENABLED])
 
 if test $FOREIGN_DEFAULT = yes; then
    packageinfo="installing all packages"

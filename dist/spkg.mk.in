@@ -23,7 +23,8 @@ endif
 SETUP_PY_INSTALL = $(DESTDIR_SET) sage-setup.py install $(FILELIST_ARG)
 
 # install wrapped
-SAGE_INSTALL = sage-dist-install $(FILELIST_ARG)
+SAGE_INSTALL = sage-dist-install
+#$(FILELIST_ARG)
 SAGE_INSTALLDIRS = $(SAGE_INSTALL) -d
 
 ## workaround
@@ -45,18 +46,19 @@ unpatch:
 	fi
 
 # Apply all patches
-patch-stamp: | patches
-	: > patch-stamp
-	for patch in $(sort $(wildcard $|/*.patch)); do \
+# hmm, some more magic?
+patch-stamp: # | patches
+	: > $@.T
+	for patch in $(sort $(wildcard patches/*.patch)); do \
 	    [ -r "$$patch" ] || continue; \
 	    patch -d src -p1 < "$$patch"; \
 	    if [ $$? -ne 0 ]; then \
 	        echo >&2 "Error applying '$$patch'"; \
 	        exit 1; \
 	    fi; \
-		 echo $$patch >> patch-stamp; \
+	    echo $$patch >> $@.T; \
 	done
-	touch $@
+	mv $@.T $@
 
 
 installtmp: DESTDIR=`pwd`/tmp
