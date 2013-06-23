@@ -17,6 +17,8 @@ import sphinx.cmdline
 import sphinx.util.console
 import sphinx.ext.intersphinx
 
+from sage.interfaces.gap import set_gap_memory_pool_size
+
 #We remove the current directory from sys.path right away
 #so that we import sage from the proper spot
 try:
@@ -28,11 +30,11 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc import sage_makedirs as mkdir
 from sage.env import SAGE_DOC, SAGE_SRC
 
-# Load the options, including
-#     SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT,
-#     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS
-# from build_options.py.
-execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
+# Load the options
+from build_options import SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT, \
+                          PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, \
+                          WEBSITESPHINXOPTS, SAGE_DOC_SRC
+#execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
 
 
 ##########################################
@@ -77,7 +79,7 @@ def builder_helper(type):
         logger.debug(build_command)
 
         # Execute custom-sphinx-build.py
-        sys.argv = [os.path.join(SAGE_DOC, 'common', 'custom-sphinx-build.py')]
+        sys.argv = [os.path.join(SAGE_DOC_SRC, 'common', 'custom-sphinx-build.py')]
         sys.argv.extend(build_command.split())
         try:
             execfile(sys.argv[0])
@@ -125,7 +127,7 @@ class DocBuilder(object):
 
         self.name = os.path.join(*doc)
         self.lang = lang
-        self.dir = os.path.join(SAGE_DOC, self.lang, self.name)
+        self.dir = os.path.join(SAGE_DOC_SRC, self.lang, self.name)
 
         #Make sure the .static and .templates directories are there
         mkdir(os.path.join(self.dir, "static"))
@@ -301,9 +303,9 @@ class AllBuilder(object):
         """
         documents = []
         for lang in LANGUAGES:
-            for document in os.listdir(os.path.join(SAGE_DOC, lang)):
+            for document in os.listdir(os.path.join(SAGE_DOC_SRC, lang)):
                 if (document not in OMIT
-                    and os.path.isdir(os.path.join(SAGE_DOC, lang, document))):
+                    and os.path.isdir(os.path.join(SAGE_DOC_SRC, lang, document))):
                     documents.append(os.path.join(lang, document))
 
         # Ensure that the reference guide is compiled first so that links from
