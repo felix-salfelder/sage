@@ -68,8 +68,8 @@ am__v_CYT_ = $(am__v_CYT_$(AM_DEFAULT_VERBOSITY))
 am__v_CYT_0 = @echo "  CYTH  " $@;
 
 define cython_call
-	$(AM_V_CYT)$(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
-	    -o $(abs_builddir)/$@ @AMDEP_TRUE@@PYDEP_TRUE@-MD
+	$(AM_V_CYT)PYTHONPATH="$(PYTHONPATH)" $(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
+	    -o $(abs_builddir)/$@ @AMDEP_TRUE@@PYDEP_TRUE@-MD -MP
 	@AMDEP_TRUE@@PYDEP_TRUE@$(AM_V_at)$(am__mv) $@.d $(DEPDIR)/$*.Pcython
 endef
 
@@ -104,12 +104,27 @@ $(LTLIBRARIES:%.la=%.so): %.so: .libs/%.so
 @VPATH_TRUE@	done
 @VPATH_TRUE@.PHONY: pys
 
-# manually implementing AM_EXTRA_RECURSIVE_TARGETS([py])
+# manually implementing AM_EXTRA_RECURSIVE_TARGETS([py pycheck])
 # will be implemented in automake1.12
 py: py-local py-recursive
 py-recursive:
 	for i in $(SUBDIRS); do $(MAKE) -C $$i py; done
-@am__leading_dot@PHONY: py-recursive py-local py
+pycheck: pycheck-local pycheck-recursive
+pycheck-recursive:
+	for i in $(SUBDIRS); do $(MAKE) -C $$i pycheck PYLIST=../$(PYLIST); done
+
+@am__leading_dot@PHONY: py-recursive py-local py \
+                        pycheck-recursive pycheck-local pycheck
+
+PYLIST=none
+
+# compare registered .py's against existing
+pycheck-local:
+	echo $(PYS) | tr ' ' '\n' | sed 's#^#@abs_builddir@/#' | \
+	      sed 's#^@abs_top_builddir@#.#' >> $(PYLIST)
+
+# this won't work as long as _PYTHON includes subdirectories
+# @diff <(echo "$(PYS)" | tr ' ' '\n' | sort) <(cd $(VPATH); ls *.py | sort)
 
 #don't delete .cc .c just because gcc fails.
 @am__leading_dot@PRECIOUS: %.cc %.c
