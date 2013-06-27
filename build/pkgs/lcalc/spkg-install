@@ -6,6 +6,10 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
+CUR=`pwd`
+
+CUR=`pwd`
+
 if [ "x$SAGE64" = xyes ]; then
     echo "Building a 64-bit version of lcalc"
 
@@ -59,7 +63,7 @@ cd src
 
 # Apply Sage-specific patches: (See SPKG.txt for details on the patches.)
 echo "Patching the upstream source code for Sage..."
-for patch in ../patches/*.patch; do
+for patch in $CUR/patches/*.patch; do
     patch -p1 < "$patch"
     if [ $? -ne 0 ]; then
 		 "patch $patch failed to apply"
