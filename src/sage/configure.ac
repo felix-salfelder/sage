@@ -425,8 +425,8 @@ AC_CONFIG_COMMANDS([cythondep],
                    [$ac_top_srcdir/cythondep AMDEP_TRUE=$AMDEP_TRUE])
 
 AC_CONFIG_FILES([cythoninit],[chmod +x cythoninit])
-AC_CONFIG_COMMANDS([cythoninit],
-                   [$ac_top_srcdir/cythoninit])
+AC_CONFIG_COMMANDS([cython_init],
+                   [./cythoninit])
 
 AC_SUBST(PYTHONPATH)
 
