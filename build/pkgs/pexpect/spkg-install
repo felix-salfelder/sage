@@ -12,4 +12,4 @@ uninstall-hack:
 	rm -f $(SAGE_LOCAL)/lib/python*/site-packages/pexpect.*
 
 install:
-	cd src; sage-setup.py install
+	cd src; $(SETUP_PY_INSTALL)
