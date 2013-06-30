@@ -23,7 +23,7 @@ export LIBRARY_PATH="$LIBRARY_PATH""$SAGE_LOCAL"/lib
 export CPPFLAGS="-I$SAGE_LOCAL/include -D_XOPEN_SOURCE=500 $CPPFLAGS"
 export LDFLAGS="-L$SAGE_LOCAL/lib $LDFLAGS"
 
-if [ $SAGE64 = "yes" ]; then
+if [ x$SAGE64 = "xyes" ]; then
     echo "Building with extra 64-bit flags for MacOS X and Open Solaris."
     if [ -z $CFLAG64 ]; then
         CFLAG64=-m64
@@ -36,13 +36,13 @@ fi
 
 # End boilerplate
 
-
+# prefixarg=prefix="$SAGE_LOCAL" ??
 
 # Install dependencies
 for PKG in $(cat src/install_order); do
-    easy_install -H None "src/$PKG" || die "Error installing $PKG !"
+    easy_install -H None "src/$PKG" $prefixarg || die "Error installing $PKG !"
 done
 PKG=$(ls -1 src | GREP_OPTIONS= grep sagenb-)
 
 # Install sagenb into site-packages
-easy_install -H None "src/$PKG" || die "Error installing sagenb !"
+easy_install -H None "src/$PKG" $prefixarg || die "Error installing sagenb !"
