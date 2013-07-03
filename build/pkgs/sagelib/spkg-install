@@ -1,0 +1,55 @@
+#!/usr/bin/env sage-dist-make
+# this is the spkg-install file for sage-the-library
+#
+# currently it just sets up runtime environment
+#
+# the other parts are still put together by the toplevel makefile :|
+
+stage: install-env py scripts ext
+
+DIST_MK = spkg.mk
+include $(DIST_MK)
+
+py:
+	$(MAKE) -C $(SAGE_ROOT)/src/sage py
+
+scripts:
+	$(MAKE) -C $(SAGE_ROOT)/src/bin install
+
+ext:
+	$(MAKE) -C $(SAGE_ROOT)/src/ext install
+
+.PHONY: install-env
+
+install-env: 00sagelibenv.sh
+	$(SAGE_INSTALL) -d $(DESTDIR)$(SAGE_ETC)/env.d
+	$(SAGE_INSTALL) -t $(DESTDIR)$(SAGE_ETC)/env.d $<
+	rm $<
+
+# this is the runtime environment for sage-the-library within
+# sage-the-distribution
+# just treat it like all the other packages.
+00sagelibenv.sh:
+	echo '[ -n "$$PYTHONPATH" ] && maybe_colon=:' > $@
+	echo 'PYTHONPATH="$(SAGE_ROOT)/src$$maybe_colon$$PYTHONPATH"' >> $@
+	echo 'PATH="$(SAGE_LOCAL)/bin:$$PATH"' >> $@
+	echo 'SAGE_PREFIX="$(SAGE_PREFIX)"' >> $@
+	echo 'SAGE_LOCAL="$$SAGE_PREFIX"' >> $@
+	echo 'SAGE_LOG="$(SAGE_LOG)"' >> $@
+	echo 'SAGE_ROOT="$(SAGE_ROOT)"' >> $@ # ?!
+	# not yet (still in 00dist.sh)
+	# echo 'SAGE_SRC="$(SAGE_SRC)"' >> $@
+	# echo 'export SAGE_SRC' >> $@
+	echo 'SAGE_SHARE="$(SAGE_SHARE)"' >> $@
+	echo 'SAGE_SPKG_INST="$$SAGE_LOCAL/var/lib/sage/installed"' >> $@
+	echo 'SAGE_EXTCODE="$$SAGE_SHARE/sage/ext"' >> $@
+
+	echo 'LD_LIBRARY_PATH="$(SAGE_LOCAL)/lib"' >> $@
+
+	echo "export LD_LIBRARY_PATH\
+	             PYTHONPATH PATH SAGE_ETC SAGE_EXTCODE\
+	             SAGE_LOCAL SAGE_PREFIX SAGE_DOC\
+	             SAGE_ROOT\
+                SAGE_SHARE SAGE_SPKG_INST" >> $@
+
+# what else? GPRC?
