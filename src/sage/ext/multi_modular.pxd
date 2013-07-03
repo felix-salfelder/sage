@@ -3,7 +3,7 @@ include "sage/ext/cdefs.pxi"
 from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
 
-cdef extern from "multi_modular.h":
+cdef extern from "sage/ext/multi_modular.h":
     ctypedef unsigned long mod_int
     mod_int MOD_INT_OVERFLOW
 
