@@ -101,7 +101,7 @@ AS_IF([test "$SINGULAR" = no], [AC_MSG_ERROR([cannot find singular.])])
 # HACK: don't know how to retrieve share from Singular
 SINGULAR_SHARE=`dirname $SINGULAR`/../share/singular
 if test ! -e $SINGULAR_SHARE/algebra.lib; then
-	AC_MSG_NOTICE([unexpected singular install, cannot find share])
+    AC_MSG_NOTICE([unexpected singular install, cannot find share])
 fi
 AC_SUBST([SINGULAR_SHARE])
 SINGULAR_BIN=`dirname $SINGULAR`
@@ -115,13 +115,10 @@ SINGULAR_INCLUDES=$CPPFLAGS
 AC_SUBST([SINGULAR_INCLUDES])
 CPPFLAGS=$OLDCPPFLAGS
 
-print currently $CPPFLAGS
-
 # just check, for now
 AC_CHECK_HEADER([cliquer/cliquer.h],,[AC_MSG_ERROR(cannot find cliquer header)])
 AC_CHECK_HEADER([flint/fmpz.h],,[AC_MSG_ERROR(cannot find flint header)])
 AC_CHECK_HEADER([zn_poly/zn_poly.h],,[AC_MSG_ERROR(cannot find zn_poly header)])
-
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER([fplll.h],,[AC_MSG_ERROR(cannot find fplll header)])
@@ -132,47 +129,78 @@ AC_SUBST([FPLLL_INCLUDES]) dnl currently unneeded
 # AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
 
 # extra packages: FIXME: just allow sage packages, if desired
-AC_CHECK_HEADER([coxeter3.h], [HAVE_LIBCOXETER3=1], [HAVE_LIBCOXETER3=0])
+AC_CHECK_HEADER([coxeter3.h], [HAVE_LIBCOXETER3=yes], [HAVE_LIBCOXETER3=no])
 AC_SUBST([HAVE_LIBCOXETER3])
-AM_CONDITIONAL([USE_LIBCOXETER3], [ test $HAVE_LIBCOXETER3 -eq 1 ])
+AM_CONDITIONAL([USE_LIBCOXETER3], [ test $HAVE_LIBCOXETER3 -eq yes ])
 
-AC_CHECK_HEADER([fes.h], [HAVE_LIBFES=1], [HAVE_LIBFES=0])
+AC_CHECK_HEADER([fes.h], [HAVE_LIBFES=yes], [HAVE_LIBFES=no])
 AC_SUBST([HAVE_LIBFES])
-AM_CONDITIONAL([USE_LIBFES], [ test $HAVE_LIBFES -eq 1 ])
+AM_CONDITIONAL([USE_LIBFES], [ test $HAVE_LIBFES -eq yes ])
 
-# this is a hack, better use AC_ARG_WITH (?)
-AC_MSG_CHECKING("lrcalc includedir")
-AS_IF([test -f $sage_local/include/lrcalc/vector.h],
-      [LIBLRCALC_INCLUDES="-I$sage_local/include/lrcalc"
-      AC_MSG_RESULT([$sage_local/include/lrcalc/])],
-      [AC_MSG_RESULT([nothing special])])
-CPPFLAGS_SAVE=$CPPFLAGS
-CPPFLAGS+=" $LIBLRCALC_INCLUDES"
-AC_CHECK_HEADER([symfcn.h], [HAVE_LIBLRCALC=1], [HAVE_LIBLRCALC=0])
-CPPFLAGS=$CPPFLAGS_SAVE
-AC_SUBST([HAVE_LIBLRCALC])
-AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC -eq 1 ])
+# lrcalc
+old_CPPFLAGS=$CPPFLAGS
+AC_ARG_WITH(lrcalc,
+    [  --with-lrcalc=lrcalc prefix],
+    [   AC_MSG_RESULT([$with_lrcalc])
+        case $with_lrcalc in
+          no)
+            HAVE_LIBLRCALC=no
+            ;;
+          yes)
+            dnl try to find it somewhere here... (better idea?!)
+            LIBLRCALC_INCLUDES="-I$sage_local/include/lrcalc"
+            HAVE_LIBLRCALC=yes
+            CPPFLAGS+=" $LIBLRCALC_INCLUDES"
+            AC_CHECK_HEADER([symfcn.h],,AC_MSG_ERROR([cannot find lrcalc]))
+            ;;
+          *)
+            dnl use specified lrcalc
+            LIBLRCALC_INCLUDES="-I$with_lrcalc/include/lrcalc"
+            CPPFLAGS+=" $LIBLRCALC_INCLUDES"
+            AC_CHECK_HEADER([symfcn.h],
+                            [HAVE_LIBLRCALC=yes],
+                            [HAVE_LIBLRCALC=no
+                             LIBLRCALC_INCLUDES=
+                            ])
+            ;;
+        esac
+        ],[ dnl figure out automatically (the sage-the-distribution case)
+            LIBLRCALC_INCLUDES="-I$sage_local/include/lrcalc"
+            CPPFLAGS+=" $LIBLRCALC_INCLUDES"
+            AC_CHECK_HEADER([symfcn.h],
+                            [HAVE_LIBLRCALC=yes],
+                            [HAVE_LIBLRCALC=no
+                             LIBLRCALC_INCLUDES=
+                            ])
+    ]
+)
+CPPFLAGS=$old_CPPFLAGS
 AC_SUBST([LIBLRCALC_INCLUDES])
+AC_SUBST([HAVE_LIBLRCALC])
+dnl AC_CHECK_LIB([lrcalc], [lrcalc], lrcalc=1))
+AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC -eq yes ])
 
-AC_CHECK_HEADER([gurobi.h], [HAVE_LIBGUROBI=1], [HAVE_LIBGUROBI=0])
+AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
+
+AC_CHECK_HEADER([gurobi.h], [HAVE_LIBGUROBI=yes], [HAVE_LIBGUROBI=no])
 AC_SUBST([HAVE_LIBGUROBI])
-AM_CONDITIONAL([USE_LIBGUROBI], [ test $HAVE_LIBGUROBI -eq 1 ])
+AM_CONDITIONAL([USE_LIBGUROBI], [ test $HAVE_LIBGUROBI -eq yes ])
 
-AC_CHECK_HEADER([cbc.h], [HAVE_LIBCBC=1], [HAVE_LIBCBC=0])
+AC_CHECK_HEADER([cbc.h], [HAVE_LIBCBC=yes], [HAVE_LIBCBC=no])
 AC_SUBST([HAVE_LIBCBC])
-AM_CONDITIONAL([USE_LIBCBC], [ test $HAVE_LIBCBC -eq 1 ])
+AM_CONDITIONAL([USE_LIBCBC], [ test $HAVE_LIBCBC -eq yes ])
 
-AC_CHECK_HEADER([cplex.h], [HAVE_LIBCPLEX=1], [HAVE_LIBCPLEX=0])
+AC_CHECK_HEADER([cplex.h], [HAVE_LIBCPLEX=yes], [HAVE_LIBCPLEX=no])
 AC_SUBST([HAVE_LIBCPLEX])
 AM_CONDITIONAL([USE_LIBCPLEX], [ test $HAVE_LIBCPLEX -eq 1 ])
 
-AC_CHECK_HEADER([coin.h], [HAVE_LIBCOIN=1], [HAVE_LIBCOIN=0])
+AC_CHECK_HEADER([coin.h], [HAVE_LIBCOIN=yes], [HAVE_LIBCOIN=no])
 AC_SUBST([HAVE_LIBCOIN])
-AM_CONDITIONAL([USE_LIBCOIN], [ test $HAVE_LIBCOIN -eq 1 ])
+AM_CONDITIONAL([USE_LIBCOIN], [ test $HAVE_LIBCOIN -eq yes ])
 
-AC_CHECK_HEADER([Solver.h], [HAVE_LIBCRYPTOMINISAT=1], [HAVE_LIBCRYPTOMINISAT=0])
+AC_CHECK_HEADER([Solver.h], [HAVE_LIBCRYPTOMINISAT=yes], [HAVE_LIBCRYPTOMINISAT=no])
 AC_SUBST([HAVE_LIBCRYPTOMINISAT])
-AM_CONDITIONAL([USE_LIBCRYPTOMINISAT], [ test $HAVE_LIBCRYPTOMINISAT -eq 1 ])
+AM_CONDITIONAL([USE_LIBCRYPTOMINISAT], [ test $HAVE_LIBCRYPTOMINISAT -eq yes ])
 
 AC_CHECK_LIB([readline], [main])
 AC_SUBST(HAVE_LIBREADLINE)
@@ -279,7 +307,8 @@ AC_SUBST(SAGE_DIR)
 
 AS_AC_EXPAND(SAGE_ETC, $sysconfdir)
 
-# additional packages
+#### data packages ####
+
 AS_IF([test -d $sage_local/share/conway_polynomials],
       [CONWAY_DATA_DIR=$sage_local/share/conway_polynomials],
       [test -d /usr/share/sagemath/conway_polynomials],
@@ -312,6 +341,7 @@ AS_IF([test -d $sage_local/share/ellvurves],
 AC_SUBST([ELLCURVE_DATA_DIR])
 AM_SUBST_NOTMAKE([ELLCURVE_DATA_DIR])
 
+dnl no longer needed (pkgconfig)
 m4ri_extra_compile_args=
 AC_SUBST(m4ri_extra_compile_args)
 
@@ -419,8 +449,8 @@ AC_CONFIG_FILES([
     env.py
 ])
 
-# create dummy files for cython file dependencies
-# (this is currently not natively supported by automake)
+dnl create dummy files for cython file dependencies
+dnl this is currently not natively supported by automake
 AC_CONFIG_COMMANDS([cythondep],
                    [$ac_top_srcdir/cythondep AMDEP_TRUE=$AMDEP_TRUE])
 
@@ -447,6 +477,13 @@ AC_MSG_RESULT([
    BLAS:       $blas
    BLAS2:      $blas2
    PYTHON:     $PYTHON
+
+   optional packages
+   lrcalc:       $HAVE_LIBLRCALC
+   cbc:          $HAVE_LIBCBC
+   coxeter:      $HAVE_LIBCOXETER3
+   gurobi:       $HAVE_LIBGUROBI
+   cryptominisat $HAVE_LIBCRYPTOMINISAT
 ])
 
 # vim:et:sw=2:
