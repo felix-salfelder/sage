@@ -1,0 +1,13 @@
+diff -rup singular-orig/src/Singular/Makefile.in singular-3.1.5.p7/src/Singular/Makefile.in
+--- singular-orig/src/Singular/Makefile.in	2013-07-04 22:22:52.000000000 +0200
++++ singular-3.1.5.p7/src/Singular/Makefile.in	2013-07-04 22:23:30.000000000 +0200
+@@ -594,7 +594,7 @@ installslib-nolns: LIB
+ 	done
+ 	${MKINSTALLDIRS} ${slibdir}/gftables
+ 	for file in `pwd`/LIB/gftables/*; do \
+-	  ${INSTALL_DATA}  $$file ${slibdir}/gftables/; \
++	  ${INSTALL_DATA}  $$file ${slibdir}/gftables; \
+ 	done
+ 
+ install-libsingular: libsingular installslib-nolns
+Only in singular-3.1.5.p7/src/Singular: Makefile.in~
