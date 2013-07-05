@@ -20,7 +20,7 @@ graphs_LTLIBRARIES = \
     weakly_chordal.la
 
 chrompoly_la_LIBADD = -lgmp -lcsage
-cliquer_la_SOURCES = cliquer.pyx cl.c
+cliquer_la_SOURCES = cliquer.pyx clhack.c
 cliquer_la_LIBADD = -lcliquer -lcsage
 comparability_la_LIBADD = -lcsage
 distances_all_pairs_la_LIBADD = -lcsage

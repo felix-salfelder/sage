@@ -12,6 +12,11 @@ modules_PYTHON = \
     all.py matrix_morphism.py free_module.py quotient_module.py module_element.py \
     free_quadratic_module.py free_module_homspace.py
 
+noinst_HEADERS = \
+	 binary_search.pxi vector_integer_sparse_c.pxi vector_integer_sparse_h.pxi \
+    vector_modn_sparse_c.pxi vector_modn_sparse_h.pxi vector_rational_sparse_c.pxi \
+    vector_rational_sparse_h.pxi
+
 modules_LTLIBRARIES = \
     finite_submodule_iter.la free_module_element.la module.la \
     vector_complex_double_dense.la vector_double_dense.la vector_integer_dense.la \

@@ -71,7 +71,7 @@ matrix_modn_sparse_la_LIBADD = -lgmp -lcsage
 
 matrix_mpolynomial_dense_la_SOURCES = matrix_mpolynomial_dense.pyxx
 matrix_mpolynomial_dense_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl -lgmpxx -lgmp -lcsage
-matrix_mpolynomial_dense_la_CPPFLAGS = $(AM_CPPFLAGS) -I@SAGE_INC@/singular -I@SAGE_INC@/factory \
+matrix_mpolynomial_dense_la_CPPFLAGS = $(AM_CPPFLAGS) @SINGULAR_INCLUDES@ \
                                        -D__STDC_LIMIT_MACROS
 matrix_mpolynomial_dense.cc: @srcdir@/matrix_mpolynomial_dense.pyxx
 

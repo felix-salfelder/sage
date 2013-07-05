@@ -41,3 +41,5 @@ misc_c_la_LIBADD = -lgmp -lcsage
 
 .pyx.c:
 	$(cython_call)
+
+noinst_HEADERS = bitset_pxd.pxi bitset.pxi

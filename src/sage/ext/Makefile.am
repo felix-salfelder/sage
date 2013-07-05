@@ -32,4 +32,9 @@ interpreters-stamp:
 
 CLEANFILES+=interpreters-stamp interpreters/wrapper*.p*
 
+noinst_HEADERS = \
+    cdefs.pxi gmp.pxi interrupt.pxi python_debug.pxi python.pxi \
+    python_rich_object.pxi python_slice.pxi random.pxi signals.pxi \
+    stdsage.pxi
+
 .PHONY: interpreters-stamp

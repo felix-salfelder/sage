@@ -16,42 +16,46 @@ if VPATH_BUILD
 %.c: CYTHON_EXTRA_PATH = $(abs_builddir)/
 endif
 
+# noinst_HEADERS = interp_rdf.h interp_cdf.h
+
 interpreters_LTLIBRARIES = wrapper_rdf.la wrapper_cdf.la wrapper_rr.la \
                            wrapper_py.la wrapper_el.la
 
-wrapper_rdf_la_SOURCES = wrapper_rdf.pyx interp_rdf.c
+nodist_wrapper_rdf_la_SOURCES = wrapper_rdf.pyx interp_rdf.c
 wrapper_rdf_la_LIBADD = -lgsl -lcsage
 
-wrapper_cdf_la_SOURCES = wrapper_cdf.pyx interp_cdf.c
+nodist_wrapper_cdf_la_SOURCES = wrapper_cdf.pyx interp_cdf.c
 wrapper_cdf_la_LIBADD = -lcsage
 
-wrapper_rr_la_SOURCES = wrapper_rr.pyx interp_rr.c
+nodist_wrapper_rr_la_SOURCES = wrapper_rr.pyx interp_rr.c
 wrapper_rr_la_LIBADD = -lmpfr -lcsage
 
-wrapper_py_la_SOURCES = wrapper_py.pyx interp_py.c
+nodist_wrapper_py_la_SOURCES = wrapper_py.pyx interp_py.c
 wrapper_py_la_LIBADD = -lmpfr -lcsage
 
-wrapper_el_la_SOURCES = wrapper_el.pyx interp_el.c
+nodist_wrapper_el_la_SOURCES = wrapper_el.pyx interp_el.c
 wrapper_el_la_LIBADD = -lmpfr -lcsage
 
+%.la: %.h
+
 # hmm.. implicit rule recursion. fix somehow
-w%apper_rdf.pyx inte%p_rdf.c \
-w%apper_cdf.pyx inte%p_cdf.c \
-w%apper_rr.pyx inte%p_rr.c \
-w%apper_py.pyx inte%p_py.c \
-w%apper_el.pyx inte%p_el.c: ../gen_inte%preters.py
+w%apper_rdf.pyx inte%p_rdf.c inte%p_rdf.h \
+w%apper_cdf.pyx inte%p_cdf.c inte%p_cdf.h \
+w%apper_rr.pyx inte%p_rr.c inte%p_rr.h \
+w%apper_py.pyx inte%p_py.c inte%p_py.h \
+w%apper_el.pyx inte%p_el.c inte%p_el.h: ../gen_inte%preters.py
 	cd ..; $(PYTHON) $(abs_srcdir)/../gen_interpreters.py
 
 interpreters: \
-    wrapper_rdf.pyx interp_rdf.c \
-    wrapper_cdf.pyx interp_cdf.c \
-    wrapper_rr.pyx interp_rr.c \
-    wrapper_py.pyx interp_py.c \
-    wrapper_el.pyx interp_el.c
+    wrapper_rdf.pyx interp_rdf.c interp_rdf.h \
+    wrapper_cdf.pyx interp_cdf.c interp_cdf.h \
+    wrapper_rr.pyx interp_rr.c interp_rr.h \
+    wrapper_py.pyx interp_py.c interp_py.h \
+    wrapper_el.pyx interp_el.c interp_el.h
 
 .PHONY: interpreters
 
-CLEANFILES+=*.h *.c timestamp
+CLEANFILES+=*.h *.c *.pyx *.pxd timestamp
 
 .pyx.c:
 	$(cython_call)
