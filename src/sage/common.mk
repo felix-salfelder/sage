@@ -19,6 +19,9 @@
 AM_LDFLAGS = -module -avoid-version
 AM_CPPFLAGS = @my_CPPFLAGS@
 
+# user specified MAKEFLAGS
+# AM_CPPFLAGS += $(CPPFLAGS)
+
 # just append globally, needed quite often.
 AM_CPPFLAGS += @CSAGE_INCLUDES@
 
@@ -81,7 +84,7 @@ MANUAL_DEP=$(MANUAL_DEP_PYX:%.pyx=$(DEPDIR)/%.Pcython)
 
 CLEANFILES = $(MANUAL_DEP_PYX:%.pyx=%.c) \
              $(MANUAL_DEP_PYX:%.pyx=%.cc) \
-             *.so $(PYS)
+             *.so *.pyc *.pyo
 
 @AMDEP_TRUE@ifneq (,$(MANUAL_DEP))
 @AMDEP_TRUE@@am__include@ $(DEPDIR)/*.Pcython
@@ -92,17 +95,21 @@ CLEANFILES = $(MANUAL_DEP_PYX:%.pyx=%.c) \
 	$(cython_call)
 
 PYS = $(filter %.py,$(DIST_COMMON))
+PYCS = $(PYS:%.py=%.pyc)
+PYOS = $(PYS:%.py=%.pyo)
 
-py-local: $(LTLIBRARIES:%.la=%.so) @VPATH_TRUE@pys
-$(LTLIBRARIES:%.la=%.so): %.so: .libs/%.so
-	$(LN_S) $< $@
+py-local: $(LTLIBRARIES:%.la=%.so) $(PYCS) $(PYOS)
+	
+$(LTLIBRARIES:%.la=%.so): %.so: %.la
+	-$(LN_S) .libs/$@ .
 
-@VPATH_TRUE@pys: $(PYS)
-@VPATH_TRUE@	for i in $(PYS); do \
-@VPATH_TRUE@	    mkdir -p `dirname $$i`; \
-@VPATH_TRUE@	    cp @srcdir@/$$i $$i; \
-@VPATH_TRUE@	done
-@VPATH_TRUE@.PHONY: pys
+# this is probably nonsense
+# @VPATH_TRUE@pys: $(PYS)
+# @VPATH_TRUE@	for i in $(PYS); do \
+# @VPATH_TRUE@	    mkdir -p `dirname $$i`; \
+# @VPATH_TRUE@	    cp @srcdir@/$$i $$i; \
+# @VPATH_TRUE@	done
+# @VPATH_TRUE@.PHONY: pys
 
 # manually implementing AM_EXTRA_RECURSIVE_TARGETS([py pycheck])
 # will be implemented in automake1.12
@@ -128,3 +135,17 @@ pycheck-local:
 
 #don't delete .cc .c just because gcc fails.
 @am__leading_dot@PRECIOUS: %.cc %.c
+
+# yes, this is ugly, may be replaced with make 3.82
+%.pyc: SHELL=/usr/bin/env bash
+%.pyo: SHELL=/usr/bin/env bash
+%.pyc: %.py
+	@echo "  PYC " $@
+	@VPATH_TRUE@@mkdir -p $(dir $@)
+	@echo -e 'import py_compile\npy_compile.compile("$<","$@")' \
+		| $(PYTHON) -
+%.pyo: %.py
+	@echo "  PYO " $@
+	@VPATH_TRUE@@mkdir -p $(dir $@)
+	@echo -e 'import py_compile\npy_compile.compile("$<","$@")' \
+		| $(PYTHON) -O -

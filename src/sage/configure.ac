@@ -29,7 +29,7 @@ AC_ARG_VAR(PATH, path)
 AC_ARG_VAR(PYTHONPATH, pythonpath)
 
 sage_local=$prefix
-test "x$prefix" = xNONE &&  sage_local=$ac_default_prefix
+test "x$prefix" = xNONE && sage_local=$ac_default_prefix
 AC_SUBST(SAGE_LOCAL, $sage_local)
 
 ## VPATH
@@ -131,20 +131,20 @@ AC_SUBST([FPLLL_INCLUDES]) dnl currently unneeded
 # extra packages: FIXME: just allow sage packages, if desired
 AC_CHECK_HEADER([coxeter3.h], [HAVE_LIBCOXETER3=yes], [HAVE_LIBCOXETER3=no])
 AC_SUBST([HAVE_LIBCOXETER3])
-AM_CONDITIONAL([USE_LIBCOXETER3], [ test $HAVE_LIBCOXETER3 -eq yes ])
+AM_CONDITIONAL([USE_LIBCOXETER3], [ test $HAVE_LIBCOXETER3 = yes ])
 
 AC_CHECK_HEADER([fes.h], [HAVE_LIBFES=yes], [HAVE_LIBFES=no])
 AC_SUBST([HAVE_LIBFES])
-AM_CONDITIONAL([USE_LIBFES], [ test $HAVE_LIBFES -eq yes ])
+AM_CONDITIONAL([USE_LIBFES], [ test $HAVE_LIBFES = yes ])
 
 # lrcalc
 old_CPPFLAGS=$CPPFLAGS
+HAVE_LIBLRCALC=no
 AC_ARG_WITH(lrcalc,
     [  --with-lrcalc=lrcalc prefix],
     [   AC_MSG_RESULT([$with_lrcalc])
         case $with_lrcalc in
           no)
-            HAVE_LIBLRCALC=no
             ;;
           yes)
             dnl try to find it somewhere here... (better idea?!)
@@ -159,8 +159,7 @@ AC_ARG_WITH(lrcalc,
             CPPFLAGS+=" $LIBLRCALC_INCLUDES"
             AC_CHECK_HEADER([symfcn.h],
                             [HAVE_LIBLRCALC=yes],
-                            [HAVE_LIBLRCALC=no
-                             LIBLRCALC_INCLUDES=
+                            [LIBLRCALC_INCLUDES=
                             ])
             ;;
         esac
@@ -169,8 +168,7 @@ AC_ARG_WITH(lrcalc,
             CPPFLAGS+=" $LIBLRCALC_INCLUDES"
             AC_CHECK_HEADER([symfcn.h],
                             [HAVE_LIBLRCALC=yes],
-                            [HAVE_LIBLRCALC=no
-                             LIBLRCALC_INCLUDES=
+                            [LIBLRCALC_INCLUDES=
                             ])
     ]
 )
@@ -178,29 +176,29 @@ CPPFLAGS=$old_CPPFLAGS
 AC_SUBST([LIBLRCALC_INCLUDES])
 AC_SUBST([HAVE_LIBLRCALC])
 dnl AC_CHECK_LIB([lrcalc], [lrcalc], lrcalc=1))
-AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC -eq yes ])
+AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC = yes ])
 
 AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
 
 AC_CHECK_HEADER([gurobi.h], [HAVE_LIBGUROBI=yes], [HAVE_LIBGUROBI=no])
 AC_SUBST([HAVE_LIBGUROBI])
-AM_CONDITIONAL([USE_LIBGUROBI], [ test $HAVE_LIBGUROBI -eq yes ])
+AM_CONDITIONAL([USE_LIBGUROBI], [ test $HAVE_LIBGUROBI = yes ])
 
 AC_CHECK_HEADER([cbc.h], [HAVE_LIBCBC=yes], [HAVE_LIBCBC=no])
 AC_SUBST([HAVE_LIBCBC])
-AM_CONDITIONAL([USE_LIBCBC], [ test $HAVE_LIBCBC -eq yes ])
+AM_CONDITIONAL([USE_LIBCBC], [ test $HAVE_LIBCBC = yes ])
 
 AC_CHECK_HEADER([cplex.h], [HAVE_LIBCPLEX=yes], [HAVE_LIBCPLEX=no])
 AC_SUBST([HAVE_LIBCPLEX])
-AM_CONDITIONAL([USE_LIBCPLEX], [ test $HAVE_LIBCPLEX -eq 1 ])
+AM_CONDITIONAL([USE_LIBCPLEX], [ test $HAVE_LIBCPLEX = yes ])
 
 AC_CHECK_HEADER([coin.h], [HAVE_LIBCOIN=yes], [HAVE_LIBCOIN=no])
 AC_SUBST([HAVE_LIBCOIN])
-AM_CONDITIONAL([USE_LIBCOIN], [ test $HAVE_LIBCOIN -eq yes ])
+AM_CONDITIONAL([USE_LIBCOIN], [ test $HAVE_LIBCOIN = yes ])
 
 AC_CHECK_HEADER([Solver.h], [HAVE_LIBCRYPTOMINISAT=yes], [HAVE_LIBCRYPTOMINISAT=no])
 AC_SUBST([HAVE_LIBCRYPTOMINISAT])
-AM_CONDITIONAL([USE_LIBCRYPTOMINISAT], [ test $HAVE_LIBCRYPTOMINISAT -eq yes ])
+AM_CONDITIONAL([USE_LIBCRYPTOMINISAT], [ test $HAVE_LIBCRYPTOMINISAT = yes ])
 
 AC_CHECK_LIB([readline], [main])
 AC_SUBST(HAVE_LIBREADLINE)
@@ -308,33 +306,46 @@ AC_SUBST(SAGE_DIR)
 AS_AC_EXPAND(SAGE_ETC, $sysconfdir)
 
 #### data packages ####
+# default: sort of pkgdatadir
+AC_ARG_WITH(dbdir,
+            AS_HELP_STRING([--with-dbdir=DIR].[use databases from DIR]),
+            [dbdir=$withval],
+            [dbdir=$sage_local/share/sage])
 
-AS_IF([test -d $sage_local/share/conway_polynomials],
-      [CONWAY_DATA_DIR=$sage_local/share/conway_polynomials],
-      [test -d /usr/share/sagemath/conway_polynomials],
+AS_IF([test -d $dbdir/conway_polynomials],
+      [CONWAY_DATA_DIR=$dbdir/conway_polynomials],
+      [test -d /usr/share/sage/conway_polynomials], #gentoo
+      [CONWAY_DATA_DIR=/usr/share/sage/conway_polynomials],
+      [test -d /usr/share/sagemath/conway_polynomials], #debian
       [CONWAY_DATA_DIR=/usr/share/sagemath/conway_polynomials],
-      [CONWAY_DATA_DIR=/usr/share/conway_polynomials])
+      [CONWAY_DATA_DIR=$sage_local/share/conway_polynomials]) dnl hack!
 AC_SUBST([CONWAY_DATA_DIR])
 AM_SUBST_NOTMAKE([CONWAY_DATA_DIR])
 
-AS_IF([test -d $sage_local/share/graphs],
+AS_IF([test -d $dbdir/graphs],
       [GRAPHS_DATA_DIR=$sage_local/share/graphs],
+      [test -d /usr/share/sage/graphs],
+      [GRAPHS_DATA_DIR=/usr/share/sage/graphs],
       [test -d /usr/share/sagemath/graphs],
       [GRAPHS_DATA_DIR=/usr/share/sagemath/graphs],
       [AC_MSG_ERROR([cannot find graphs database])])
 AC_SUBST([GRAPHS_DATA_DIR])
 AM_SUBST_NOTMAKE([GRAPHS_DATA_DIR])
 
-AS_IF([test -d $sage_local/share/reflexive_polytopes],
+AS_IF([test -d $dbdir/reflexive_polytopes],
       [POLYTOPE_DATA_DIR=$sage_local/share/reflexive_polytopes],
+      [test -d /usr/share/sage/reflexive_polytopes],
+      [POLYTOPE_DATA_DIR=/usr/share/sage/reflexive_polytopes],
       [test -d /usr/share/sagemath/reflexive_polytopes],
       [POLYTOPE_DATA_DIR=/usr/share/sagemath/reflexive_polytopes],
       [AC_MSG_ERROR([cannot find polytopes database])])
 AC_SUBST([POLYTOPE_DATA_DIR])
 AM_SUBST_NOTMAKE([POLYTOPE_DATA_DIR])
 
-AS_IF([test -d $sage_local/share/ellvurves],
+AS_IF([test -d $dbdir/share/ellvurves],
       [ELLCURVE_DATA_DIR=$sage_local/share/ellcurves],
+      [test -d /usr/share/sage/ellcurves],
+      [ELLCURVE_DATA_DIR=/usr/share/sage/ellcurves],
       [test -d /usr/share/sagemath/ellcurves],
       [ELLCURVE_DATA_DIR=/usr/share/sagemath/ellcurves],
       [AC_MSG_ERROR([cannot find elliptic curves])])
