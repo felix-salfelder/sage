@@ -46,7 +46,7 @@ if [ $? -ne 0 ]; then
     echo >&2 "Error building givaro"
 fi
 
-$MAKE install
+$MAKE install INSTALL=sage-dist-install DESTDIR="$DESTDIR"
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing givaro"
     exit 1
