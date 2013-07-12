@@ -233,7 +233,7 @@ AUTHORS:
 #     for example. The advantage of this more complicated approach is
 #     that you can then add extra methods to your data type. For
 #     example, GapElement_List instances can access the individual
-#     elements with the usual gapelement[i] syntax.
+#     elements with the usual element[i] syntax.
 #
 # TODO
 #
@@ -256,16 +256,14 @@ from sage.libs.gap.element cimport *
 ### Debugging ##############################################################
 ############################################################################
 
-cdef void report(libGAP_Obj bag):
-    print libGAP_TNAM_OBJ(bag), <int>libGAP_TNUM_BAG(bag), <int>libGAP_SIZE_BAG(bag)
-
-
-cdef void print_gasman_objects():
-    libgap_enter()
-    libGAP_CallbackForAllBags(report)
-    libgap_exit()
-
-
+# cdef void report(libGAP_Obj bag):
+#     print libGAP_TNAM_OBJ(bag), <int>libGAP_TNUM_BAG(bag), <int>libGAP_SIZE_BAG(bag)
+# 
+# 
+# cdef void print_gasman_objects():
+#     libgap_enter()
+#     libGAP_CallbackForAllBags(report)
+#     libgap_exit()
 
 
 from sage.misc.lazy_import import is_during_startup

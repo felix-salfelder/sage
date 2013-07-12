@@ -21,6 +21,9 @@ from element cimport *
 ############################################################################
 ### Hooking into the GAP memory management #################################
 ############################################################################
+# ????
+cdef extern from *:
+    ctypedef long Py_hash_t
 
 cdef class ObjWrapper(object):
     """
@@ -86,7 +89,7 @@ cdef class ObjWrapper(object):
             sage: hash(x)
             0
         """
-        return <int>(self.value)
+        return <Py_hash_t>(self.value)
 
 
 cdef ObjWrapper wrap_obj(libGAP_Obj obj):
@@ -157,17 +160,8 @@ def gap_root():
         sage: gap_root()   # random output
         '/home/vbraun/opt/sage-5.3.rc0/local/gap/latest'
     """
-    import os.path
-    gapdir = os.path.join(SAGE_LOCAL, 'gap', 'latest')
-    if os.path.exists(gapdir):
-        return gapdir
-    print 'The gap-4.5.5.spkg (or later) seems to be not installed!'
-    gap_sh = open(os.path.join(SAGE_LOCAL, 'bin', 'gap')).read().splitlines()
-    gapdir = filter(lambda dir:dir.strip().startswith('GAP_DIR'), gap_sh)[0]
-    gapdir = gapdir.split('"')[1]
-    gapdir = gapdir.replace('$SAGE_LOCAL', SAGE_LOCAL)
-    return gapdir
-
+    from sage.env import GAP_DATA_DIR
+    return GAP_DATA_DIR
 
 cdef initialize():
     """
@@ -366,10 +360,10 @@ cpdef memory_usage():
 
     See :meth:`~sage.libs.gap.libsagegap.Gap.mem` for details.
     """
-    cdef size_t SizeMptrsArea = libGAP_OldBags - libGAP_MptrBags
+    cdef size_t SizeMptrsArea = <size_t>(libGAP_OldBags - libGAP_MptrBags)
     cdef size_t SizeOldBagsArea = libGAP_YoungBags - libGAP_OldBags
     cdef size_t SizeYoungBagsArea = libGAP_AllocBags - libGAP_YoungBags
-    cdef size_t SizeAllocationArea = libGAP_StopBags - libGAP_AllocBags
+    cdef size_t SizeAllocationArea = <size_t>(libGAP_StopBags - libGAP_AllocBags)
     cdef size_t SizeUnavailableArea = libGAP_EndBags - libGAP_StopBags
     return (SizeMptrsArea, SizeOldBagsArea, SizeYoungBagsArea, SizeAllocationArea, SizeUnavailableArea)
 

@@ -1,0 +1,82 @@
+
+
+libGAP_True = True;
+libGAP_False = False;
+
+libGAP_NrError = NrError;
+libGAP_Symbol = Symbol;
+
+libGAP_GetSymbol = GetSymbol;
+libGAP_NrAllBags = NrAllBags;
+libGAP_Last = Last;
+libGAP_Last2 = Last2;
+libGAP_Last3 = Last3;
+
+libGAP_AllocBags = AllocBags;
+libGAP_ChangedBags = ChangedBags;
+libGAP_EndBags = EndBags;
+libGAP_MarkedBags = MarkedBags;
+libGAP_MptrBags = MptrBags;
+libGAP_OldBags = OldBags;
+libGAP_StopBags = StopBags;
+libGAP_YoungBags = YoungBags;
+
+
+/* gasman.h */
+libGAP_InitGlobalBag = InitGlobalBag;
+libGAP_BottomLVars = BottomLVars;
+libGAP_StackBottomBags = StackBottomBags;
+libGAP_FuncGetBottomLVars = FuncGetBottomLVars;
+
+/* gap.h */
+libGAP_ViewObjHandler = ViewObjHandler;
+
+/* scanner.h */
+libGAP_ClearError = ClearError;
+
+/* read.h
+libGAP_ReadEvalResult = ReadEvalResult;
+*/
+libGAP_ReadEvalCommand = ReadEvalCommand;
+
+/* records.h */
+libGAP_NamesRNam = NamesRNam;
+libGAP_RNamName = RNamName;
+libGAP_ElmRecFuncs = ElmRecFuncs;
+libGAP_IsRecFuncs = IsRecFuncs;
+
+/* precord.h */
+libGAP_NEW_PREC = NEW_PREC;
+libGAP_AssPRec = AssPRec;
+
+/* strings.h */
+libGAP_IsStringFuncs = IsStringFuncs;
+libGAP_NEW_STRING = NEW_STRING;
+
+/* arith.h */
+libGAP_QuoFuncs = QuoFuncs;
+libGAP_ModFuncs = ModFuncs;
+libGAP_EqFuncs = EqFuncs;
+libGAP_LtFuncs = LtFuncs;
+libGAP_ProdFuncs = ProdFuncs;
+libGAP_DiffFuncs = DiffFuncs;
+libGAP_SumFuncs = SumFuncs;
+libGAP_PowFuncs = PowFuncs;
+
+/* gasman.h */
+libGAP_CheckMasterPointers = CheckMasterPointers;
+libGAP_CollectBags = CollectBags;
+
+/* gvars.h */
+libGAP_PtrGVars = PtrGVars;
+libGAP_GVarName = GVarName;
+libGAP_AssGVar = AssGVar;
+
+/* listfunc.h */
+libGAP_AddList = AddList;
+libGAP_AddPlist = AddPlist;
+
+libGAP_InfoBags = InfoBags;
+libGAP_CallbackForAllBags = CallbackForAllBags;
+
+
