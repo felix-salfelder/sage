@@ -1,0 +1,10 @@
+libgap {
+global:
+	libGAP_*;
+	libgap_*;
+	StackBottomBags;
+	BottomLVars;
+	ReadEvalResult;
+local:
+	*;
+};

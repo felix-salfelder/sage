@@ -12,7 +12,7 @@
 include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
 
-cdef extern from "libgap/libgap.h":
+cdef extern from "sage/libs/gap/libgap_wrap.h":
     void libgap_initialize(int argc, char** argv)
     ctypedef void(*libgap_gasman_callback_ptr)()
     void libgap_set_gasman_callback(libgap_gasman_callback_ptr callback)
@@ -28,20 +28,20 @@ cdef extern from "libgap/libgap.h":
     void libgap_enter()
     void libgap_exit()
 
-cdef extern from "libgap/system.h":
+# cdef extern from "libgap/system.h":
     ctypedef char libGAP_Char
     ctypedef unsigned char libGAP_UChar
 
-cdef extern from "libgap/code.h":
+# cdef extern from "libgap/code.h":
     ctypedef unsigned int libGAP_Stat
     ctypedef libGAP_Stat* libGAP_PtrBody
 
-cdef extern from "libgap/gap.h":
+# cdef extern from "libgap/gap.h":
     ctypedef unsigned int libGAP_UInt
     ctypedef void* libGAP_ExecStatus
     void libGAP_ViewObjHandler(void*)
     void libGAP_InitializeGap(int*, char** argv)
-    void libGAP_set_system_variables(char**, char**)
+#    void libGAP_set_system_variables(char**, char**)
     cdef libGAP_UInt libGAP_Last
     cdef libGAP_UInt libGAP_Last2
     cdef libGAP_UInt libGAP_Last3
@@ -54,7 +54,7 @@ cdef extern from "libgap/gap.h":
     cdef libGAP_ExecStatus libGAP_STATUS_ERROR
     cdef libGAP_ExecStatus libGAP_STATUS_QQUIT
 
-cdef extern from "libgap/objects.h":
+# cdef extern from "libgap/objects.h":
     ctypedef void* libGAP_Obj
     libGAP_Obj libGAP_SHALLOW_COPY_OBJ(libGAP_Obj obj)
     bint libGAP_IS_INTOBJ(libGAP_Obj obj)
@@ -132,100 +132,100 @@ cdef extern from "libgap/objects.h":
     cdef int libGAP_TESTING
     cdef int libGAP_LAST_TESTING_TNUM
 
-cdef extern from "libgap/read.h":
+# cdef extern from "libgap/read.h":
     void* libGAP_ReadEvalCommand(libGAP_Obj context)
     void* libGAP_ReadEvalFile()
-    void* libGAP_ReadEvalResult
+    libGAP_Obj libGAP_ReadEvalResult
     bint libGAP_READ_ERROR()
 
-cdef extern from "libgap/scanner.h":
+# cdef extern from "libgap/scanner.h":
     void libGAP_ClearError()
     libGAP_UInt libGAP_NrError
     libGAP_UInt libGAP_Symbol
     void libGAP_GetSymbol()
     void libGAP_Match (libGAP_UInt symbol, char* msg, libGAP_UInt skipto)
-    int libGAP_S_ILLEGAL
-    int libGAP_S_IDENT
-    int libGAP_S_UNBIND
-    int libGAP_S_ISBOUND
-    int libGAP_S_TRYNEXT
-    int libGAP_S_INFO
-    int libGAP_S_ASSERT
-    int libGAP_S_SAVEWS
-    int libGAP_S_LOADWS
-    int libGAP_S_LBRACK
-    int libGAP_S_LBRACE
-    int libGAP_S_BLBRACK
-    int libGAP_S_BLBRACE
-    int libGAP_S_RBRACK
-    int libGAP_S_RBRACE
-    int libGAP_S_DOT
-    int libGAP_S_BDOT
-    int libGAP_S_LPAREN
-    int libGAP_S_RPAREN
-    int libGAP_S_COMMA
-    int libGAP_S_DOTDOT
-    int libGAP_S_COLON
-    int libGAP_S_PARTIALINT
-    int libGAP_S_INT
-    int libGAP_S_TRUE
-    int libGAP_S_FALSE
-    int libGAP_S_CHAR
-    int libGAP_S_STRING
-    int libGAP_S_PARTIALSTRING
-    int libGAP_S_REC
-    int libGAP_S_FUNCTION
-    int libGAP_S_LOCAL
-    int libGAP_S_END
-    int libGAP_S_MAPTO
-    int libGAP_S_MULT
-    int libGAP_S_DIV
-    int libGAP_S_MOD
-    int libGAP_S_POW
-    int libGAP_S_PLUS
-    int libGAP_S_MINUS
-    int libGAP_S_EQ
-    int libGAP_S_LT
-    int libGAP_S_GT
-    int libGAP_S_NE
-    int libGAP_S_LE
-    int libGAP_S_GE
-    int libGAP_S_IN
-    int libGAP_S_NOT
-    int libGAP_S_AND
-    int libGAP_S_OR
-    int libGAP_S_ASSIGN
-    int libGAP_S_IF
-    int libGAP_S_FOR
-    int libGAP_S_WHILE
-    int libGAP_S_REPEAT
-    int libGAP_S_THEN
-    int libGAP_S_ELIF
-    int libGAP_S_ELSE
-    int libGAP_S_FI
-    int libGAP_S_DO
-    int libGAP_S_OD
-    int libGAP_S_UNTIL
-    int libGAP_S_BREAK
-    int libGAP_S_RETURN
-    int libGAP_S_QUIT
-    int libGAP_S_QQUIT
-    int libGAP_S_CONTINUE
-    int libGAP_S_SEMICOLON
-    int libGAP_S_EOF
+    libGAP_UInt libGAP_S_ILLEGAL
+    libGAP_UInt libGAP_S_IDENT
+    libGAP_UInt libGAP_S_UNBIND
+    libGAP_UInt libGAP_S_ISBOUND
+    libGAP_UInt libGAP_S_TRYNEXT
+    libGAP_UInt libGAP_S_INFO
+    libGAP_UInt libGAP_S_ASSERT
+    libGAP_UInt libGAP_S_SAVEWS
+    libGAP_UInt libGAP_S_LOADWS
+    libGAP_UInt libGAP_S_LBRACK
+    libGAP_UInt libGAP_S_LBRACE
+    libGAP_UInt libGAP_S_BLBRACK
+    libGAP_UInt libGAP_S_BLBRACE
+    libGAP_UInt libGAP_S_RBRACK
+    libGAP_UInt libGAP_S_RBRACE
+    libGAP_UInt libGAP_S_DOT
+    libGAP_UInt libGAP_S_BDOT
+    libGAP_UInt libGAP_S_LPAREN
+    libGAP_UInt libGAP_S_RPAREN
+    libGAP_UInt libGAP_S_COMMA
+    libGAP_UInt libGAP_S_DOTDOT
+    libGAP_UInt libGAP_S_COLON
+    libGAP_UInt libGAP_S_PARTIALINT
+    libGAP_UInt libGAP_S_INT
+    libGAP_UInt libGAP_S_TRUE
+    libGAP_UInt libGAP_S_FALSE
+    libGAP_UInt libGAP_S_CHAR
+    libGAP_UInt libGAP_S_STRING
+    libGAP_UInt libGAP_S_PARTIALSTRING
+    libGAP_UInt libGAP_S_REC
+    libGAP_UInt libGAP_S_FUNCTION
+    libGAP_UInt libGAP_S_LOCAL
+    libGAP_UInt libGAP_S_END
+    libGAP_UInt libGAP_S_MAPTO
+    libGAP_UInt libGAP_S_MULT
+    libGAP_UInt libGAP_S_DIV
+    libGAP_UInt libGAP_S_MOD
+    libGAP_UInt libGAP_S_POW
+    libGAP_UInt libGAP_S_PLUS
+    libGAP_UInt libGAP_S_MINUS
+    libGAP_UInt libGAP_S_EQ
+    libGAP_UInt libGAP_S_LT
+    libGAP_UInt libGAP_S_GT
+    libGAP_UInt libGAP_S_NE
+    libGAP_UInt libGAP_S_LE
+    libGAP_UInt libGAP_S_GE
+    libGAP_UInt libGAP_S_IN
+    libGAP_UInt libGAP_S_NOT
+    libGAP_UInt libGAP_S_AND
+    libGAP_UInt libGAP_S_OR
+    libGAP_UInt libGAP_S_ASSIGN
+    libGAP_UInt libGAP_S_IF
+    libGAP_UInt libGAP_S_FOR
+    libGAP_UInt libGAP_S_WHILE
+    libGAP_UInt libGAP_S_REPEAT
+    libGAP_UInt libGAP_S_THEN
+    libGAP_UInt libGAP_S_ELIF
+    libGAP_UInt libGAP_S_ELSE
+    libGAP_UInt libGAP_S_FI
+    libGAP_UInt libGAP_S_DO
+    libGAP_UInt libGAP_S_OD
+    libGAP_UInt libGAP_S_UNTIL
+    libGAP_UInt libGAP_S_BREAK
+    libGAP_UInt libGAP_S_RETURN
+    libGAP_UInt libGAP_S_QUIT
+    libGAP_UInt libGAP_S_QQUIT
+    libGAP_UInt libGAP_S_CONTINUE
+    libGAP_UInt libGAP_S_SEMICOLON
+    libGAP_UInt libGAP_S_EOF
 
-cdef extern from "libgap/gvars.h":
+# cdef extern from "libgap/gvars.h":
     libGAP_UInt libGAP_GVarName(char* name)
     void libGAP_AssGVar(libGAP_UInt gvar, libGAP_Obj val)
     libGAP_Obj libGAP_VAL_GVAR(libGAP_UInt gvar)
 
-cdef extern from "libgap/string.h":
+# cdef extern from "libgap/string.h":
     char* libGAP_CSTR_STRING(libGAP_Obj list)
     int libGAP_GET_LEN_STRING(libGAP_Obj list)
     bint libGAP_IS_STRING(libGAP_Obj obj)
     void libGAP_C_NEW_STRING(libGAP_Obj new_gap_string, int length, char* c_string)
 
-cdef extern from "libgap/gasman.h":
+# cdef extern from "libgap/gasman.h":
     void libGAP_InitGlobalBag(libGAP_Obj* addr, char* cookie)
     libGAP_Obj libGAP_NewBag(libGAP_UInt type, libGAP_UInt size)
     void libGAP_CHANGED_BAG(libGAP_Obj bag)
@@ -253,11 +253,7 @@ cdef extern from "libgap/gasman.h":
     libGAP_Obj* libGAP_MarkedBags
     libGAP_Obj* libGAP_ChangedBags
 
-# in gasman.c but not declared in gasman.h
-cdef extern libGAP_Obj* libGAP_StopBags
-cdef extern libGAP_Obj* libGAP_EndBags
-
-cdef extern from "libgap/ariths.h":
+# cdef extern from "libgap/ariths.h":
     libGAP_Obj libGAP_SUM (libGAP_Obj, libGAP_Obj)
     libGAP_Obj libGAP_DIFF(libGAP_Obj, libGAP_Obj)
     libGAP_Obj libGAP_PROD(libGAP_Obj, libGAP_Obj)
@@ -278,30 +274,30 @@ cdef extern from "libgap/ariths.h":
     bint libGAP_EQ(libGAP_Obj opL, libGAP_Obj opR)
     bint libGAP_LT(libGAP_Obj opL, libGAP_Obj opR)
 
-cdef extern from "libgap/calls.h":
+# cdef extern from "libgap/calls.h":
     bint libGAP_IS_FUNC(libGAP_Obj)
 
-cdef extern from "libgap/plist.h":
+# cdef extern from "libgap/plist.h":
     libGAP_Obj libGAP_NEW_PLIST(int type, int len)
     bint libGAP_IS_PLIST(libGAP_Obj lst)
     int libGAP_LEN_PLIST(libGAP_Obj lst)
     libGAP_Obj libGAP_ELM_PLIST(libGAP_Obj lst, int pos)
 
-cdef extern from "libgap/lists.h":
+# cdef extern from "libgap/lists.h":
     void libGAP_UNB_LIST(libGAP_Obj list, int pos)
 
-cdef extern from "libgap/listfunc.h":
+# cdef extern from "libgap/listfunc.h":
     void libGAP_AddList(libGAP_Obj list, libGAP_Obj obj)
     void libGAP_AddPlist(libGAP_Obj list, libGAP_Obj obj)
 
-cdef extern from "libgap/records.h":
+# cdef extern from "libgap/records.h":
     char* libGAP_NAME_RNAM(libGAP_UInt rnam)
     libGAP_UInt libGAP_RNamIntg(int i)
     bint libGAP_IS_REC(libGAP_Obj obj)
     libGAP_Obj libGAP_ELM_REC(libGAP_Obj rec, libGAP_UInt rnam)
     libGAP_UInt libGAP_RNamName(libGAP_Char* name)
 
-cdef extern from "libgap/precord.h":
+# cdef extern from "libgap/precord.h":
     libGAP_Obj libGAP_NEW_PREC(int len)
     int libGAP_LEN_PREC(libGAP_Obj rec)
     int libGAP_GET_RNAM_PREC(libGAP_Obj rec, int i)
@@ -311,18 +307,19 @@ cdef extern from "libgap/precord.h":
     bint libGAP_IsbPRec(libGAP_Obj rec, libGAP_UInt rnam)
     libGAP_Obj libGAP_ElmPRec(libGAP_Obj rec, libGAP_UInt rnam)
 
-cdef extern from "libgap/cyclotom.h":
-    pass
+# cdef extern from "libgap/cyclotom.h":
+#    pass
 
-cdef extern from "libgap/bool.h":
+# cdef extern from "libgap/bool.h":
     cdef libGAP_Obj libGAP_True
     cdef libGAP_Obj libGAP_False
 
-cdef extern from "libgap/vars.h":
-     cdef int libGAP_T_LVARS
-     libGAP_Obj libGAP_BottomLVars
+# cdef extern from "libgap/vars.h":
+    cdef int libGAP_T_LVARS
+    cdef libGAP_Obj libGAP_BottomLVars
+    libGAP_Obj libGAP_FuncGetBottomLVars(Obj)
 
-
-
-
+# in gasman.c but not declared in gasman.h
+cdef extern libGAP_Obj* libGAP_StopBags
+cdef extern libGAP_Obj* libGAP_EndBags
 

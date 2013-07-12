@@ -33,3 +33,10 @@ groups_affine_gps_PYTHON = \
     affine_gps/euclidean_group.py \
     affine_gps/group_element.py \
     affine_gps/__init__.py
+
+# not using config.h ... (for now?)
+if HAVE_LIBGAP
+LIBGAP_ARG=-DHAVE_LIBGAP
+endif
+
+libgap_wrapper_la_CPPFLAGS = -I@top_builddir@/libs/gap $(LIBGAP_ARG) $(AM_CPPFLAGS)
