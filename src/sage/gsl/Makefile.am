@@ -22,6 +22,7 @@ noinst_HEADERS = \
     gsl_synchrotron.pxi gsl_transport.pxi gsl_trig.pxi gsl_vector_complex.pxi \
     gsl_vector.pxi gsl_wavelet.pxi gsl_zeta.pxi math.pxi
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 gsl_LTLIBRARIES = \
 	 callback.la dwt.la fft.la gsl_array.la integration.la interpolation.la \
 	 ode.la probability_distribution.la
@@ -42,6 +43,3 @@ ode_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
 ode_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
 probability_distribution_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
 probability_distribution_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-
-.pyx.c:
-	$(cython_call)

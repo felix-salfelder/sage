@@ -7,7 +7,8 @@ include $(top_srcdir)/common.mk
 extdir = $(pythondir)/sage/ext
 ext_PYTHON = gen_interpreters.py __init__.py
 
-ext_LTLIBRARIES = c_lib.la fast_callable.la fast_eval.la interactive_constructors_c.la multi_modular.la pselect.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+ext_LTLIBRARIES = c_lib.la fast_callable.la fast_eval.la interactive_constructors_c.la multi_modular.la pselect.la
 c_lib_la_LIBADD = -lcsage
 
 multi_modular_la_LIBADD = -lgmp -lcsage
@@ -16,10 +17,7 @@ multi_modular_la_CFLAGS = $(AM_CFLAGS) -std=c99
 fast_callable_la_LIBADD = -lcsage
 fast_eval_la_LIBADD = -lcsage
 
-.pyx.c:
-	$(cython_call)
-
-#FIXME?
+#FIXME (how?)
 interpreters-stamp:
 	$(PYTHON) @srcdir@/gen_interpreters.py
 # this is needed to make cython find the just generated .pxd files

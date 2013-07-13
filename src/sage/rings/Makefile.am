@@ -22,6 +22,7 @@ rings_PYTHON = \
     field_element.py principal_ideal_domain_element.py commutative_ring_element.py \
     real_interval_field.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 rings_LTLIBRARIES = \
     bernmm.la bernoulli_mod_p.la complex_double.la \
     complex_interval.la complex_mpc.la complex_number.la factorint.la fast_arith.la \
@@ -33,11 +34,9 @@ rings_LTLIBRARIES = \
 
 bernmm_la_SOURCES = bernmm.pyxx bernmm/bern_modp.cpp bernmm/bern_modp_util.cpp bernmm/bern_rat.cpp
 bernmm_la_LIBADD = -lntl -lgmp -lpthread -lcsage
-bernmm.cc: @srcdir@/bernmm.pyxx
 bernmm_la_CPPFLAGS = -DUSE_THREADS=1 -DTHREAD_STACK_SIZE=4096 $(AM_CPPFLAGS)
 
 bernoulli_mod_p_la_LIBADD = -lntl
-bernoulli_mod_p.cc: @srcdir@/bernoulli_mod_p.pyxx
 bernoulli_mod_p_la_SOURCES = bernoulli_mod_p.pyxx
 bernoulli_mod_p_la_CPPFLAGS = -I@SAGE_DIR@/libs/ntl/ $(AM_CPPFLAGS)
 
@@ -54,7 +53,7 @@ fast_arith_la_LIBADD = -lpari -lgmp -lcsage
 
 # fixme?
 fraction_field_FpT_la_LIBADD = -lcsage -lflint -lgmp -lgmpxx -lntl -lzn_poly
-fraction_field_FpT.cc: @srcdir@/fraction_field_FpT.pyx
+fraction_field_FpT_la_SOURCES = fraction_field_FpT.pyxx
 
 integer_la_LIBADD = -lntl -lpari -lflint -lgmp -lcsage
 integer_la_CPPFLAGS = $(PYTHON_INCLUDES) $(AM_CPPFLAGS)
@@ -84,8 +83,3 @@ real_interval_absolute_la_LIBADD = -lgmp
 real_mpfi_la_LIBADD = -lmpfi -lmpfr -lgmp -lcsage
 
 real_mpfr_la_LIBADD = -lmpfr -lpari -lgmp -lcsage
-
-.pyx.c:
-	$(cython_call)
-.pyx.cc:
-	$(cython_call)

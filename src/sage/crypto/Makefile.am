@@ -6,9 +6,8 @@ include $(top_srcdir)/common.mk
 cryptodir = $(pythondir)/sage/crypto
 crypto_PYTHON = lattice.py __init__.py stream_cipher.py cryptosystem.py stream.py all.py classical.py lwe.py classical_cipher.py cipher.py lfsr.py util.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 crypto_LTLIBRARIES = boolean_function.la
-.pyx.c:
-	$(cython_call)
 
 crypto_mqdir = $(cryptodir)/mq
 crypto_mq_PYTHON = \

@@ -10,6 +10,7 @@ rings_padics_PYTHON = \
     padic_extension_generic.py padic_extension_leaves.py padic_generic.py \
     precision_error.py tests.py tutorial.py unramified_extension_generic.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 rings_padics_LTLIBRARIES = \
     local_generic_element.la padic_ZZ_pX_CA_element.la \
     padic_ZZ_pX_CR_element.la padic_ZZ_pX_FM_element.la padic_ZZ_pX_element.la \
@@ -18,33 +19,35 @@ rings_padics_LTLIBRARIES = \
     padic_ext_element.la padic_fixed_mod_element.la padic_generic_element.la \
     padic_printing.la pow_computer.la pow_computer_ext.la
 
-padic_ZZ_pX_CA_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
-padic_ZZ_pX_CA_element.cc: @srcdir@/padic_ZZ_pX_CA_element.pyxx
 padic_ZZ_pX_CA_element_la_SOURCES = padic_ZZ_pX_CA_element.pyxx
+padic_ZZ_pX_CA_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
 
+padic_ZZ_pX_CR_element_la_SOURCES = padic_ZZ_pX_CR_element.pyxx
 padic_ZZ_pX_CR_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
-padic_ZZ_pX_CR_element.cc: @srcdir@/padic_ZZ_pX_CR_element.pyx
+
+padic_ZZ_pX_FM_element_la_SOURCES = padic_ZZ_pX_FM_element.pyxx
 padic_ZZ_pX_FM_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
-padic_ZZ_pX_FM_element.cc: @srcdir@/padic_ZZ_pX_FM_element.pyx
+
+padic_ZZ_pX_element_la_SOURCES = padic_ZZ_pX_element.pyxx
 padic_ZZ_pX_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
-padic_ZZ_pX_element.cc: @srcdir@/padic_ZZ_pX_element.pyx
+
 padic_base_coercion_la_LIBADD = -lgmp -lcsage
+
 padic_base_generic_element_la_LIBADD = -lgmp
 padic_capped_absolute_element_la_LIBADD = -lgmp -lcsage
 padic_capped_relative_element_la_LIBADD = -lgmp -lcsage
+
+padic_ext_element_la_SOURCES = padic_ext_element.pyxx
 padic_ext_element_la_LIBADD = -lntl -lgmp -lcsage -lgmpxx -lm -lstdc++
-padic_ext_element.cc: @srcdir@/padic_ext_element.pyx
+
 padic_fixed_mod_element_la_LIBADD = -lgmp -lcsage
 padic_generic_element_la_LIBADD = -lgmp -lcsage
 
 padic_printing_la_LIBADD = -lgmp -lntl -lcsage -lgmpxx -lm -lstdc++
-padic_printing.cc: @srcdir@/padic_printing.pyx
-pow_computer_la_LIBADD = -lcsage -lntl -lgmp -lgmpxx -lm -lstdc++
-pow_computer.cc: @srcdir@/pow_computer.pyx
-pow_computer_ext_la_LIBADD = -lcsage -lntl -lgmp -lgmpxx -lm -lstdc++
-pow_computer_ext.cc: @srcdir@/pow_computer_ext.pyx
+padic_printing_la_SOURCES = padic_printing.pyxx
 
-.pyx.c:
-	$(cython_call)
-.pyx.cc:
-	$(cython_call)
+pow_computer_la_LIBADD = -lcsage -lntl -lgmp -lgmpxx -lm
+pow_computer_la_SOURCES = pow_computer.pyxx
+
+pow_computer_ext_la_LIBADD = -lcsage -lntl -lgmp -lgmpxx -lm
+pow_computer_ext_la_SOURCES = pow_computer_ext.pyxx

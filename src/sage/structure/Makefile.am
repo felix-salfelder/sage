@@ -12,6 +12,7 @@ structure_PYTHON = \
     factorization_integer.py factorization.py nonexact.py \
     coerce_exceptions.py formal_sum.py list_clone_timings.py gens_py.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 structure_LTLIBRARIES = \
     category_object.la coerce.la coerce_actions.la coerce_dict.la coerce_maps.la \
     element.la factory.la generators.la list_clone.la list_clone_timings_cy.la \
@@ -31,6 +32,3 @@ parent_base_la_LIBADD = -lcsage
 parent_gens_la_LIBADD = -lcsage
 parent_la_LIBADD = -lcsage
 parent_old_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

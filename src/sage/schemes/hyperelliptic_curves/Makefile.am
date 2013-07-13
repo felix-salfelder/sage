@@ -14,12 +14,8 @@ schemes_hyperelliptic_curves_PYTHON = \
 
 schemes_hyperelliptic_curves_LTLIBRARIES = hypellfrob.la
 hypellfrob_la_SOURCES = \
-	 hypellfrob.pyx hypellfrob/hypellfrob_cc.cpp hypellfrob/recurrences_ntl.cpp \
+	 hypellfrob.pyxx hypellfrob/hypellfrob_cc.cpp hypellfrob/recurrences_ntl.cpp \
     hypellfrob/recurrences_zn_poly.cpp
 
 hypellfrob_la_LIBADD = -lntl -lstdc++ -lgmp -lzn_poly -lcsage
-hypellfrob.cc: @srcdir@/hypellfrob.pyx
 hypellfrob_la_CPPFLAGS = -I@srcdir@/../../libs/ntl -I@srcdir@/hypellfrob $(AM_CPPFLAGS)
-
-.pyx.cc:
-	$(cython_call)

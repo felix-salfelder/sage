@@ -13,6 +13,7 @@ graphs_PYTHON = \
     bipartite_graph.py graph_editor.py isgci.py graph_plot.py line_graph.py \
     hypergraph.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 graphs_LTLIBRARIES = \
     chrompoly.la cliquer.la comparability.la convexity_properties.la \
     distances_all_pairs.la generic_graph_pyx.la genus.la graph_generators_pyx.la \
@@ -56,6 +57,3 @@ graphs_generators_PYTHON = \
 
 trees_la_LIBADD = -lcsage
 weakly_chordal_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

@@ -9,8 +9,6 @@ functions_PYTHON = \
     wigner.py all.py spike_function.py exp_integral.py log.py hyperbolic.py \
     special.py min_max.py generalized.py
 
-functions_LTLIBRARIES = prime_pi.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+functions_LTLIBRARIES = prime_pi.la
 prime_pi_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

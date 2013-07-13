@@ -2,7 +2,6 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
-# FIXME: are the .xx: srcdir/pyxx rules necessary?
 SUBDIRS = padics
 include $(top_srcdir)/common.mk
 rings_polynomialdir = $(pythondir)/sage/rings/polynomial
@@ -17,6 +16,7 @@ rings_polynomial_PYTHON = \
     polynomial_singular_interface.py symmetric_ideal.py term_order.py \
     toy_buchberger.py toy_d_basis.py toy_variety.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 rings_polynomial_LTLIBRARIES = \
     cyclotomic.la laurent_polynomial.la multi_polynomial.la \
     multi_polynomial_ideal_libsingular.la multi_polynomial_libsingular.la \
@@ -35,7 +35,6 @@ m4ri_flags_filtered = $(filter-out -std=c99,@M4RI_CFLAGS@)
 
 multi_polynomial_ideal_libsingular_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl -lgmpxx -lgmp -lcsage
 multi_polynomial_ideal_libsingular_la_SOURCES = multi_polynomial_ideal_libsingular.pyxx
-multi_polynomial_ideal_libsingular.cc: @srcdir@/multi_polynomial_ideal_libsingular.pyxx
 multi_polynomial_ideal_libsingular_la_CXXFLAGS = -D__STDC_LIMIT_MACROS $(AM_CXXFLAGS)
 multi_polynomial_ideal_libsingular_la_CPPFLAGS = $(AM_CPPFLAGS) \
                                                  @SINGULAR_INCLUDES@
@@ -46,19 +45,16 @@ multi_polynomial_ring_generic_la_LIBADD = -lcsage
 
 multi_polynomial_libsingular_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl -lgmpxx -lgmp -lcsage
 multi_polynomial_libsingular_la_SOURCES = multi_polynomial_libsingular.pyxx
-multi_polynomial_libsingular.cc: @srcdir@/multi_polynomial_libsingular.pyxx
 multi_polynomial_libsingular_la_CPPFLAGS = $(AM_CPPFLAGS) -D__STDC_LIMIT_MACROS \
                                            @SINGULAR_INCLUDES@
 
 pbori_la_LIBADD = -lpolybori-0.8 -lpolybori_groebner-0.8 -lm4ri -lpng12 -lcsage
 pbori_la_SOURCES = pbori.pyxx
-pbori.cc: @srcdir@/pbori.pyxx
 pbori_la_CXXFLAGS = $(m4ri_flags_filtered) $(AM_CXXFLAGS)
 pbori_la_CPPFLAGS = $(AM_CPPFLAGS) -I@SAGE_DIR@/libs/polybori
 
 plural_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lgmpxx -lgmp -lcsage
 plural_la_SOURCES = plural.pyxx
-plural.cc: @srcdir@/plural.pyxx
 plural_la_CPPFLAGS = $(AM_CPPFLAGS) -D__STDC_LIMIT_MACROS \
                      @SINGULAR_INCLUDES@
 
@@ -102,15 +98,6 @@ polynomial_zz_pex_la_CPPFLAGS = -I@SAGE_DIR@/libs/ntl $(AM_CPPFLAGS)
 
 real_roots_la_LIBADD = -lmpfr -lgmp
 real_roots_la_CPPFLAGS = -I@numpy_include_dir@ $(AM_CPPFLAGS)
-
-.pyx.c:
-	$(cython_call)
-.pyx.cc:
-	$(CYTHONCPP) $(CYTHONFLAGS) $< -o $@ -MF $(DEPDIR)/$*.PcythonT
-	$(cython_call)
-
-%.pyxx: @srcdir@/%.pyx
-	ln -s $< $@
 
 # FIXME. something extremely wrong with singular
 multi_polynomial_ideal_libsingular_la_CPPFLAGS += -DNDEBUG

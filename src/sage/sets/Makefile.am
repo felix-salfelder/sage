@@ -10,12 +10,10 @@ sets_PYTHON = \
     all.py positive_integers.py set_from_iterator.py cartesian_product.py \
     integer_range.py finite_enumerated_set.py
 
-sets_LTLIBRARIES = disjoint_set.la finite_set_map_cy.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+sets_LTLIBRARIES = disjoint_set.la finite_set_map_cy.la
 
 finite_set_map_cy_la_LIBADD = -lcsage
 
 disjoint_set_la_LIBADD = -lgmp -lflint -lcsage
 disjoint_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-
-.pyx.c:
-	$(cython_call)

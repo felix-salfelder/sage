@@ -9,6 +9,7 @@ plot_plot3d_PYTHON = \
     parametric_plot3d.py platonic.py plot3d.py plot_field3d.py revolution_plot3d.py \
     shapes2.py tachyon.py texture.py tri_plot.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 plot_plot3d_LTLIBRARIES = \
     base.la implicit_surface.la index_face_set.la parametric_surface.la shapes.la \
     transform.la
@@ -19,6 +20,3 @@ implicit_surface_la_CPPFLAGS = $(AM_CPPFLAGS) -I@numpy_include_dir@
 index_face_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)
 index_face_set_la_LIBADD = -lcsage
 parametric_surface_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

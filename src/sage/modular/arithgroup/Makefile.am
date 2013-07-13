@@ -9,11 +9,8 @@ modular_arithgroup_PYTHON = \
     congroup_gammaH.py congroup_gamma0.py congroup_gamma1.py arithgroup_element.py \
     all.py arithgroup_perm.py congroup_gamma.py
 
-modular_arithgroup_LTLIBRARIES = congroup_pyx.la farey_symbol.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+modular_arithgroup_LTLIBRARIES = congroup_pyx.la farey_symbol.la
 congroup_pyx_la_LIBADD = -lcsage
 farey_symbol_la_SOURCES = farey_symbol.pyxx farey.cpp sl2z.cpp
 farey_symbol_la_LIBADD = -lgmpxx -lgmp -lcsage
-farey_symbol.cc: @srcdir@/farey_symbol.pyxx
-
-.pyx.c:
-	$(cython_call)

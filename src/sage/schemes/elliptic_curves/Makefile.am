@@ -1,3 +1,7 @@
+# this file is part of Sage
+# (c) 2013 Felix Salfelder
+# license: gplv3+
+#
 include $(top_srcdir)/common.mk
 schemes_elliptic_curvesdir = $(pythondir)/sage/schemes/elliptic_curves
 schemes_elliptic_curves_PYTHON = \
@@ -11,9 +15,7 @@ schemes_elliptic_curves_PYTHON = \
     isogeny_class.py period_lattice.py \
     gal_reps_number_field.py
 
-schemes_elliptic_curves_LTLIBRARIES = descent_two_isogeny.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+schemes_elliptic_curves_LTLIBRARIES = descent_two_isogeny.la
 descent_two_isogeny_la_LIBADD = -lflint -lgmp -lratpoints
 descent_two_isogeny_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-
-.pyx.c:
-	$(cython_call)

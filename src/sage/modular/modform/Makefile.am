@@ -8,9 +8,7 @@ ambient_g0.py test.py ambient.py submodule.py ambient_g1.py element.py \
 constructor.py all.py theta.py half_integral.py eisenstein_submodule.py \
 eis_series.py notes.py ambient_eps.py periods.py ambient_R.py numerical.py
 
-modular_modform_LTLIBRARIES = eis_series_cython.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+modular_modform_LTLIBRARIES = eis_series_cython.la
 eis_series_cython_la_LIBADD = -lgmp -lflint -lcsage
 eis_series_cython_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-
-.pyx.c:
-	$(cython_call)

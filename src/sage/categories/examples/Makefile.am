@@ -13,7 +13,5 @@ categories_examples_PYTHON = \
     facade_sets.py infinite_enumerated_sets.py finite_semigroups.py \
     finite_coxeter_groups.py
 
-categories_examples_LTLIBRARIES = semigroups_cython.la 
-
-.pyx.c:
-	$(cython_call)
+AM_DEFAULT_SOURCE_EXT = .pyx
+categories_examples_LTLIBRARIES = semigroups_cython.la

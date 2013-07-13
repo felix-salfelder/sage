@@ -41,11 +41,9 @@ categories_PYTHON = \
     finite_crystals.py finite_dimensional_modules_with_basis.py \
     finite_dimensional_coalgebras_with_basis.py
 
-categories_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+categories_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la
 
 map_la_LIBADD = -lcsage
 morphism_la_LIBADD = -lcsage
 action_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

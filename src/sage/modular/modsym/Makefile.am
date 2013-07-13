@@ -9,12 +9,10 @@ modular_modsym_PYTHON = \
     p1list_nf.py ambient.py relation_matrix.py element.py all.py hecke_operator.py \
     subspace.py modular_symbols.py g1list.py
 
-modular_modsym_LTLIBRARIES = apply.la heilbronn.la p1list.la relation_matrix_pyx.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+modular_modsym_LTLIBRARIES = apply.la heilbronn.la p1list.la relation_matrix_pyx.la
 apply_la_LIBADD = -lcsage -lflint -lgmp -lgmpxx -lm -lstdc++
 apply_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
 heilbronn_la_LIBADD = -lcsage -lflint -lgmp -lgmpxx -lm -lstdc++
 heilbronn_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
 p1list_la_LIBADD = -lgmp -lcsage
-
-.pyx.c:
-	$(cython_call)

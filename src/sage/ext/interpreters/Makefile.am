@@ -55,7 +55,4 @@ interpreters: \
 
 .PHONY: interpreters
 
-CLEANFILES+=*.h *.c *.pyx *.pxd timestamp
-
-.pyx.c:
-	$(cython_call)
+CLEANFILES+= *.h *.c *.pyx *.pxd timestamp

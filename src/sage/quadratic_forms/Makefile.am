@@ -20,11 +20,10 @@ quadratic_forms_PYTHON = \
    extras.py binary_qf.py quadratic_form__split_local_covering.py qfsolve.py \
    quadratic_form__neighbors.py ternary_qf.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 quadratic_forms_LTLIBRARIES = count_local_2.la quadratic_form__evaluate.la ternary.la
 
 count_local_2_la_LIBADD = -lgmp
-.pyx.c:
-	$(cython_call)
 
 quadratic_forms_generadir = $(quadratic_formsdir)/genera
 quadratic_forms_genera_PYTHON = \

@@ -17,11 +17,12 @@ noinst_HEADERS = \
     vector_modn_sparse_c.pxi vector_modn_sparse_h.pxi vector_rational_sparse_c.pxi \
     vector_rational_sparse_h.pxi
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 modules_LTLIBRARIES = \
     finite_submodule_iter.la free_module_element.la module.la \
     vector_complex_double_dense.la vector_double_dense.la vector_integer_dense.la \
     vector_mod2_dense.la vector_modn_dense.la vector_rational_dense.la \
-    vector_real_double_dense.la 
+    vector_real_double_dense.la
 
 vector_complex_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ -lcsage
 vector_complex_double_dense_la_CPPFLAGS = -I@numpy_include_dir@ $(AM_CPPFLAGS)
@@ -40,6 +41,3 @@ vector_real_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ -lcsage
 vector_real_double_dense_la_CPPFLAGS = -I@numpy_include_dir@ $(AM_CPPFLAGS)
 
 free_module_element_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)

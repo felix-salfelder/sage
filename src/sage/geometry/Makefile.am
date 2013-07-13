@@ -9,11 +9,10 @@ geometry_PYTHON = \
     cone.py polyhedra.py __init__.py fan_isomorphism.py toric_plotter.py \
     fan_morphism.py fan.py all.py hasse_diagram.py lattice_polytope.py polytope.py \
     toric_lattice.py
-geometry_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la 
-toric_lattice_element_la_LIBADD = -lgmp -lcsage
 
-.pyx.c:
-	$(cython_call)
+AM_DEFAULT_SOURCE_EXT = .pyx
+geometry_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la
+toric_lattice_element_la_LIBADD = -lgmp -lcsage
 
 geometry_polyhedrondir = $(geometrydir)/polyhedron
 geometry_polyhedron_PYTHON = \

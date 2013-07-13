@@ -3,6 +3,7 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
+miscdir = $(pythondir)/sage/misc
 misc_PYTHON = \
     misc.py table.py map_threaded.py sage_unittest.py sage_extension.py \
     memory_info.py nested_class_test.py benchmark.py trace.py bindable_class.py \
@@ -20,7 +21,7 @@ misc_PYTHON = \
     func_persist.py dev_tools.py sage_ostools.py \
     test_class_pickling.py ascii_art.py
 
-miscdir = $(pythondir)/sage/misc
+AM_DEFAULT_SOURCE_EXT = .pyx
 misc_LTLIBRARIES = \
     allocator.la binary_tree.la bitset.la c3.la cachefunc.la citation.la \
     classcall_metaclass.la constant_function.la cython_c.la derivative.la \
@@ -38,8 +39,5 @@ readline_extra_commands_la_LIBADD = -lreadline
 bitset_la_LIBADD = -lcsage
 binary_tree_la_LIBADD = -lcsage
 misc_c_la_LIBADD = -lgmp -lcsage
-
-.pyx.c:
-	$(cython_call)
 
 noinst_HEADERS = bitset_pxd.pxi bitset.pxi

@@ -26,10 +26,11 @@ combinat_PYTHON = \
     composition_signed.py split_nk.py composition.py \
     non_decreasing_parking_function.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 combinat_LTLIBRARIES = \
     combinat_cython.la debruijn_sequence.la degree_sequences.la dict_addition.la \
     enumeration_mod_permgroup.la expnums.la partitions.la permutation_cython.la \
-    q_bernoulli.la 
+    q_bernoulli.la
 
 degree_sequences_la_LIBADD = -lcsage
 combinat_cython_la_LIBADD = -lgmp -lcsage
@@ -38,8 +39,6 @@ expnums_la_LIBADD = -lgmp -lcsage
 partitions_la_SOURCES = partitions.pyxx partitions_c.cc
 partitions_la_LIBADD = -lgmp -lmpfr -lcsage
 partitions.cc: @srcdir@/partitions.pyxx
-.pyx.c:
-	$(cython_call)
 
 combinat_cluster_algebra_quiverdir = $(combinatdir)/cluster_algebra_quiver
 combinat_cluster_algebra_quiver_PYTHON = \

@@ -10,20 +10,17 @@ rings_number_field_PYTHON = \
     number_field_rel.py order.py small_primes_of_degree_one.py totallyreal_phc.py \
     totallyreal_rel.py unit_group.py
 
-rings_number_field_LTLIBRARIES = number_field_base.la number_field_element.la \
-                                 number_field_element_quadratic.la \
-                                 number_field_morphisms.la totallyreal.la totallyreal_data.la 
+AM_DEFAULT_SOURCE_EXT = .pyx
+rings_number_field_LTLIBRARIES = \
+    number_field_base.la number_field_element.la \
+	 number_field_element_quadratic.la \
+	 number_field_morphisms.la totallyreal.la totallyreal_data.la
 
 number_field_element_la_SOURCES = number_field_element.pyxx
-number_field_element_la.cc: @srcdir@/number_field_element.pyxx
 number_field_element_la_LIBADD = -lntl -lgmp -lcsage
 
 number_field_element_quadratic_la_SOURCES = number_field_element_quadratic.pyxx
-number_field_element_quadratic_la.cc: @srcdir@/number_field_element_quadratic.pyxx
 number_field_element_quadratic_la_LIBADD = -lntl -lgmp -lcsage
 
 totallyreal_la_LIBADD = -lpari -lgmp -lcsage
 totallyreal_data_la_LIBADD = -lgmp -lcsage
-
-.pyx.c:
-	$(cython_call)

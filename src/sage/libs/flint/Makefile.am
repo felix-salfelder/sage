@@ -5,6 +5,8 @@
 include $(top_srcdir)/common.mk
 libs_flintdir = $(pythondir)/sage/libs/flint
 libs_flint_PYTHON = __init__.py
+
+AM_DEFAULT_SOURCE_EXT = .pyx
 libs_flint_LTLIBRARIES = arith.la flint.la fmpz_poly.la
 
 arith_la_LIBADD = -lcsage -lflint -lgmp -lgmpxx -lm
@@ -15,5 +17,3 @@ flint_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
 
 fmpz_poly_la_LIBADD = -lcsage -lflint -lgmp -lgmpxx -lm
 fmpz_poly_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
-.pyx.c:
-	$(cython_call)

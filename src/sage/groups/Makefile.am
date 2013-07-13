@@ -11,6 +11,7 @@ groups_PYTHON = \
     finitely_presented.py \
     libgap_group.py libgap_mixin.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 groups_LTLIBRARIES = group.la libgap_wrapper.la old.la
 
 groups_additive_abeliandir = $(pythondir)/sage/groups/additive_abelian
@@ -32,7 +33,3 @@ groups_affine_gps_PYTHON = \
     affine_gps/euclidean_group.py \
     affine_gps/group_element.py \
     affine_gps/__init__.py
-
-
-.pyx.c:
-	$(cython_call)

@@ -10,6 +10,7 @@ matrix_PYTHON = \
     matrix_integer_dense_hnf.py matrix_integer_dense_saturation.py matrix_misc.py \
     matrix_space.py operation_table.py symplectic_basis.py tests.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 matrix_LTLIBRARIES = \
     action.la change_ring.la matrix.la matrix0.la matrix1.la matrix2.la \
     matrix_complex_double_dense.la matrix_cyclo_dense.la matrix_dense.la \
@@ -86,9 +87,6 @@ matrix_window_modn_dense_la_LIBADD = -lcsage
 matrix_window_la_LIBADD = -lcsage
 
 misc_la_LIBADD = -lmpfr -lgmp -lcsage
-
-.pyx.c:
-	$(cython_call)
 
 # somethings terribly wrong with singular
 matrix_mpolynomial_dense_la_CPPFLAGS += -DNDEBUG

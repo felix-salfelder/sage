@@ -5,6 +5,8 @@
 include $(top_srcdir)/common.mk
 groups_perm_gps_partn_refdir = $(pythondir)/sage/groups/perm_gps/partn_ref
 groups_perm_gps_partn_ref_PYTHON = __init__.py
+
+AM_DEFAULT_SOURCE_EXT = .pyx
 groups_perm_gps_partn_ref_LTLIBRARIES = \
     automorphism_group_canonical_label.la canonical_augmentation.la double_coset.la \
     refinement_binary.la refinement_graphs.la refinement_lists.la \
@@ -31,6 +33,3 @@ refinement_python_la_LIBADD = -lgmp -lflint
 refinement_python_la_CFLAGS = -std=c99 $(AM_CFLAGS)
 refinement_sets_la_LIBADD = -lgmp -lflint
 refinement_sets_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-
-.pyx.c:
-	$(cython_call)

@@ -14,27 +14,28 @@ if USE_LIBCPLEX
 COND_CPLEX = cplex_backend.la
 endif
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 numerical_backends_LTLIBRARIES = \
 	 $(COND_COIN) $(COND_CPLEX) generic_backend.la glpk_backend.la \
     glpk_graph_backend.la ppl_backend.la
 
 coin_backend_la_LIBADD = -lcsage -lstdc++ -lCbc -lCbcSolver -lCgl -lClp -lCoinUtils -lOsiCbc -lOsiClp -lOsi
-coin_backend.cc: @srcdir@/coin_backend.pyx
+coin_backend_la_SOURCES = coin_backend.pyxx
 coin_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
+
 cplex_backend_la_LIBADD = -lcsage -lstdc++ -lcplex
 cplex_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
+
 generic_backend_la_LIBADD = -lcsage -lstdc++
 generic_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
+
 glpk_backend_la_LIBADD = -lcsage -lstdc++ -lglpk -lgmp -lz
-glpk_backend.cc: @srcdir@/glpk_backend.pyx
+glpk_backend_la_SOURCES: glpk_backend.pyxx
 glpk_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
+
 glpk_graph_backend_la_LIBADD = -lcsage -lstdc++ -lglpk -lgmp -lz
-glpk_graph_backend.cc: @srcdir@/glpk_graph_backend.pyx
+glpk_graph_backend_la_SOURCES: glpk_graph_backend.pyxx
 glpk_graph_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
+
 ppl_backend_la_LIBADD = -lcsage -lstdc++
 ppl_backend_la_CPPFLAGS = -I@C_LIB_INCLUDE@ $(AM_CPPFLAGS)
-
-.pyx.c:
-	$(cython_call)
-.pyx.cc:
-	$(cython_call)

@@ -6,9 +6,6 @@ include $(top_srcdir)/common.mk
 combinat_matricesdir = $(pythondir)/sage/combinat/matrices
 combinat_matrices_PYTHON = __init__.py all.py hadamard_matrix.py dlxcpp.py latin.py
 
-combinat_matrices_LTLIBRARIES = dancing_links.la 
+AM_DEFAULT_SOURCE_EXT = .pyxx
+combinat_matrices_LTLIBRARIES = dancing_links.la
 dancing_links_la_LIBADD = -lcsage
-dancing_links.cc: @srcdir@/dancing_links.pyx
-
-.pyx.cc:
-	$(cython_call)

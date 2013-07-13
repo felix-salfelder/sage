@@ -8,6 +8,7 @@ coding_PYTHON = \
     __init__.py ag_code.py all.py code_bounds.py code_constructions.py decoder.py \
     guava.py linear_code.py sd_codes.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 coding_LTLIBRARIES = binary_code.la
 
 source_codingdir = $(codingdir)/source_coding
@@ -15,6 +16,3 @@ source_codingdir = $(codingdir)/source_coding
     source_coding/all.py \
     source_coding/huffman.py \
     source_coding/__init__.py
-
-.pyx.c:
-	$(cython_call)

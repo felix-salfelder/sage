@@ -12,9 +12,7 @@ plot_PYTHON = \
     matrix_plot.py misc.py plot.py plot_field.py point.py polygon.py primitive.py \
     scatter_plot.py step.py text.py
 
+AM_DEFAULT_SOURCE_EXT = .pyx
 plot_LTLIBRARIES = complex_plot.la
 complex_plot_la_CPPFLAGS = $(AM_CPPFLAGS) -I@numpy_include_dir@
 complex_plot_la_LIBADD = -lcsage
-
-.pyx.c:
-	$(cython_call)
