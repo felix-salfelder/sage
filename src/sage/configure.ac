@@ -18,11 +18,10 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LN_S
 
-# AC_SUBST(AM_DEFAULT_SOURCE_EXT,.pyx)
-
 ## environment,
 # see autoconf/manual/autoconf-2.60/html_node/Setting-Output-Variables.html,
 # particularly: "variable is kept during automatic reconfiguration"
+# FIXME: LD_LIBRARY_PATH required??
 AC_ARG_VAR(CPPFLAGS, cppflags)
 AC_ARG_VAR(LDFLAGS, ldflags)
 AC_ARG_VAR(PATH, path)
@@ -46,6 +45,9 @@ AC_SUBST(VPATH_TRUE)
 AC_SUBST(VPATH_FALSE)
 ## defaults
 AC_SUBST(AM_LDFLAGS, "-module -avoid-version")
+
+# doesn't work... (how to set a default?!)
+#AC_SUBST([AM_DEFAULT_SOURCE_EXT], [.pyx])
 
 ## python stuff
 python_version_required=2.7
@@ -93,6 +95,28 @@ AM_CONDITIONAL([PYDEP], [test $pydep = yes])
 # find clib. might be obsolete
 # AC_ARG_WITH(blas, --with-clib   choose c_lib, [clib=$with_clib], [])
 
+AC_CHECK_HEADERS([math.h assert.h sys/sysmacros.h fcntl.h sys/stat.h mach/mach.h sys/mman.h])
+AC_CHECK_HEADERS([sgtty.h stdlib.h string.h sys/ioctl.h sys/param.h sys/time.h sys/resource.h])
+AC_CHECK_HEADERS([termio.h termios.h unistd.h signal.h stdio.h libc.h sys/times.h sys/wait.h])
+AC_CHECK_HEADERS([vfork.h dirent.h errno.h setjmp.h])
+
+AC_FUNC_VFORK
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([getpseudotty _getpty getpt ptsname_r])
+AC_CHECK_FUNCS([setpgid setjmp sbrk])
+AC_CHECK_FUNCS([rld_load])
+AC_CHECK_FUNCS([times getrusage])
+AC_CHECK_FUNCS([vm_allocate])
+AC_CHECK_FUNCS([fork popen waitpid wait4])
+AC_CHECK_FUNCS([dup2 floor memmove mkdir pow rint])
+AC_CHECK_FUNCS([ttyname strerror select])
+AC_CHECK_FUNCS([access stat fstat lstat unlink mkdir mkdtemp mkstemp rmdir link rename])
+AC_CHECK_FUNCS([symlink readlink chmod fchmod chown fchown lchown dup dup2 mknod mkfifo])
+AC_CHECK_FUNCS([socket listen accept connect bind getsockname recv recvfrom recvmsg send])
+AC_CHECK_FUNCS([sendto sendmsg getsockopt setsockopt getprotobyname gethostbyname])
+AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir])
+
 ### singular
 AC_PATH_PROGS([SINGULAR],
               [Singular singular],
@@ -115,9 +139,21 @@ SINGULAR_INCLUDES=$CPPFLAGS
 AC_SUBST([SINGULAR_INCLUDES])
 CPPFLAGS=$OLDCPPFLAGS
 
+AS_IF([test -f $sage_local/include/flint/flint.h],
+      [LIBFLINT_INCLUDES=-I$sage_local/include/flint],
+      [LIBFLINT_INCLUDES=-I/usr/include/flint])
+CPPFLAGS+=" $LIBFLINT_INCLUDES"
+AC_CHECK_HEADER([flint.h],,[AC_MSG_ERROR(cannot find flint header)])
+AC_SUBST(LIBFLINT_INCLUDES)
+
+CPPFLAGS="$OLDCPPFLAGS $PYTHON_INCLUDES"
+dnl FIXME: this check fails for some reason, should be AC_MSG_ERROR
+AC_CHECK_HEADER([pynac/order.h],,[AC_MSG_NOTICE(cannot find pynac header)])
+
+CPPFLAGS=$OLDCPPFLAGS
+
 # just check, for now
 AC_CHECK_HEADER([cliquer/cliquer.h],,[AC_MSG_ERROR(cannot find cliquer header)])
-AC_CHECK_HEADER([flint/fmpz.h],,[AC_MSG_ERROR(cannot find flint header)])
 AC_CHECK_HEADER([zn_poly/zn_poly.h],,[AC_MSG_ERROR(cannot find zn_poly header)])
 
 AC_LANG_PUSH([C++])
@@ -125,8 +161,6 @@ AC_CHECK_HEADER([fplll.h],,[AC_MSG_ERROR(cannot find fplll header)])
 AC_CHECK_HEADER([fplll/fplll.h],,[AC_MSG_ERROR(cannot find fplll header)])
 AC_LANG_POP
 AC_SUBST([FPLLL_INCLUDES]) dnl currently unneeded
-# not yet
-# AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
 
 # extra packages: FIXME: just allow sage packages, if desired
 AC_CHECK_HEADER([coxeter3.h], [HAVE_LIBCOXETER3=yes], [HAVE_LIBCOXETER3=no])
@@ -178,7 +212,11 @@ AC_SUBST([HAVE_LIBLRCALC])
 dnl AC_CHECK_LIB([lrcalc], [lrcalc], lrcalc=1))
 AM_CONDITIONAL([USE_LIBLRCALC], [ test $HAVE_LIBLRCALC = yes ])
 
-AC_CHECK_HEADER([gap/libgap.h],,[AC_MSG_ERROR(cannot find libgap header)])
+# FIXME: also check for gap
+HAVE_LIBGAP=no
+AC_CHECK_HEADER([libgap/libgap.h], [HAVE_LIBGAP=yes], [AC_MSG_NOTICE(cannot find libgap header);
+   SAGE_CHECK_PYTHON_MODULE([ply.lex],[AC_MSG_ERROR([need ply to hack gap])]) ])
+AM_CONDITIONAL([HAVE_LIBGAP], [ test $HAVE_LIBGAP = yes ])
 
 AC_CHECK_HEADER([gurobi.h], [HAVE_LIBGUROBI=yes], [HAVE_LIBGUROBI=no])
 AC_SUBST([HAVE_LIBGUROBI])
@@ -260,23 +298,28 @@ fi
 #    BLAS2='gslcblas'
 #   AC_MSG_RESULT(fallback to gslcblas)
 
+# random symbol (fixme?)
+AC_CHECK_LIB([ec], [_Z9show_timeRSo], [],
+             [ AC_MSG_ERROR([Could not find ec library]) ])
+
 #########################################################
 ### M4RI flags
 #########################################################
 
-# TODO!
-# import ast
-# m4ri_extra_compile_args = ["-std=c99"]
-# for line in open(SAGE_INC + "/m4ri/m4ri_config.h"):
-#     if not line.startswith("#define __M4RI_SIMD_CFLAGS"):
-#         continue
-#     m4ri_sse2_cflags = ast.literal_eval(line[len("#define __M4RI_SIMD_CFLAGS"):].strip())
-#     m4ri_extra_compile_args.extend( [flag.strip() for flag in m4ri_sse2_cflags.split(" ") if flag.strip()] )
-#     break
-
 PKG_CHECK_MODULES([M4RI],[m4ri],,AC_MSG_ERROR([no m4ri config found]))
 M4RI_CFLAGS+=" -std=c99"
 AC_SUBST([M4RI_CFLAGS])
+
+PKG_CHECK_MODULES([M4RIE],[m4rie],
+                  [AC_MSG_NOTICE([no m4rie config found, lets try without...])],
+                  [M4RIE_CFLAGS=-I/usr/include/m4rie]
+                 )
+
+old_CPPFLAGS=$CPPFLAGS
+dnl hack: pass -c99 via CPPFLAGS...
+CPPFLAGS+=" $M4RIE_CFLAGS -std=c99"
+AC_CHECK_HEADER([mzed.h],,[AC_MSG_ERROR(cannot find m4rie header)])
+CPPFLAGS=$old_CPPFLAGS
 
 AC_SUBST(BLAS, ${blas})
 AC_SUBST(BLAS2, ${blas2})
@@ -288,8 +331,9 @@ AC_SUBST([my_CPPFLAGS])
 # more paths
 c_lib_include='$(top_srcdir)/../c_lib/include'
 CSAGE_INCLUDES=-I$c_lib_include
-AC_SUBST(C_LIB_INCLUDE, $c_lib_include)
+LIBCSAGE_INCLUDES=-I$c_lib_include
 AC_SUBST(CSAGE_INCLUDES)
+AC_SUBST(LIBCSAGE_INCLUDES)
 
 # fixme: use AC_...
 numpy_include_dir=$sage_local/lib/python/site-packages/numpy/core/include
@@ -304,6 +348,28 @@ SAGE_DIR=$srcdir
 AC_SUBST(SAGE_DIR)
 
 AS_AC_EXPAND(SAGE_ETC, $sysconfdir)
+
+AC_CHECK_SIZEOF(void *)
+# AC_CHECK_ALIGNOF([long])
+AC_HEADER_STDBOOL
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_HEADER_DIRENT
+AC_HEADER_MAJOR
+AC_HEADER_STAT
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_TYPE_PID_T
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS([signal])
+AC_TYPE_SIGNAL
+# weird check for signal handling
+if test "$ac_cv_type_signal" = "void"; then
+    AC_DEFINE([HAVE_SIGNAL_VOID], [1] ,[void as signal type??])
+fi
+
+AC_DEFINE(HAVE_STRERROR, 1, [Everybody has that])
+AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Or GAP will define its own])
 
 #### data packages ####
 # default: sort of pkgdatadir
@@ -352,11 +418,29 @@ AS_IF([test -d $dbdir/share/ellvurves],
 AC_SUBST([ELLCURVE_DATA_DIR])
 AM_SUBST_NOTMAKE([ELLCURVE_DATA_DIR])
 
-dnl no longer needed (pkgconfig)
-m4ri_extra_compile_args=
-AC_SUBST(m4ri_extra_compile_args)
+# FIXME: gentoo?
+# FIXME: require GAP_INCLUDEDIR unless HAVE_LIBGAP
+GAP_INCLUDEDIR=/usr/include/gap
+AS_IF([test -d $sage_local/gap],
+      [GAP_DATA_DIR=$sage_local/gap/latest;
+       GAP_INCLUDEDIR=$sage_local/gap/latest/src],
+      [test -d /usr/share/gap],
+      [GAP_DATA_DIR=/usr/share/gap],
+      [AC_MSG_ERROR([cannot find gap])])
+AC_SUBST([GAP_DATA_DIR])
+#AC_SUBST([GAP_INCLUDES])
+AC_SUBST([GAP_INCLUDEDIR])
 
-# output files
+AC_MSG_CHECKING([for gap libdir])
+AS_IF([test -x $sage_local/gap/latest/bin/*/gap],
+      [GAP_LIB_DIR=`dirname $sage_local/gap/latest/bin/*/gap`],
+      [test -d /usr/lib/gap/bin],
+      [GAP_LIB_DIR=/usr/lib/gap/bin],
+      [AC_MSG_ERROR([cannot find gap])])
+AC_SUBST([GAP_LIB_DIR])
+AC_MSG_RESULT([$GAP_LIB_DIR])
+
+#### output files
 
 AC_CONFIG_FILES([
     setup.py
@@ -489,12 +573,17 @@ AC_MSG_RESULT([
    BLAS2:      $blas2
    PYTHON:     $PYTHON
 
+   directories:
+   gap data      $GAP_DATA_DIR
+   gap lib       $GAP_LIB_DIR
+
    optional packages
    lrcalc:       $HAVE_LIBLRCALC
    cbc:          $HAVE_LIBCBC
    coxeter:      $HAVE_LIBCOXETER3
    gurobi:       $HAVE_LIBGUROBI
    cryptominisat $HAVE_LIBCRYPTOMINISAT
+   libgap        $HAVE_LIBGAP
 ])
 
 # vim:et:sw=2:

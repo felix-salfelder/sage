@@ -28,13 +28,15 @@ AM_CPPFLAGS += @CSAGE_INCLUDES@
 # this is the directory that contains "sage"
 AM_CPPFLAGS += -I$(abs_top_srcdir)/..
 
-AM_DEFAULT_SOURCE_EXT = .pyx
-
 # FIXME: place where required (partly done)
 LIBS += -lcsage
 
 # dont spam terminal with error messages
 CYTHONFLAGS = --fast-fail
+
+# write cython_debug
+CYTHON_GDBOPT = --gdb-outdir @abs_top_builddir@/..
+CYTHONFLAGS += $(CYTHON_GDBOPT)
 
 # this is required for inspection
 CYTHONFLAGS += --embed-positions
@@ -73,7 +75,7 @@ am__v_CYT_0 = @echo "  CYTH  " $@;
 define cython_call
 	$(AM_V_CYT)PYTHONPATH="$(PYTHONPATH)" $(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
 	    -o $(abs_builddir)/$@ @AMDEP_TRUE@@PYDEP_TRUE@-MD -MP
-	@AMDEP_TRUE@@PYDEP_TRUE@$(AM_V_at)$(am__mv) $@.d $(DEPDIR)/$*.Pcython
+	@AMDEP_TRUE@@PYDEP_TRUE@$(AM_V_at)mv $@.d $(DEPDIR)/$*.Pcython
 endef
 
 %.cc: CYTHONFLAGS+=--cplus
@@ -86,11 +88,16 @@ CLEANFILES = $(MANUAL_DEP_PYX:%.pyx=%.c) \
              $(MANUAL_DEP_PYX:%.pyx=%.cc) \
              *.so *.pyc *.pyo
 
+hmmmm:
+	@echo $(SOURCES)
+	@echo MANUAL_DEP_PYX $(MANUAL_DEP_PYX) 
+
 @AMDEP_TRUE@ifneq (,$(MANUAL_DEP))
 @AMDEP_TRUE@@am__include@ $(DEPDIR)/*.Pcython
 @AMDEP_TRUE@endif
 
-# pyxx is always cc, .pyx may be anything.
+.pyx.c:
+	$(cython_call)
 .pyxx.cc:
 	$(cython_call)
 
@@ -100,7 +107,7 @@ PYOS = $(PYS:%.py=%.pyo)
 
 py-local: $(LTLIBRARIES:%.la=%.so) $(PYCS) $(PYOS)
 	
-$(LTLIBRARIES:%.la=%.so): %.so: %.la
+$(LTLIBRARIES:%.la=%.so): %.so: | %.la
 	-$(LN_S) .libs/$@ .
 
 # this is probably nonsense
@@ -115,7 +122,7 @@ $(LTLIBRARIES:%.la=%.so): %.so: %.la
 # will be implemented in automake1.12
 py: py-local py-recursive
 py-recursive:
-	for i in $(SUBDIRS); do $(MAKE) -C $$i py; done
+	for i in $(SUBDIRS); do $(MAKE) -C $$i py || exit 1; done
 pycheck: pycheck-local pycheck-recursive
 pycheck-recursive:
 	for i in $(SUBDIRS); do $(MAKE) -C $$i pycheck PYLIST=../$(PYLIST); done

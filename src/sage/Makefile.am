@@ -8,9 +8,9 @@ include common.mk
 
 # FIXME: fallback to setup.py if desired
 SUBDIRS = \
-    algebras calculus categories coding combinat crypto databases ext finance functions games geometry \
+    libs algebras calculus categories coding combinat crypto databases ext finance functions games geometry \
     graphs groups gsl homology \
-    interfaces interacts libs lfunctions logic \
+    interfaces interacts lfunctions logic \
     matrix media misc modular modules monoids numerical \
     parallel plot probability quadratic_forms rings sandpiles \
     schemes sets stats structure symbolic tensor tests server doctest sat

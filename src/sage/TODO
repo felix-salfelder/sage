@@ -1,0 +1,8 @@
+
+../../sage/local/default.qepcadrc
+
+messages like
+/home/felix/extern/sage-git-transition/B-nontl/util.pxd in init sage.groups.libgap_wrapper (libgap_wrapper.c:6577)
+lack the correct path...
+
+dummy config.h.in doesnt work right (unused)
