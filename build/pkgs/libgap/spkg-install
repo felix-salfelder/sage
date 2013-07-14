@@ -1,50 +1,34 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sage-dist-make
 
-if [ -z "$SAGE_LOCAL" ]; then
-    echo >&2 "SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
+DIST_MK = spkg.mk
+include $(DIST_MK)
 
-if [ "$SAGE64" = yes ]; then
-    if [ -z $CFLAG64 ]; then
-        CFLAG64=-m64
-    fi
-    CFLAGS="$CFLAGS $CFLAG64"
-    CXXFLAGS="$CXXFLAGS $CFLAG64"
-    echo "Building a 64-bit version of GAP (with '$CFLAG64')."
-fi
+ifeq ($(SAGE64),yes)
+    CFLAG64?=-m64
+	 CFLAGS+=$(CFLAG64)
+	 CXXFLAGS+=$(CFLAG64)
+endif
 
-if [ "$SAGE_DEBUG" == "yes" ] ; then
+ifeq ($(SAGE_DEBUG),yes)
     # Note that -g3 allows you to use preprocessor macros in gdb which are widely used
-    CFLAGS="$CFLAGS -O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS"
+    CFLAGS+=-O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS
     #  -DDEBUG_HANDLER_REGISTRATION is broken
-fi
+endif
 
-source "$SAGE_LOCAL/gap/latest/sysinfo.gap"
-echo "GAP was configured with $GAParch_system"
+install: build
+	@echo "Installing libGAP..."
+	$(MAKE) -C src install INSTALL=sage-dist-install DESTDIR="$(DESTDIR)"
 
-echo "Configuring libGAP..."
-cd src
-./configure --disable-static CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" \
-    --with-gap_system_arch="$GAParch_system" \
-    --with-sage="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL" --prefix="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring libGAP."
-    exit 1
-fi
+configure:
+	@echo "GAP was configured with $(GAParch_system)"
+	@echo "Configuring libGAP..."
+	cd src;\
+	./configure --disable-static CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \
+               --with-gap_system_arch="$(GAParch_system)" \
+               --with-sage="$(SAGE_LOCAL)" --with-gmp="$(SAGE_LOCAL)" --prefix="$(SAGE_PREFIX)"
 
-echo "Building libGAP..."
-$MAKE
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building libGAP."
-    exit 1
-fi
+build: configure
+	@echo "Building libGAP..."
+	$(MAKE) -C src
 
-echo "Installing libGAP..."
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing libGAP."
-    exit 1
-fi
-
+.PHONY: configure build
