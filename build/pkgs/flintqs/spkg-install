@@ -13,7 +13,6 @@ for patch in ../patches/*.patch; do
     patch -p1 <"$patch"
     if [ $? -ne 0 ]; then
         echo >&2 "Error applying '$patch'"
-        exit 1
     fi
 done
 
@@ -33,7 +32,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-$CP QuadraticSieve "$SAGE_LOCAL"/bin/
+cp QuadraticSieve "$SAGE_LOCAL"/bin/
 if [ $? -ne 0 ]; then
     echo "Error copying QuadraticSieve file"
     exit 1
