@@ -19,7 +19,6 @@ cd src
 # one is based on the first one!):
 patch -p1 < ../patches/dont-add-system-libs-if-binary-build.patch &&
 patch -p1 < ../patches/search-lib64-dirs-if-appropriate.patch
-success "Error patching PIL"
 
 echo "Deleting old versions..."
 rm -rf "$SAGE_LOCAL"/lib/python/site-packages/PIL
