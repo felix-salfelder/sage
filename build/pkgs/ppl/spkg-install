@@ -10,6 +10,8 @@ if [ "x$CFLAG64" = x ]; then
     CFLAG64=-m64
 fi
 
+CUR=`pwd`
+
 # If the environment variable SAGE64=yes, force building a 64-bit version:
 if [ "x$SAGE64" = xyes ]; then
     echo "Building a 64-bit version of ppl"
@@ -27,11 +29,10 @@ cd src
 # * fail to compile on Solaris gcc 4.5.1
 # * break when setting MAKE="make -jN"
 # They cover code that is not exposed by the Cython wrapper
-for patch in ../patches/*.patch; do
+for patch in $CUR/patches/*.patch; do
     patch -p1 <"$patch"
     if [ $? -ne 0 ]; then
         echo >&2 "Error applying '$patch'"
-        exit 1
     fi
 done
 
