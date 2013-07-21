@@ -9,6 +9,8 @@ fi
 # unset RM since it messes with libtool
 unset RM
 
+CUR=`pwd`
+
 mpfr_patch()
 {
     # Apply a patch on Solaris, but only on the sun4v architecture
@@ -75,7 +77,7 @@ mpfr_patch()
             echo >&2 "set to \"$PATCH_MPFR\".  The MPFR library will be patched as a precaution."
             do_apply=true
         esac
-        if $do_apply && ! patch -p1 < ../patches/mpn_exp.c.patch; then
+        if $do_apply && ! patch -p1 < $CUR/patches/mpn_exp.c.patch; then
             echo >&2 "Error: Patch for Solaris SPARC ('mpn_exp.c.patch') failed to apply."
             exit 1
         fi
@@ -83,14 +85,13 @@ mpfr_patch()
     fi # $UNAME=SunOS
 
     # Apply official upstream patches (if any):
-    ls ../patches/upstream/*.patch &>/dev/null &&
+    ls $CUR/patches/upstream/*.patch &>/dev/null &&
     echo "Applying official upstream patches..." &&
-    for patch in ../patches/upstream/*.patch; do
+    for patch in $CUR/patches/upstream/*.patch; do
         basename "$patch"
         # We don't need '-N' and '-Z' here, options suggested by upstream:
         if ! patch -p1 <"$patch"; then
             echo >&2 "Error: '$patch' failed to apply."
-            exit 1
         fi
     done &&
     echo
@@ -279,7 +280,6 @@ mpfr_build()
     mpfr_patch
     if [ $? -ne 0 ]; then
         echo >&2 "Error patching MPFR."
-        exit 1
     fi
 
     echo
