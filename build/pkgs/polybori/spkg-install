@@ -16,7 +16,7 @@ prepare_polybori()
     fi
 
     # place configuration file
-    cp ../custom.py .
+    cp ../patches/custom.py .
     if [ $? -ne 0 ]; then
         echo >&2 "Error copying 'custom.py'"
         exit 1
