@@ -61,7 +61,9 @@ cd src
 echo "Patching the upstream source code for Sage..."
 for patch in ../patches/*.patch; do
     patch -p1 < "$patch"
-    success "patch $patch failed to apply"
+    if [ $? -ne 0 ]; then
+		 "patch $patch failed to apply"
+	 fi
 done
 
 # There's currently no 'configure' script for Lcalc; we (also) configure
