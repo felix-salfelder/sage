@@ -8,7 +8,11 @@
 
 */
 
+#ifdef USE_GMP
 #include <gmp.h>
+#else
+#include <mpir.h>
+#endif
 #include <pari/pari.h>
 #include <stdio.h>
 

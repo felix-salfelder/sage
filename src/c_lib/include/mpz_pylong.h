@@ -2,7 +2,11 @@
 #define MPZ_PYLONG_H
 
 #include <Python.h>
+#ifdef USE_GMP
 #include <gmp.h>
+#else
+#include <mpir.h>
+#endif
 
 /* mpz -> pylong conversion */
 PyObject * mpz_get_pylong(mpz_srcptr z);

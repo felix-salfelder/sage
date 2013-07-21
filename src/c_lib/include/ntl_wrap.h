@@ -20,7 +20,11 @@
 #include <NTL/mat_GF2E.h>
 #include <NTL/HNF.h>
 #include <NTL/LLL.h>
+#ifdef USE_GMP
 #include <gmp.h>
+#else
+#include <mpir.h>
+#endif
 using namespace NTL;
 #endif
 
