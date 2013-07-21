@@ -17,6 +17,10 @@
 
 #include        "system.h"              /* system dependent part           */
 
+#ifndef CONFIGNAME
+#define CONFIGNAME "sage"
+#endif
+
 #ifdef HAVE_SYS_STAT_H
 #include        <sys/stat.h>
 #endif
@@ -102,6 +106,8 @@ extern char * In;
 
 #include        "intfuncs.h"
 #include        "iostream.h"
+
+#include        "libgap_internal.h"
 
 /****************************************************************************
 **
@@ -215,17 +221,17 @@ typedef struct {
 #endif
 
 static StructImportedGVars ImportedGVars[MAX_IMPORTED_GVARS];
-static Int NrImportedGVars;
+Int NrImportedGVars;
 
 static StructImportedGVars ImportedFuncs[MAX_IMPORTED_GVARS];
-static Int NrImportedFuncs;
+Int NrImportedFuncs;
 
 /* int restart_argc; 
    char **restart_argv; */
 
 char *original_argv0;
 static char **sysargv;
-static char **sysenviron;
+char **sysenviron;
 
 /* 
 syJmp_buf SyRestartBuf;
@@ -740,11 +746,7 @@ int DoFixGac(char *myself)
 }
 #endif
 
-#ifdef COMPILECYGWINDLL
-#define main realmain
-#endif
-
-int main (
+int gap_main_loop (
           int                 argc,
           char *              argv [],
           char *              environ [] )
@@ -1384,6 +1386,7 @@ Obj FuncCALL_WITH_CATCH( Obj self, Obj func, Obj args )
 
 Obj FuncJUMP_TO_CATCH( Obj self, Obj payload)
 {
+  libgap_call_error_handler();
   ThrownObject = payload;
   syLongjmp(ReadJmpError, 1);
   return 0;
