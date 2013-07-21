@@ -15,7 +15,6 @@ for p in patches/*.patch; do
         patch -p0 <$p
 	if [ $? -ne 0 ]; then
 	   echo "Error applying patch $p"
-	   exit 1
 	fi
 done
 
