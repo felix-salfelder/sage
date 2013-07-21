@@ -11,6 +11,8 @@ fi
 #     http://trac.sagemath.org/sage_trac/ticket/9603
 # for details.
 
+# FIXME: move to configure.ac
+
 case "$UNAME" in
 CYGWIN|HP-UX|SunOS)
     echo "iconv will be installed as the operating system is Cygwin, HP-UX or Solaris."
