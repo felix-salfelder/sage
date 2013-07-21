@@ -74,3 +74,19 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# upstream lacks pkgconfig. do it like m4ri anyhow
+cat > m4rie.pc <<EOF
+prefix=/home/felix/extern/sage-git-transition/A/local
+exec_prefix=${prefix}
+libdir=/home/felix/extern/sage-git-transition/A/local/lib
+includedir=${prefix}/include
+
+Name: M4RIE
+Description: Extended dense linear algebra over GF(2).
+Version: 20130416
+Libs: -L${libdir} -lm4rie -lm
+Cflags: -I${includedir}/m4rie -std=c99
+EOF
+
+sage-dist-install -d $DESTDIR$SAGE_LOCAL/lib/pkgconfig
+sage-dist-install -t $DESTDIR$SAGE_LOCAL/lib/pkgconfig m4rie.pc
