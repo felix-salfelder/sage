@@ -38,17 +38,8 @@ ntl_libtool()
 ntl_patch()
 {
     echo "Applying patches to NTL."
-
-    cd "$CUR/src"
-
-    # Apply all patches
-    for patch in ../patches/*.patch; do
-        patch -p1 < "$patch"
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error applying '$patch'."
-            exit 1
-        fi
-    done
+    cd $CUR
+	 ( echo "include spkg.mk" | sage-dist-make - patch-stamp ) || exit $?
 }
 
 ntl_configure()
@@ -77,8 +68,8 @@ ntl_configure()
     fi
 
     ./configure DEF_PREFIX="$SAGE_LOCAL" SHARED=on \
-        CC="$CC" CFLAGS="$CFLAGS $SHAREDFLAGS" \
-        CXX="$CXX" CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
+        CFLAGS="$CFLAGS $SHAREDFLAGS" \
+        CXXFLAGS="$CXXFLAGS $SHAREDFLAGS" \
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on NTL_STD_CXX=on \
         LIBTOOL=../libtool/libtool
@@ -112,7 +103,7 @@ ntl_install()
     $MAKE install
 
     if [ $? -ne 0 ]; then
-        echo >&2 "Unable to tune and build NTL."
+        echo >&2 "Unable to install NTL."
         exit 1
     fi
 }
