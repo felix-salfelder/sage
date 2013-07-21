@@ -21,9 +21,9 @@ cd src
 
 # Apply patches
 echo "Patching Sphinx..."
-for p in ../patches/*.patch; do
+for p in $CUR/patches/*.patch; do
     patch -p1 <"$p"
-    success "Error applying patch \"$p\""
+    echo "Error applying patch \"$p\""
 done
 echo
 
@@ -40,11 +40,12 @@ echo
 
 # Install new version
 echo "Installing Sphinx..."
-python setup.py install
+sage-setup.py install --record="$FILELIST"
 success 'Error installing Sphinx'
 echo
 
 cd "$CUR"
+# AAAAAARGHH (fix later)
 cp patches/sphinx-build "$SAGE_LOCAL/bin/"
 success "Error copying sphinx-build to $SAGE_LOCAL/bin/"
 echo
