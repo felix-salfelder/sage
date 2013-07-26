@@ -21,7 +21,6 @@ dist_bin_SCRIPTS = \
     sage-inline-fortran \
     sage-ipython \
     sage-location \
-	 sage-maxima.lisp \
     sage-notebook \
     sage-num-threads.py \
     sage-native-execute \
@@ -40,6 +39,7 @@ dist_bin_SCRIPTS = \
 sageconfdir=$(sysconfdir)
 sageconf_DATA = \
     env.sh \
+    sage-maxima.lisp \
     sage-banner
 
 # fixme: create symlink?
