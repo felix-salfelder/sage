@@ -6,7 +6,10 @@ AM_SILENT_RULES
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_HEADER([config.h])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign -Wno-portability])
+
+# Use the silent-rules feature when possible.
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # this is not in stable automake yet
 # AM_EXTRA_RECURSIVE_TARGETS([py])
@@ -26,6 +29,14 @@ AC_ARG_VAR(CPPFLAGS, cppflags)
 AC_ARG_VAR(LDFLAGS, ldflags)
 AC_ARG_VAR(PATH, path)
 AC_ARG_VAR(PYTHONPATH, pythonpath)
+
+AC_ARG_ENABLE([doc], AS_HELP_STRING([--enable-doc], [Build docs]),
+ [case "${enableval}" in
+  yes) doc=true ;;
+  no)  doc=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-doc]) ;;
+esac],[doc=no])
+AM_CONDITIONAL([BUILD_DOC], [test x$doc = xtrue])
 
 sage_local=$prefix
 test "x$prefix" = xNONE && sage_local=$ac_default_prefix
@@ -92,6 +103,15 @@ fi
 AC_MSG_RESULT($pydep)
 AM_CONDITIONAL([PYDEP], [test $pydep = yes])
 
+AC_MSG_CHECKING([whether $CYTHON supports gdb])
+if $CYTHON --help | grep -q 'gdb-outdir'; then
+   cygdb=yes
+else
+   cygdb=no
+fi
+AC_MSG_RESULT($cygdb)
+AM_CONDITIONAL([CYGDB], [test $cygdb = yes])
+
 # find clib. might be obsolete
 # AC_ARG_WITH(blas, --with-clib   choose c_lib, [clib=$with_clib], [])
 
@@ -122,14 +142,16 @@ AC_PATH_PROGS([SINGULAR],
               [Singular singular],
               [no])
 AS_IF([test "$SINGULAR" = no], [AC_MSG_ERROR([cannot find singular.])])
-# HACK: don't know how to retrieve share from Singular
-SINGULAR_SHARE=`dirname $SINGULAR`/../share/singular
-if test ! -e $SINGULAR_SHARE/algebra.lib; then
-    AC_MSG_NOTICE([unexpected singular install, cannot find share])
+AS_IF([$SINGULAR -q],,[AC_MSG_ERROR([singular doesn't work.])])
+SINGULAR_LIB=`echo 'system("SingularLib");' | $SINGULAR -q --no-rc --no-stdlib -b`
+if test ! -e $SINGULAR_LIB/algebra.lib; then
+    AC_MSG_ERROR([unexpected singular install, cannot find lib])
 fi
-AC_SUBST([SINGULAR_SHARE])
+AC_SUBST([SINGULAR_LIB])
 SINGULAR_BIN=`dirname $SINGULAR`
 AC_SUBST([SINGULAR_BIN])
+SINGULAR_SO=`readlink -f \`$CC -print-file-name=libsingular.so\``
+AC_SUBST([SINGULAR_SO])
 
 # singular needs singular and factory
 OLDCPPFLAGS=$CPPFLAGS
@@ -310,8 +332,8 @@ PKG_CHECK_MODULES([M4RI],[m4ri],,AC_MSG_ERROR([no m4ri config found]))
 M4RI_CFLAGS+=" -std=c99"
 AC_SUBST([M4RI_CFLAGS])
 
-PKG_CHECK_MODULES([M4RIE],[m4rie],
-                  [AC_MSG_NOTICE([no m4rie config found, lets try without...])],
+PKG_CHECK_MODULES([M4RIE],[m4rie],,
+                  [AC_MSG_NOTICE([no m4rie config found, lets try without...])]
                   [M4RIE_CFLAGS=-I/usr/include/m4rie]
                  )
 
@@ -376,7 +398,7 @@ AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Or GAP will define its own])
 AC_ARG_WITH(dbdir,
             AS_HELP_STRING([--with-dbdir=DIR].[use databases from DIR]),
             [dbdir=$withval],
-            [dbdir=$sage_local/share/sage])
+            [dbdir=$sage_local/share])
 
 AS_IF([test -d $dbdir/conway_polynomials],
       [CONWAY_DATA_DIR=$dbdir/conway_polynomials],
@@ -408,8 +430,8 @@ AS_IF([test -d $dbdir/reflexive_polytopes],
 AC_SUBST([POLYTOPE_DATA_DIR])
 AM_SUBST_NOTMAKE([POLYTOPE_DATA_DIR])
 
-AS_IF([test -d $dbdir/share/ellvurves],
-      [ELLCURVE_DATA_DIR=$sage_local/share/ellcurves],
+AS_IF([test -d $dbdir/ellcurves],
+      [ELLCURVE_DATA_DIR=$dbdir/ellcurves],
       [test -d /usr/share/sage/ellcurves],
       [ELLCURVE_DATA_DIR=/usr/share/sage/ellcurves],
       [test -d /usr/share/sagemath/ellcurves],
@@ -573,9 +595,15 @@ AC_MSG_RESULT([
    BLAS2:      $blas2
    PYTHON:     $PYTHON
 
-   directories:
+   flags:
+   M4RI_CFLAGS:  $M4RI_CFLAGS
+   M4RIE_CFLAGS: $M4RIE_CFLAGS
+
+   directories/stuff
    gap data      $GAP_DATA_DIR
    gap lib       $GAP_LIB_DIR
+   singular lib  $SINGULAR_LIB
+   singular so   $SINGULAR_SO
 
    optional packages
    lrcalc:       $HAVE_LIBLRCALC

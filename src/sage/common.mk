@@ -19,6 +19,9 @@
 AM_LDFLAGS = -module -avoid-version
 AM_CPPFLAGS = @my_CPPFLAGS@
 
+# how to do this right? LDADD?
+AM_LDFLAGS+= -L@top_builddir@/../c_lib/src/.libs
+
 # user specified MAKEFLAGS
 # AM_CPPFLAGS += $(CPPFLAGS)
 
@@ -35,8 +38,12 @@ LIBS += -lcsage
 CYTHONFLAGS = --fast-fail
 
 # write cython_debug
+# does not work. workdir must be @srcdir@
+# CYTHON_GDBOPT = --gdb
 CYTHON_GDBOPT = --gdb-outdir @abs_top_builddir@/..
+if CYGDB
 CYTHONFLAGS += $(CYTHON_GDBOPT)
+endif
 
 # this is required for inspection
 CYTHONFLAGS += --embed-positions
@@ -58,6 +65,7 @@ CYTHONFLAGS += -I$(abs_top_srcdir) -I$(abs_top_builddir)
 CYTHON ?= cython
 
 # needed to force correct paths in docstrings
+# wrong paths lead to mysterious sageinspect.py errors
 CYTHON_WORKING = -w $(abs_top_srcdir)/..
 CYTHONFLAGS += $(CYTHON_WORKING)
 
@@ -72,8 +80,20 @@ AM_V_CYT = $(am__v_CYT_$(V))
 am__v_CYT_ = $(am__v_CYT_$(AM_DEFAULT_VERBOSITY))
 am__v_CYT_0 = @echo "  CYTH  " $@;
 
+AM_V_PYC = $(am__v_PYC_$(V))
+am__v_PYC_ = $(am__v_PYC_$(AM_DEFAULT_VERBOSITY))
+am__v_PYC_0 = @echo "  PYC   " $@;
+
+AM_V_PYO = $(am__v_PYO_$(V))
+am__v_PYO_ = $(am__v_PYO_$(AM_DEFAULT_VERBOSITY))
+am__v_PYO_0 = @echo "  PYO   " $@;
+
+# ouch, trailing colon triggers python bug: empty string will be misinterpreted
+# as '.'.
+PYTHONPATHENV = PYTHONPATH="@abs_top_builddir@/..$(PYTHONPATH:%=:%)"
+
 define cython_call
-	$(AM_V_CYT)PYTHONPATH="$(PYTHONPATH)" $(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
+	$(AM_V_CYT)$(PYTHONPATHENV) $(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
 	    -o $(abs_builddir)/$@ @AMDEP_TRUE@@PYDEP_TRUE@-MD -MP
 	@AMDEP_TRUE@@PYDEP_TRUE@$(AM_V_at)mv $@.d $(DEPDIR)/$*.Pcython
 endef
@@ -87,10 +107,6 @@ MANUAL_DEP=$(MANUAL_DEP_PYX:%.pyx=$(DEPDIR)/%.Pcython)
 CLEANFILES = $(MANUAL_DEP_PYX:%.pyx=%.c) \
              $(MANUAL_DEP_PYX:%.pyx=%.cc) \
              *.so *.pyc *.pyo
-
-hmmmm:
-	@echo $(SOURCES)
-	@echo MANUAL_DEP_PYX $(MANUAL_DEP_PYX) 
 
 @AMDEP_TRUE@ifneq (,$(MANUAL_DEP))
 @AMDEP_TRUE@@am__include@ $(DEPDIR)/*.Pcython
@@ -107,6 +123,7 @@ PYOS = $(PYS:%.py=%.pyo)
 
 py-local: $(LTLIBRARIES:%.la=%.so) $(PYCS) $(PYOS)
 	
+# FIXME: V
 $(LTLIBRARIES:%.la=%.so): %.so: | %.la
 	-$(LN_S) .libs/$@ .
 
@@ -147,12 +164,8 @@ pycheck-local:
 %.pyc: SHELL=/usr/bin/env bash
 %.pyo: SHELL=/usr/bin/env bash
 %.pyc: %.py
-	@echo "  PYC " $@
-	@VPATH_TRUE@@mkdir -p $(dir $@)
-	@echo -e 'import py_compile\npy_compile.compile("$<","$@")' \
-		| $(PYTHON) -
+	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
+	$(AM_V_PYC)echo -e 'import py_compile\npy_compile.compile("$<","$@")' | $(PYTHON) -
 %.pyo: %.py
-	@echo "  PYO " $@
-	@VPATH_TRUE@@mkdir -p $(dir $@)
-	@echo -e 'import py_compile\npy_compile.compile("$<","$@")' \
-		| $(PYTHON) -O -
+	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
+	$(AM_V_PYO)echo -e 'import py_compile\npy_compile.compile("$<","$@")' | $(PYTHON) -O -

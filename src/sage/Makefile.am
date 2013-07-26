@@ -254,3 +254,9 @@ noinst_HEADERS = \
     ./ext/solaris_fixes.h \
     ./sat/solvers/cryptominisat/solverconf_helper.h \
     ./sat/solvers/cryptominisat/cryptominisat_helper.h
+
+# provide a python module, so we can build docs
+if BUILD_DOC
+DOCPY=py
+endif
+all-local: $(DOCPY)
