@@ -74,12 +74,12 @@ endef
 
 scripts: $(BIN)
 
-all-local: \
-    $(FOREIGN_DEP) \
-    $(BIN) \
-    $(SAGE) \
-    $(CSAGE) \
-    $(EXTCODE)
+all-local: $(FOREIGN_DEP)
+# nonsense?
+#     $(BIN) \
+#     $(SAGE) \
+#     $(CSAGE) \
+#     $(EXTCODE)
 
 # TOOLCHAIN consists of dependencies determined by spkg/install,
 # including for example the GCC package.
@@ -100,7 +100,9 @@ toolchain-deps:
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = $(BIN) $(SAGE) $(CSAGE) $(EXTCODE) @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
+SAGERUNTIME = @DEP_sagelib@
+
+sagelib_DEPS = $(BIN) $(SAGE) $(CSAGE) $(EXTCODE) @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
 
 ###############################################################################
 # Building the base system
@@ -128,9 +130,12 @@ atlas_DEPS = @DEP_lapack@ @DEP_python@
 # HACK?
 $(INST)/$(FP_atlas): @UPSTREAM@/lapack-3.4.2.tar
 
-@UPSTREAM@/lapack-3.4.2.tar:
-	@echo "cannot create $@, please download manually. (sorry)"
-	@exit 1
+$(UPSTREAM)/lapack-3.4.2.tar: $(UPSTREAM)/lapack-3.4.2.tgz
+	@echo "BUG: should take lapack tarball from lapack package, this is a different one."
+	gunzip $<
+
+$(UPSTREAM)/lapack-3.4.2.tgz:
+	cd $(UPSTREAM); wget http://www.netlib.org/lapack/lapack-3.4.2.tgz
 
 readline_DEPS = @DEP_termcap@
 
@@ -165,7 +170,7 @@ libfplll_DEPS = @DEP_mpir@ @DEP_mpfr@
 pari_DEPS = @DEP_readline@ @DEP_mpir@
 
 polybori_DEPS = @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
-                   @DEP_libm4ri@ @DEP_gd@
+                @DEP_libm4ri@ @DEP_gd@
 
 polytopes_db):
 
@@ -184,8 +189,8 @@ givaro_DEPS = @DEP_mpir@
 fflas_ffpack_DEPS = @DEP_mpir@ @DEP_givaro@ @DEP_gsl@ @DEP_atlas@
 
 linbox_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
-                      @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
-                      @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@
+              @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
+              @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@
 
 iml_DEPS = @DEP_mpir@ @DEP_gsl@ @DEP_atlas@
 
@@ -341,7 +346,8 @@ src/sage-configure-stamp: @DEP_cython@ src/c_lib-configure-stamp \
                           @DEP_elliptic_curves@ \
                           @DEP_graphs@ \
                           @DEP_polytopes_db@ \
-                          $(scripts_DEPS) @DEP_libgap@
+                          $(scripts_DEPS) @DEP_libgap@ \
+                          src/c_lib-build-stamp
 
 extcode: $(EXTCODE_TARGETS)
 
@@ -371,7 +377,7 @@ cvxopt_DEPS = \
     @DEP_atlas@ @DEP_cephes@ @DEP_gsl@ \
     @DEP_glpk@
 
-cephes):
+cephes_DEPS = @DEP_cython@
 
 ###############################################################################
 

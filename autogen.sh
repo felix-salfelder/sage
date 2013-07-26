@@ -27,6 +27,6 @@ fi
 for i in $MODULES; do
 	( cd $i;
 	  echo autogen in $( pwd )
-	  ./autogen.sh || echo trouble in $i/autogen.sh
-	)
+	  ./autogen.sh || ( echo trouble in $i/autogen.sh; exit 1 )
+	) || exit 1
 done

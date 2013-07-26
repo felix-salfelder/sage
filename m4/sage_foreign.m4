@@ -29,7 +29,7 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
  else # --disable-<packagename>
   FOREIGN_DISABLED+=" $1"
   if test x$CHK_$1 = xnegative; then
-   AC_MSG_NOTICE([system package for $1 is known to not work. you have been warned!])
+   AC_MSG_NOTICE([system package for $1 is unavailable or will not work. you have been warned!])
    sleep 3
   fi
  fi

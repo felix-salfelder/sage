@@ -45,13 +45,15 @@ unpatch:
 		echo unpatch not implemented yet. delete with make clean if necessary; \
 	fi
 
+SRC=src
+
 # Apply all patches
 # hmm, some more magic?
 patch-stamp: # | patches
 	: > $@.T
 	for patch in $(sort $(wildcard patches/*.patch)); do \
 	    [ -r "$$patch" ] || continue; \
-	    patch -d src -p1 < "$$patch"; \
+	    patch -d $(SRC) -p1 < "$$patch"; \
 	    if [ $$? -ne 0 ]; then \
 	        echo >&2 "Error applying '$$patch'"; \
 	        exit 1; \

@@ -3,7 +3,11 @@
 
 AC_PREREQ([2.69])
 AC_INIT([sage], [5.11.beta3], [sage-support@googlegroups.com])
-AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability silent-rules])
+AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability])
+
+# Use the silent-rules feature when possible.
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -235,6 +239,9 @@ AC_SUBST([KEEPBUILD],$keepbuild)
 ## sage foreign package in/exclusion
 # base packages
 # checks for packages
+
+AC_CHECK_LIB([atlas], [ATL_scpsc], [], [CHK_atlas=negative])
+
 AC_MSG_CHECKING([whether iconv is required])
 case "$UNAME" in
     CYGWIN|HP-UX|SunOS)
@@ -378,18 +385,18 @@ AC_SUBST(UNAME, `uname`)
 
 AC_CONFIG_FILES([GNUmakefile
                  deps
-                 dist/spkg.mk
-                 dist/Makefile
-                 dist/bin/Makefile
-                 dist/etc/Makefile
-                 dist/etc/env.sh])
+                 sagedist/spkg.mk
+                 sagedist/Makefile
+                 sagedist/bin/Makefile
+                 sagedist/etc/Makefile
+                 sagedist/etc/env.sh])
 
-AC_CONFIG_FILES([dist/bin/sage-dist-install],
-       [chmod +x dist/bin/sage-dist-install])
-AC_CONFIG_FILES([dist/bin/sage-dist-make],
-       [chmod +x dist/bin/sage-dist-make])
-AC_CONFIG_FILES([dist/bin/sage_fortran],
-       [chmod +x dist/bin/sage_fortran])
+AC_CONFIG_FILES([sagedist/bin/sage-dist-install],
+       [chmod +x sagedist/bin/sage-dist-install])
+AC_CONFIG_FILES([sagedist/bin/sage-dist-make],
+       [chmod +x sagedist/bin/sage-dist-make])
+AC_CONFIG_FILES([sagedist/bin/sage_fortran],
+       [chmod +x sagedist/bin/sage_fortran])
 
 # this is currently not needed.
 AC_CONFIG_FILES([sage],

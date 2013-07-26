@@ -4,20 +4,24 @@ paths are suboptimal.
 /build/bin should be /dist/bin (maybe not?)
 /src should be pkgs/libsage or sagelib
 
-fix package staging (dont use the term "install" for not installing)
-
-fix package uninstall
-
 dependencies must be where packages are, not in "deps"
 
 PYTHON dependency, currently using SAGE_LOCAL/bin/python unconditionally
-(do it like singular)
+(do it like singular) (done?)
 
 CORE_MODULES should be built with VPATH (?) but with spkg-install
 
+failing doctests, doe to hardcoded paths
+
 uninstall before fresh install
 
-hook sage -b etc.
+make -n doesnt work very well
+
+decruft dependencies (sagelibspkg vs parts of it)
+
+lapack, atlas. (argh). the lapack package does not install lapack. disabling atlas requires system lapack
+
+hook sage -b etc, complete old Makefile interface.
 
 BUG: do git hopping, make
 ../configure: line 5703: syntax error near unexpected token `Cython,CHK_cython=negative'
