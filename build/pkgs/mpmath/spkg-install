@@ -18,4 +18,4 @@ rm -rf $SAGE_ROOT/local/lib/python/site-packages/mpmath*
 
 cd src/
 
-python setup.py install
+sage-setup.py install --record=$FILELIST
