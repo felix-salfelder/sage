@@ -1344,7 +1344,12 @@ def sage_getargspec(obj):
             args, varargs, varkw = inspect.getargs(func_obj)
         except TypeError: # arg is not a code object
         # The above "hopefully" was wishful thinking:
-            return inspect.ArgSpec(*_sage_getargspec_cython(sage_getsource(obj)))
+            s = sage_getsource(obj)
+            if not s:
+               print obj, "has no source?!"
+            else:
+               print "source", s
+            return inspect.ArgSpec(*_sage_getargspec_cython(s))
             #return _sage_getargspec_from_ast(sage_getsource(obj))
     try:
         defaults = func_obj.func_defaults
