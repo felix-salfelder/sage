@@ -12,8 +12,8 @@ all: install
 COMMONMK?=spkg.mk
 include $(COMMONMK)
 
-SRC = `pwd`/src
-SHARED = "$(SRC)/shared"
+SRC = `pwd`/src/latest
+SHARED = `pwd`/src/shared
 
 SINGULAR_CONFIGURE?=
 # disable the dynamic kernel, except on Linux
@@ -131,7 +131,7 @@ configure-stamp: patch-stamp
 	export CFLAGS="$(CFLAGS)" \
 	       CXXFLAGS="$(CXXFLAGS)" \
 	       GREP_OPTIONS=""; \
-	cd src; ./configure \
+	cd $(SRC); ./configure \
 	            --prefix="$(SAGE_LOCAL)" \
 	            --exec-prefix="$(SAGE_LOCAL)" \
 	            --bindir="$(SAGE_LOCAL)"/bin \
@@ -156,7 +156,7 @@ configure-stamp: patch-stamp
 	export CFLAGS="$(CFLAGS)" \
 	       CXXFLAGS="$(CXXFLAGS)" \
 	       GREP_OPTIONS=""; \
-	cd src/factory; ./configure \
+	cd $(SRC)/factory; ./configure \
 	            --prefix="$(SAGE_LOCAL)" \
 	            --includedir="$(SAGE_LOCAL)/include/factory" \
 	            --exec-prefix="$(SAGE_LOCAL)" \
@@ -175,7 +175,7 @@ configure-stamp: patch-stamp
 	export CFLAGS="$(CFLAGS)" \
 	       CXXFLAGS="$(CXXFLAGS)"; \
 	       GREP_OPTIONS=""; \
-	cd src/libfac; ./configure \
+	cd $(SRC)/libfac; ./configure \
 	            --prefix="$(SAGE_LOCAL)" \
 	            --exec-prefix="$(SAGE_LOCAL)" \
 	            --bindir="$(SAGE_LOCAL)"/bin \
@@ -208,17 +208,17 @@ install: install-singular install-docs install-env
 # BUG: singular will nuke the installation before it is even built!
 
 install-singular: clean-hack build
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc install-nolns
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc install-libsingular
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC) install-nolns
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC) install-libsingular
 
 #install-rest: # former build_factory, build_libfac
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc/factory all
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc/factory install
-	$(S_I) src/factory/factoryconf.h "$(SAGE_LOCAL)/include/"
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc/libfac all
-	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -Csrc/libfac install
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/factory all
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/factory install
+	$(S_I) $(SRC)/factory/factoryconf.h "$(SAGE_LOCAL)/include/"
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/libfac all
+	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/libfac install
 
-	$(S_I) src/Singular/singular "$(SAGE_LOCAL)/bin"
+	$(S_I) $(SRC)/Singular/singular "$(SAGE_LOCAL)/bin"
 
 install-docs:
 	$(S_I) -t $(SAGE_LOCAL)/share/singular/ $(SHARED)/singular.hlp $(SHARED)/singular.idx
@@ -234,7 +234,7 @@ singular.sh:
 	echo "export SINGULAR_EXECUTABLE SINGULARPATH" >> $@
 
 build: configure-stamp
-	ln -sf Singular src/Singular/singular
+	ln -sf Singular $(SRC)/Singular/singular
 
 #create_singular_script()
 
