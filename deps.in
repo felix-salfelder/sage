@@ -143,9 +143,6 @@ docutils_DEPS = @DEP_python@
 
 elliptic_curves_DEPS = @DEP_python@ @DEP_sqlite@
 
-# HACK.
-$(PKGSDIR)/$(FP_elliptic_curves): elliptic_curves-clean
-
 # CONWAY depends on SAGERUNTIME because it runs Sage code to
 # generate a Sage object (.sobj).
 conway_polynomials_DEPS = $(SAGERUNTIME)
@@ -301,11 +298,11 @@ pygments_DEPS+= @DEP_sqlalchemy@
 # this is unneeded.
 # src/sage-configure-stamp: src/c_lib-build
 
+# WHY?! this way ./sage -sh fails until all of them have been compiled
 scripts_DEPS = \
     @DEP_atlas@ \
     @DEP_cephes@ \
     @DEP_cliquer@ \
-    @DEP_cython@ \
     @DEP_ecl@ \
     @DEP_eclib@ \
     @DEP_ecm@ \
@@ -345,6 +342,7 @@ src/bin-configure-stamp: $(scripts_DEPS)
 src/sage-configure-stamp: @DEP_cython@ src/c_lib-configure-stamp \
                           @DEP_elliptic_curves@ \
                           @DEP_graphs@ \
+                          @DEP_cython@ \
                           @DEP_polytopes_db@ \
                           $(scripts_DEPS) @DEP_libgap@ \
                           src/c_lib-build-stamp

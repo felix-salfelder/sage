@@ -18,6 +18,7 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
    $1=no
   else
    DEP_$1=$our_package
+   SAGE_$1=yes
    $1=yes
   fi
  elif test $$1 = true; then
@@ -26,6 +27,7 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
    AC_MSG_NOTICE(["forcefully overriding available system package: $1"])
   fi
   DEP_$1=$our_package
+  SAGE_$1=yes
  else # --disable-<packagename>
   FOREIGN_DISABLED+=" $1"
   if test x$CHK_$1 = xnegative; then
@@ -34,9 +36,13 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
   fi
  fi
  AC_SUBST(DEP_$1)
+ AC_SUBST(SAGE_$1)
+ AS_IF([ test -n "$2" ], [BINARY_$1="$2"])
+ AC_SUBST(BINARY_$1)
  m4_pushdef([uppercase],translit([[$1]],[a-z],[A-Z]))
 
  # this is not currently used. might be helpful...
+ # FIXME: remove uppercase?
  AM_CONDITIONAL([SAGE_OWN_]uppercase, [test x$$1 = xtrue])
  m4_popdef([uppercase])
  FOREIGN_DEP+=' $(DEP_$1)'

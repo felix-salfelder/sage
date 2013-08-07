@@ -1,0 +1,105 @@
+# this file is part of Sage
+# (c) 2013 Felix Salfelder
+# license: gplv3+
+#
+
+# these are the environment bits required to run spkg-install programs
+# and also things like $prefix/bin/sage -i
+
+SAGE_ROOT="@abs_top_builddir@"
+export SAGE_ROOT
+
+LIBRARY_PATH="$LIBRARY_PATH:$SAGE_LOCAL/lib"
+export LIBRARY_PATH
+
+# must be exported here, so it gets included into bin/env.sh when
+# running inside sage-the-distribution
+SAGE_LOCAL=@abs_top_builddir@/local
+export SAGE_LOCAL
+
+# stage packages into SAGE_LOCAL for now.
+SAGE_PREFIX=$SAGE_LOCAL
+export SAGE_PREFIX
+
+# dummywall beween SAGE_LOCAL/bin and system paths
+PATH="$SAGE_ROOT/sagedist/bin:$PATH"
+PATH="@abs_top_srcdir@/sagedist/bin:$PATH"
+
+PATH="$SAGE_LOCAL/bin:$PATH"
+
+# sage_fortran
+PATH="$SAGE_ROOT/build/bin:$PATH"
+export PATH
+
+CPPFLAGS="$CPPFLAGS -I$SAGE_LOCAL/include"
+export CPPFLAGS
+
+# maxima build will fail if LDFLAGS contains extra whitespace (d'0h)
+LDFLAGS+="-L$SAGE_LOCAL/lib"
+export LDFLAGS
+
+SAGE_DOC="@abs_top_builddir@/src/doc"
+export SAGE_DOC
+
+# this could well be part of sagelib/spkg-install (after cleanup)
+SAGE_SRC="@SAGE_SRC@"
+export SAGE_SRC
+
+SAGE_DOC_SRC="@abs_top_srcdir@/src/doc"
+export SAGE_DOC_SRC
+
+SAGE_DISTFILES="@abs_top_builddir@/upstream"
+export SAGE_DISTFILES
+
+###### FIXME: decruft ######
+
+# Setup env varariables if ccache is installed
+if [ -d "$SAGE_LOCAL/libexec/ccache" ]; then
+    PATH="$SAGE_LOCAL/libexec/ccache:$PATH"
+fi
+if [ -z "$CCACHE_BASEDIR" ]; then
+    export CCACHE_BASEDIR="$SAGE_ROOT"
+fi
+
+if [ "$LD" = "" ]; then
+    LD="ld"  && export LD
+fi
+if [ "$AR" = "" ]; then
+    AR="ar"  && export AR
+fi
+if [ "$AS" = "" ]; then
+    AS="as"  && export AS
+fi
+
+if [ "$CXXFLAGS" = "" ]; then
+    export CXXFLAGS="$CFLAGS"
+fi
+
+if [ "$CP" = "" ]; then
+    CP="cp"  && export CP
+fi
+
+if [ "$MV" = "" ]; then
+    MV="mv"  && export MV
+fi
+
+if [ "$RANLIB" = "" ]; then
+    RANLIB="ranlib"  && export RANLIB
+fi
+
+if [ "$LN" = "" ]; then
+    LN="ln"  && export LN
+fi
+
+if [ "$MKDIR" = "" ]; then
+    MKDIR="mkdir"  && export MKDIR
+fi
+
+if [ "$CHMOD" = "" ]; then
+    CHMOD="chmod"  && export CHMOD
+fi
+
+if [ "$TOUCH" = "" ]; then
+    TOUCH="touch"  && export TOUCH
+fi
+

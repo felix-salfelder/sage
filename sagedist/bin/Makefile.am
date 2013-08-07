@@ -5,3 +5,22 @@
 bin_SCRIPTS = sage_fortran
 
 all-local: sage-dist-make sage-dist-install
+
+all-local: $(FOREIGN_ALL:%=%-dummy)
+
+# move to configure is probably better
+$(FOREIGN_ALL:%=%-dummy): %-dummy:
+	@if test -n "$(BINARY_$*)"; then \
+	  if test x$(SAGE_$*) = xyes; then \
+	    echo creating $(BINARY_$*) dummies for $*; \
+	    for i in $(BINARY_$*); do \
+			echo sage-dummy.sh $$i $* > $$i; \
+			chmod +x $$i; \
+	    done;\
+	  else\
+	    echo removing $(BINARY_$*) dummies;\
+	    rm -f $(BINARY_$*);\
+	  fi;\
+	fi
+
+.PHONY: $(FOREIGN_ALL:%=%-dummy)

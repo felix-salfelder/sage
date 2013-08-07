@@ -96,9 +96,6 @@ src/c_lib-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib
 
 src/bin-configure-stamp: CORE_OPTS+= --sysconfdir=@prefix@/etc
 
-# --path-paranoia?
-@SAGE_ONLY_TRUE@src/bin-configure-stamp: CORE_OPTS+= --enable-path_redundancy
-
 src/sage-build-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
 
 #c_lib depends from deps.in
@@ -166,7 +163,8 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
-	       srcdir="$(abs_top_srcdir)/$$path"; \
+	       srcdir="$(abs_top_srcdir)/$$path" \
+	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
 	cd $$path; \
 	echo "$(abs_top_srcdir)/$$path/spkg-install FILELIST=\"$@\"" ;\
@@ -183,6 +181,27 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 		touch $(abs_top_builddir)/$@; \
 	fi
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
+
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
+	@echo "==== checking $* ===="
+	@path=$(PKGSDIR)/$(FP_$*); \
+	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
+	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	       UNAME="@UNAME@" \
+	       srcdir="$(abs_top_srcdir)/$$path" \
+	       abs_top_srcdir="$(abs_top_srcdir)"; \
+	source $(ENV_SH); \
+	cd $$path; \
+	$(PIPE) "./spkg-install check $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	if [ $$? -ne 0 ]; then \
+		echo $@ failed, deleting; \
+		rm -f $(abs_top_builddir)/$@; \
+		exit 1; \
+	else \
+		echo $@ succeeded; \
+		touch $(abs_top_builddir)/$@; \
+	fi
 
 # HACK: sagelib is not ready yet
 $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
@@ -213,7 +232,7 @@ $(FOREIGN_ALL:%=%-stage): %-stage: $(INST)/$$(FP_$$*)
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-restage): %-restage:
-	rm -f $(INST)/$(FP_$*)
+	$(MAKE) $*-unstage
 	$(MAKE) $*-stage
 
 # the diff command needs work
@@ -307,39 +326,8 @@ $(FOREIGN_ALL:%=%-unstage): %-unstage:
 UNINSTALL_FP = @FOREIGN_DISABLED@ @FOREIGN_AVAILABLE@
 stage-decruft: $(UNINSTALL_FP:%=%-unstage)
 
-p=%
-define unpack
-	@echo unpacking $@
-# hmm, call clean?
-	rm -rf $(PKGSDIR)/$*/src $(PKGSDIR)/$*/*-stamp
-	mkdir -p $(PKGSDIR)/$*
-	cd $(PKGSDIR)/$*; @TAR@ -xf $(abs_top_builddir)/$|
-	@a="$(FP_$*)"; shopt -s extglob; \
-	  $(call unat,mv $(PKGSDIR)/$*/$${a%.p[0-9]?([0-9])} $@)
-endef
-
-.SECONDEXPANSION:
-$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
-                  $$(shell echo >&2 $$* to2 $$(FP_$$*))
-	$(unpack)
-
-# no need to download exception
-$(PKGSDIR)/%-builtin:
-	$(MKDIR_P) $(PKGSDIR)/$*-builtin/src
-	cd $(abs_top_builddir)/$(PKGSDIR)/$*-builtin; \
-	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$*/* .
-	
-
-.SECONDEXPANSION:
-$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
-                  $$(shell echo >&2 $$* to3 $$(FP_$$*))
-	$(unpack)
-
 $(INST):
 	$(MKDIR_P) $@
-
-#$(INST)/:
-#	mkdir -p $@
 
 $(SAGE_LOGS):
 	mkdir -p $@
@@ -527,6 +515,7 @@ copy:
    $(FOREIGN_ALL:%=%-stage) \
    $(FOREIGN_ALL:%=%-binary) \
    $(FOREIGN_ALL:%=%-distcheck) \
+   $(FOREIGN_ALL:%=%-check) \
    $(FOREIGN_ALL:%=%-info) \
    unstage-clean \
    $(UNINSTALL_FP:%=%-unstage) \
@@ -556,18 +545,44 @@ $(INST_VERSION_ALL):
 	$(downloadit)
 
 define unpackwithversion
-	@echo unpacking $@
+	@echo unpackingwithversion $@
 	$(MKDIR_P) $(PKGSDIR)/$*/src
 	cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
 	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .
-	cd $(PKGSDIR)/$*/src; @TAR@ --strip-components=1 -xf $(abs_top_builddir)/$|
+	@TAR@ -C $(PKGSDIR)/$*/src --strip-components=1 -xf $|
 endef
 
-# hmm, for now. better wihout stamp (?)
-# actually need $(PKGSDIR)/<pkgname>/src-<versionno>
+# HMMM: check again wheter checksum is okay?
 .SECONDEXPANSION:
 $(PKGSDIR)/%: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
 	$(unpackwithversion)
+
+p=%
+define unpack
+	@echo unpacking $@
+# hmm, call clean?
+	rm -rf $(PKGSDIR)/$*/src $(PKGSDIR)/$*/*-stamp
+	mkdir -p $(PKGSDIR)/$*
+	cd $(PKGSDIR)/$*; @TAR@ -xf $(abs_top_builddir)/$|
+	@a="$(FP_$*)"; shopt -s extglob; \
+	  $(call unat,mv $(PKGSDIR)/$*/$${a%.p[0-9]?([0-9])} $@)
+endef
+
+.SECONDEXPANSION:
+$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
+                  $$(shell echo >&2 $$* to2 $$(FP_$$*))
+	$(unpack)
+
+# no need to download exception
+$(PKGSDIR)/%-builtin:
+	$(MKDIR_P) $(PKGSDIR)/$*-builtin/src
+	cd $(abs_top_builddir)/$(PKGSDIR)/$*-builtin; \
+	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$*/* .
+
+.SECONDEXPANSION:
+$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
+                  $$(shell echo >&2 $$* to3 $$(FP_$$*))
+	$(unpack)
 
 @dotPRECIOUS@: local/var/lib/sage/installed/% \
                @UPSTREAM@/%.bz2 @UPSTREAM@/%.gz
@@ -576,11 +591,9 @@ $(PKGSDIR)/%: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(
 # RECHECK: does this work right?
 .SECONDARY:
 
-
 unstage-local:
 	rm -rf src/*-stamp
 
-# just remove it...
 $(FOREIGN_ALL:%=%-clean): %-clean:
 	rm -rf build/pkgs/$*-*
 
@@ -596,3 +609,16 @@ libcheck:
 		ldd $$i |grep -v 'statically linked' | grep -v 'not a dynamic executable' \
 		        $(LIB_WHITELIST:%=| grep -v '%'); \
 	done
+
+# FIXME, these packages are broken, force reunpack
+# this one moves files instad of installing them
+# $(INST)/$(FP_elliptic_curves): elliptic_curves-reunphack
+# # this one appears to build correctly but the result is broken
+# $(INST)/$(FP_maxima): maxima-reunphack
+# # this one causes maxima to appear to build correctly, but breaks maxima
+# $(INST)/$(FP_ecl): ecl-reunphack
+
+# this is a HACK, but that doesnt matter, its just a workaround
+%-reunphack:
+	$(MAKE) $*-clean
+	$(MAKE) $(PKGSDIR)/$(FP_$*)

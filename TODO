@@ -1,3 +1,5 @@
+rebase cliquer paching to sage-upstream
+
 paths are suboptimal.
 /build/pkgs should be /pkgs
 /build/etc should be /dist/etc (maybe not?)
@@ -11,11 +13,19 @@ PYTHON dependency, currently using SAGE_LOCAL/bin/python unconditionally
 
 CORE_MODULES should be built with VPATH (?) but with spkg-install
 
-failing doctests, doe to hardcoded paths
+failing doctests, due to hardcoded paths
+
+what about doctesting optional packages (lrcalc and the like?)
 
 uninstall before fresh install
 
+check checksum before unpack. maybe not after download (?)
+
+KEEP_BUILDDIR feature
+
 make -n doesnt work very well
+
+recheck: stage unstages before build has completed (good idea?)
 
 decruft dependencies (sagelibspkg vs parts of it)
 
@@ -38,11 +48,7 @@ installation: can be implemented as follows:
 - @top_builddir@/local symlinks to .local/$prefix
 - "make install" now just installs everything
 
+always (cd /x && $(LN_S) foo bar) instead of $(LN_S) foo /x/bar
 
-other things:
-
-In other words, it does not work to do:
-          $(LN_S) foo /x/bar
-Instead, do:
-          (cd /x && $(LN_S) foo bar)
+use AS_IF
 

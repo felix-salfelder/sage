@@ -35,8 +35,13 @@ SAGE_INSTALLDIRS_DESTDIR = $(SAGE_INSTALL) $(DESTDIR_ARG) -d
 
 all: check install
 
-check:
-	:
+check: spkg-check
+
+# run spkg-check if it exists
+spkg-check: build
+	[ ! -x spkg-check ] || ./spkg-check
+
+.PHONY: spkg-check
 
 install: tmpclean patch-stamp
 

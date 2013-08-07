@@ -108,7 +108,7 @@ CHK_cliquer=
 AC_CHECK_HEADER([cliquer/cliquer.h],,[CHK_cliquer=negative])
 
 python_version_required=2.7
-AM_PATH_PYTHON([$python_version_required])
+AM_PATH_PYTHON([$python_version_required],,[:])
 AS_VAR_IF([PYTHON_VERSION],[$python_version_required],[dnl
    # whitelist python if desired:
    # CHK_python=positive
@@ -132,6 +132,9 @@ if test ! "x$prefix" = xNONE; then
 fi
 
 AC_SUBST(SAGE_LOCAL, $sage_local)
+
+SAGE_SRC=`cd $srcdir/src; pwd`
+AC_SUBST(SAGE_SRC)
 
 # Check C++ and Fortran compilers.
 if test -z "$CXX"; then
@@ -292,7 +295,7 @@ SAGE_FOREIGN_PACKAGE([libfplll])
 SAGE_FOREIGN_PACKAGE([freetype])
 SAGE_FOREIGN_PACKAGE([genus2reduction])
 SAGE_FOREIGN_PACKAGE([gap])
-SAGE_FOREIGN_PACKAGE([gcc])
+SAGE_FOREIGN_PACKAGE([gcc],[gcc])
 SAGE_FOREIGN_PACKAGE([gd])
 SAGE_FOREIGN_PACKAGE([gdmodule])
 SAGE_FOREIGN_PACKAGE([gf2x])
@@ -316,7 +319,7 @@ SAGE_FOREIGN_PACKAGE([linbox])
 SAGE_FOREIGN_PACKAGE([libm4ri])
 SAGE_FOREIGN_PACKAGE([libm4rie])
 SAGE_FOREIGN_PACKAGE([matplotlib])
-SAGE_FOREIGN_PACKAGE([maxima])
+SAGE_FOREIGN_PACKAGE([maxima],[maxima])
 SAGE_FOREIGN_PACKAGE([mpc])
 SAGE_FOREIGN_PACKAGE([mpfi])
 SAGE_FOREIGN_PACKAGE([mpfr])
@@ -336,7 +339,7 @@ SAGE_FOREIGN_PACKAGE([ppl])
 SAGE_FOREIGN_PACKAGE([pycrypto])
 SAGE_FOREIGN_PACKAGE([pygments])
 SAGE_FOREIGN_PACKAGE([pynac])
-SAGE_FOREIGN_PACKAGE([python])
+SAGE_FOREIGN_PACKAGE([python],[python python2.7])
 SAGE_FOREIGN_PACKAGE([ratpoints])
 SAGE_FOREIGN_PACKAGE([r])
 SAGE_FOREIGN_PACKAGE([rpy2])
@@ -348,7 +351,7 @@ SAGE_FOREIGN_PACKAGE([sagelib])
 SAGE_FOREIGN_PACKAGE([sagenb])
 SAGE_FOREIGN_PACKAGE([sagetex])
 SAGE_FOREIGN_PACKAGE([scipy])
-SAGE_FOREIGN_PACKAGE([scons])
+SAGE_FOREIGN_PACKAGE([scons],[scons])
 SAGE_FOREIGN_PACKAGE([setuptools])
 SAGE_FOREIGN_PACKAGE([singular])
 SAGE_FOREIGN_PACKAGE([sphinx])
@@ -389,7 +392,8 @@ AC_CONFIG_FILES([GNUmakefile
                  sagedist/Makefile
                  sagedist/bin/Makefile
                  sagedist/etc/Makefile
-                 sagedist/etc/env.sh])
+                 sagedist/etc/env.sh
+                 sagedist/etc/dist.sh])
 
 AC_CONFIG_FILES([sagedist/bin/sage-dist-install],
        [chmod +x sagedist/bin/sage-dist-install])
