@@ -308,14 +308,17 @@ sage_setup() {
 # change various hardcoded paths.  Skip this if we don't have write
 # access to $SAGE_LOCAL (e.g. when running as a different user) or
 # if Python and sage-location haven't been installed yet.
-maybe_sage_location()
-{
-    if [ -w "$SAGE_LOCAL" ]; then
-        if [ -x "$SAGE_LOCAL/bin/python" ] && [ -x "@prefix@/bin/sage-location" ]; then
-            sage-location || exit $?
-        fi
-    fi
-}
+
+# this must be part of sage-the-distribution
+
+# maybe_sage_location()
+# {
+#     if [ -w "$SAGE_LOCAL" ]; then
+#         if [ -x "$SAGE_LOCAL/bin/python" ] && [ -x "@prefix@/bin/sage-location" ]; then
+#             sage-location || exit $?
+#         fi
+#     fi
+# }
 
 
 # Start an interactive Sage session, this function never returns.
