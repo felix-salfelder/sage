@@ -123,7 +123,7 @@ if [ -x "$SAGE_ROOT/local/bin/sage" ]; then
 elif [ -x "$SAGE_ROOT/src/bin/sage" ]; then
 	 # run a not-yet installed sage
     # particularly, env.sh is not in place, use a substitute.
-    export SAGE_ETC="$SAGE_ROOT/dist/etc"
+    export SAGE_ETC="$SAGE_ROOT/sagedist/etc"
     "$SAGE_ROOT/src/bin/sage" "$@"
 else
     echo >&2 "$0: no Sage installation found in \$SAGE_ROOT=$SAGE_ROOT"
