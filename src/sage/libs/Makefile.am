@@ -15,7 +15,7 @@ SUBDIRS = \
 
 include $(top_srcdir)/common.mk
 libsdir = $(pythondir)/sage/libs
-libs_PYTHON = __init__.py all.py
+libs_PYTHON = __init__.py all.py polybori/__init__.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 libs_LTLIBRARIES = ecl.la libsageecm.la ppl.la ratpoints.la
@@ -27,13 +27,14 @@ ppl_la_LIBADD = -lppl -lgmpxx -lgmp -lm -lcsage
 ratpoints_la_LIBADD = -lratpoints -lgmp
 
 libs_gmpdir = $(libsdir)/gmp
-libs_gmp_PYTHON = __init__.py
+libs_gmp_PYTHON = gmp/__init__.py
 
 noinst_HEADERS = \
-    ./fplll/fplll.pxi ./coxeter3/decl.pxi ./pari/declinl.pxi ./pari/decl.pxi \
-    ./pari/gen.pxi ./pari/pari_err.pxi ./ntl/ntl_ZZ_pEX_linkage.pxi ./ntl/decl.pxi \
-    ./ntl/ntl_GF2X_linkage.pxi ./ntl/misc.pxi ./symmetrica/symmetrica.pxi \
-    ./symmetrica/kostka.pxi ./symmetrica/sab.pxi ./symmetrica/sb.pxi \
-    ./symmetrica/schur.pxi ./symmetrica/sc.pxi ./symmetrica/plet.pxi \
-    ./symmetrica/part.pxi ./flint/nmod_poly_linkage.pxi ./flint/fmpz_poly.pxi \
-    ./flint/fmpz.pxi ./cremona/defs.pxi ./singular/singular-cdefs.pxi
+    fplll/fplll.pxi coxeter3/decl.pxi pari/declinl.pxi pari/decl.pxi \
+    pari/gen.pxi pari/pari_err.pxi ntl/ntl_ZZ_pEX_linkage.pxi ntl/decl.pxi \
+    ntl/ntl_GF2X_linkage.pxi ntl/misc.pxi symmetrica/symmetrica.pxi \
+    symmetrica/kostka.pxi symmetrica/sab.pxi symmetrica/sb.pxi \
+    symmetrica/schur.pxi symmetrica/sc.pxi symmetrica/plet.pxi \
+    symmetrica/part.pxi flint/nmod_poly_linkage.pxi flint/fmpz_poly.pxi \
+    flint/fmpz.pxi cremona/defs.pxi singular/singular-cdefs.pxi \
+    ppl_shim.hh polybori/decl.pxd

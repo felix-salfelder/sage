@@ -90,3 +90,5 @@ misc_la_LIBADD = -lmpfr -lgmp -lcsage
 
 # somethings terribly wrong with singular
 matrix_mpolynomial_dense_la_CPPFLAGS += -DNDEBUG
+
+noinst_HEADERS = matrix_modn_dense_template_header.pxi matrix_modn_dense_template.pxi

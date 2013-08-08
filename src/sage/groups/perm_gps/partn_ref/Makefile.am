@@ -33,3 +33,5 @@ refinement_python_la_LIBADD = -lgmp -lflint
 refinement_python_la_CFLAGS = -std=c99 $(AM_CFLAGS)
 refinement_sets_la_LIBADD = -lgmp -lflint
 refinement_sets_la_CFLAGS = -std=c99 $(AM_CFLAGS)
+
+noinst_HEADERS = data_structures_pxd.pxi data_structures_pyx.pxi

@@ -11,6 +11,6 @@ sat_solvers_cryptominisat_LTLIBRARIES = cryptominisat.la solverconf.la
 cryptominisat_la_LIBADD = -lcryptominisat -lz
 cryptominisat_la_CPPFLAGS = -I@SAGE_LOCAL@/include -I@SAGE_LOCAL@/include/cmsat $(AM_CPPFLAGS)
 
-solverconf_la_SOURCES = solverconf.pyx solverconf_helper.cpp
+solverconf_la_SOURCES = solverconf.pyxx solverconf_helper.cpp
 solverconf_la_LIBADD = -lcryptominisat -lz
 solverconf_la_CPPFLAGS = -I@SAGE_LOCAL@/include -I@SAGE_LOCAL@/include/cmsat $(AM_CPPFLAGS)

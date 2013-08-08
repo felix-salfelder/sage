@@ -33,6 +33,8 @@ polydict_la_LIBADD = -lcsage
 
 m4ri_flags_filtered = $(filter-out -std=c99,@M4RI_CFLAGS@)
 
+noinst_HEADERS = polynomial_template.pxi polynomial_template_header.pxi
+
 multi_polynomial_ideal_libsingular_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl -lgmpxx -lgmp -lcsage
 multi_polynomial_ideal_libsingular_la_SOURCES = multi_polynomial_ideal_libsingular.pyxx
 multi_polynomial_ideal_libsingular_la_CXXFLAGS = -D__STDC_LIMIT_MACROS $(AM_CXXFLAGS)

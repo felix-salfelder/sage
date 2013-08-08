@@ -83,3 +83,5 @@ real_interval_absolute_la_LIBADD = -lgmp
 real_mpfi_la_LIBADD = -lmpfi -lmpfr -lgmp -lcsage
 
 real_mpfr_la_LIBADD = -lmpfr -lpari -lgmp -lcsage
+
+noinst_HEADERS = mpfi.pxi mpc.pxi

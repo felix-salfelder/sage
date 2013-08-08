@@ -14,3 +14,5 @@ modular_arithgroup_LTLIBRARIES = congroup_pyx.la farey_symbol.la
 congroup_pyx_la_LIBADD = -lcsage
 farey_symbol_la_SOURCES = farey_symbol.pyxx farey.cpp sl2z.cpp
 farey_symbol_la_LIBADD = -lgmpxx -lgmp -lcsage
+
+noinst_HEADERS = sl2z.hpp farey.hpp

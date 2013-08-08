@@ -20,3 +20,5 @@ implicit_surface_la_CPPFLAGS = $(AM_CPPFLAGS) -I@numpy_include_dir@
 index_face_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)
 index_face_set_la_LIBADD = -lcsage
 parametric_surface_la_LIBADD = -lcsage
+
+noinst_HEADERS = point_c.pxi

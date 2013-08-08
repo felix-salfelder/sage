@@ -6,7 +6,10 @@ SUBDIRS = notebook
 include $(top_srcdir)/common.mk
 
 serverdir = $(pythondir)/sage/server
-server_PYTHON = all.py  __init__.py  introspect.py  misc.py  nodoctest.py  support.py
+server_PYTHON = \
+    all.py __init__.py \
+    introspect.py misc.py \
+    nodoctest.py support.py
 
 server_tracdir = $(serverdir)/trac
 server_trac_PYTHON = \

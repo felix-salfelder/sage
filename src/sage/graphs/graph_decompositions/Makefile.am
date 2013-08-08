@@ -11,3 +11,5 @@ graphs_graph_decompositions_LTLIBRARIES = graph_products.la rankwidth.la vertex_
 rankwidth_la_SOURCES = rankwidth.pyx rankwidth_c/rw.c
 rankwidth_la_LIBADD = -lcsage
 vertex_separation_la_LIBADD = -lcsage
+
+EXTRA_DIST = fast_digraph.pyx

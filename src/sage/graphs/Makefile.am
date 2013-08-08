@@ -57,3 +57,6 @@ graphs_generators_PYTHON = \
 
 trees_la_LIBADD = -lcsage
 weakly_chordal_la_LIBADD = -lcsage
+
+noinst_HEADERS = cl.h
+EXTRA_DIST = clhack.c

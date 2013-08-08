@@ -32,3 +32,5 @@ parent_base_la_LIBADD = -lcsage
 parent_gens_la_LIBADD = -lcsage
 parent_la_LIBADD = -lcsage
 parent_old_la_LIBADD = -lcsage
+
+noinst_HEADERS = coerce.pxi
