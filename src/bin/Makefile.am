@@ -39,8 +39,14 @@ dist_bin_SCRIPTS = \
 sageconfdir=$(sysconfdir)
 sageconf_DATA = \
     env.sh \
-    sage-maxima.lisp \
     sage-banner
+
+#FIXME: this does not exactly belong here
+EXTRA_DIST = sage-banner
+
+#FIXME: ext(code)?
+sageconf_DATA+= sage-maxima.lisp
+EXTRA_DIST+= sage-maxima.lisp
 
 # fixme: create symlink?
 # sage-bdist
