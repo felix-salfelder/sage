@@ -95,14 +95,14 @@ PYTHONPATHENV = PYTHONPATH="@abs_top_builddir@/..$(PYTHONPATH:%=:%)"
 define cython_call
 	$(AM_V_CYT)$(PYTHONPATHENV) $(CYTHON) $(CYTHONFLAGS) $(abspath $(CYTHON_EXTRA_PATH)$<) \
 	    -o $(abs_builddir)/$@ @AMDEP_TRUE@@PYDEP_TRUE@-MD -MP
-	@AMDEP_TRUE@@PYDEP_TRUE@$(AM_V_at)mv $@.d $(DEPDIR)/$*.Pcython
+	$(AM_V_at)@AMDEP_TRUE@@PYDEP_TRUE@mv $@.d $(DEPDIR)/$*.Pcython
 endef
 
-%.cc: CYTHONFLAGS+=--cplus
+%.cc: CYTHONFLAGS+= --cplus
 
-MANUAL_DEP_PYS=$(filter %.pyx %.pyxx,$(SOURCES))
-MANUAL_DEP_PYX=$(MANUAL_DEP_PYS:%.pyxx=%.pyx)
-MANUAL_DEP=$(MANUAL_DEP_PYX:%.pyx=$(DEPDIR)/%.Pcython)
+MANUAL_DEP_PYS = $(filter %.pyx %.pyxx,$(SOURCES))
+MANUAL_DEP_PYX = $(MANUAL_DEP_PYS:%.pyxx=%.pyx)
+MANUAL_DEP = $(MANUAL_DEP_PYX:%.pyx=$(DEPDIR)/%.Pcython)
 
 CLEANFILES = $(MANUAL_DEP_PYX:%.pyx=%.c) \
              $(MANUAL_DEP_PYX:%.pyx=%.cc) \
@@ -147,7 +147,7 @@ pycheck-recursive:
 @am__leading_dot@PHONY: py-recursive py-local py \
                         pycheck-recursive pycheck-local pycheck
 
-PYLIST=none
+PYLIST = none
 
 # compare registered .py's against existing
 pycheck-local:
