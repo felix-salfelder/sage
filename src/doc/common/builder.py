@@ -31,10 +31,11 @@ from sage.misc.misc import sage_makedirs as mkdir
 from sage.env import SAGE_DOC, SAGE_SRC
 
 # Load the options
-from build_options import SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT, \
-                          PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, \
-                          WEBSITESPHINXOPTS, SAGE_DOC_SRC
-#execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
+sys.path.append(os.path.join(SAGE_DOC, 'common'))
+# from build_options import SAGE_DOC, LANGUAGES, SPHINXOPTS, PAPER, OMIT, \
+#                           PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, \
+#                           WEBSITESPHINXOPTS, SAGE_DOC_SRC
+execfile(os.path.join(SAGE_DOC, 'common' , 'build_options.py'))
 
 
 ##########################################
@@ -141,7 +142,7 @@ class DocBuilder(object):
 
         EXAMPLES::
 
-            sage: import os, sys; sys.path.append(os.environ['SAGE_DOC']+'/common/'); import builder
+            sage: import os, sys; sys.path.append(os.environ['SAGE_DOC_SRC']+'/common/'); import builder
             sage: b = builder.DocBuilder('tutorial')
             sage: b._output_dir('html')
             '.../doc/output/html/en/tutorial'
@@ -598,7 +599,7 @@ for a webpage listing all of the documents.''' % (output_dir,
 
             sage: import os, sys; sys.path.append(os.environ['SAGE_DOC']+'/common/'); import builder
             sage: b = builder.ReferenceBuilder('reference')
-            sage: refdir = os.path.join(os.environ['SAGE_DOC'], 'en', b.name)
+            sage: refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
             sage: sorted(b.get_all_documents(refdir))
             ['reference/algebras', 'reference/arithgroup', ..., 'reference/tensor']
         """
