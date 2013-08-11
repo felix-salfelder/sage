@@ -161,11 +161,15 @@ pycheck-local:
 @am__leading_dot@PRECIOUS: %.cc %.c
 
 # yes, this is ugly, may be replaced with make 3.82
+#
+# FIXME: cleanup, remove __file__ quirk if not VPATH
+#
+# FIXME: parsing twice (pyc and py). can be done in one go
 %.pyc: SHELL=/usr/bin/env bash
 %.pyo: SHELL=/usr/bin/env bash
 %.pyc: %.py
 	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
-	$(AM_V_PYC)echo -e 'import py_compile\npy_compile.compile("$<","$@")' | $(PYTHON) -
+	$(AM_V_PYC)echo -e "\n__file__='$<'" | cat "$<" - | $(PYTHON) -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'
 %.pyo: %.py
 	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
-	$(AM_V_PYO)echo -e 'import py_compile\npy_compile.compile("$<","$@")' | $(PYTHON) -O -
+	$(AM_V_PYO)echo -e "\n__file__='$<'" | cat "$<" - | $(PYTHON) -O -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'
