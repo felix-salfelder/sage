@@ -32,6 +32,11 @@ Python modules::
 
     sage: sage_getfile(sage.misc.sageinspect)
     '.../sageinspect.py'
+    sage: print os.path.join(SAGE_SRC, 'sage', 'misc', 'sageinspect.py').__repr__()
+    '.../sageinspect.py'
+    sage: from sage.env import SAGE_ROOT
+    sage: os.path.join(SAGE_SRC, 'sage', 'misc', 'sageinspect.py') == sage_getfile(sage.misc.sageinspect)
+    True
 
     sage: print sage_getdoc(sage.misc.sageinspect).lstrip()[:40]
     Inspect Python, Sage, and Cython objects
@@ -1100,6 +1105,7 @@ def _sage_getargspec_cython(source):
     return _sage_getargspec_from_ast('def dummy('+''.join(py_units)
                                      +varargs+keywords+'): pass')
 
+# this is expected to return the *source* file of obj
 def sage_getfile(obj):
     r"""
     Get the full file name associated to ``obj`` as a string.
@@ -1147,7 +1153,14 @@ def sage_getfile(obj):
         return sage_getfile(obj.__class__) #inspect.getabsfile(obj.__class__)
 
     # No go? fall back to inspect.
-    return inspect.getabsfile(obj)
+    absfile = inspect.getabsfile(obj)
+    if absfile.endswith('.pyc'):
+        # for some reason getabsfile has returned the pyc file. probably within SAGE_ROOT
+        # lets find the source code...
+        from sage.env import SAGE_ROOT, SAGE_SRC
+        if absfile.startswith(SAGE_ROOT):
+           absfile = os.path.join(SAGE_SRC, absfile[5+len(SAGE_ROOT):-1])
+    return absfile
 
 def sage_getargspec(obj):
     r"""
