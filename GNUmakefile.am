@@ -531,7 +531,7 @@ include deps.in
 $(INST_VERSION_ALL):
 
 .SECONDEXPANSION:
-@UPSTREAM@/%.tar.bz2: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/checksums.ini
+upstream/%.tar.bz2: $(PKGSDIR)/$$(firstword $$(subst -, ,$$*))/checksums.ini
 	$(downloadit)
 	@dlsum=$$(sha1sum $@ | cut -f1 -d' ');\
 	refsum=$$(grep sha1 $< | cut -d= -f2);\
@@ -541,7 +541,7 @@ $(INST_VERSION_ALL):
 	  rm $@; exit 1 )
 	@touch $@ # wget will apply the remote mtime
 
-@UPSTREAM@/%.gz:
+upstream/%.gz:
 	$(downloadit)
 
 define unpackwithversion
@@ -554,7 +554,7 @@ endef
 
 # HMMM: check again wheter checksum is okay?
 .SECONDEXPANSION:
-$(PKGSDIR)/%: | @UPSTREAM@/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
+$(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
 	$(unpackwithversion)
 
 p=%
@@ -569,7 +569,7 @@ define unpack
 endef
 
 .SECONDEXPANSION:
-$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
+$(PKGSDIR)/%/src: | upstream/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
                   $$(shell echo >&2 $$* to2 $$(FP_$$*))
 	$(unpack)
 
