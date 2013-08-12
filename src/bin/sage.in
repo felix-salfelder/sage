@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# FIXME: move to a reasonable location. better use PATH
+PIPESTATUS_CMD="@abs_top_srcdir@/../../build/pipestatus"
+
 usage() {
     echo "----------------------------------------------------------------------"
     grep -i version "$SAGE_ETC/sage-banner"
@@ -311,14 +314,15 @@ sage_setup() {
 
 # this must be part of sage-the-distribution
 
-# maybe_sage_location()
-# {
+maybe_sage_location()
+{
 #     if [ -w "$SAGE_LOCAL" ]; then
 #         if [ -x "$SAGE_LOCAL/bin/python" ] && [ -x "@prefix@/bin/sage-location" ]; then
 #             sage-location || exit $?
 #         fi
 #     fi
-# }
+:
+}
 
 
 # Start an interactive Sage session, this function never returns.
@@ -704,7 +708,7 @@ install() {
         PKG_NAME=`echo "$PKG" | sed -e "s/\.spkg$//"`
         PKG_NAME=`basename "$PKG_NAME"`
 
-        "$SAGE_ROOT"/build/pipestatus \
+        $PIPESTATUS_CMD \
             "sage-spkg $OPTINFO $OPTF $OPTS $OPTC '$PKG' 2>&1" \
             "(trap '' SIGINT; tee -a '$SAGE_ROOT/logs/install.log' '$SAGE_LOGS/$PKG_NAME.log')"
         # Do not try to install further packages if one failed
