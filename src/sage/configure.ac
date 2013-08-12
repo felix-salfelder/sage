@@ -143,7 +143,7 @@ AC_PATH_PROGS([SINGULAR],
               [no])
 AS_IF([test "$SINGULAR" = no], [AC_MSG_ERROR([cannot find singular.])])
 AS_IF([$SINGULAR -q],,[AC_MSG_ERROR([singular doesn't work.])])
-SINGULAR_LIB=`echo 'system("SingularLib");' | $SINGULAR -q --no-rc --no-stdlib -b`
+SINGULAR_LIB=`echo 'system("SingularLib");' | $SINGULAR -q --no-rc --no-stdlib -b 2>/dev/null`
 if test ! -e $SINGULAR_LIB/algebra.lib; then
     AC_MSG_ERROR([unexpected singular install, cannot find lib])
 fi
