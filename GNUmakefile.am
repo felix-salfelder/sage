@@ -21,7 +21,7 @@ V_1 = 1
 SAGE_LOGS = @abs_top_builddir@/pkgs/logs
 
 CORE_MODULES = src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
-CORE_ENV =
+CORE_ENV = dummy=1
 CORE_OPTS = --prefix="@prefix@" --with-dbdir="@prefix@/share"
 
 ### CORE_MODULE build implementation ###
@@ -46,6 +46,7 @@ $(CORE_MODULES:%=%-build-stamp): %-build-stamp: %-configure-stamp
 	export $(CORE_ENV); \
 	source $(ENV_SH); \
 	$(MAKE) -C$* V=$(V_$(V)) $(BUILDTARGET)
+	touch $@
 
 src/sage-build-stamp: BUILDTARGET = py
 src/c_lib-build-stamp: BUILDTARGET = all
@@ -63,14 +64,10 @@ $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	$(MAKE) -C$* install
 	touch $@
 
-# distribute core modules as tarballs
-# (probably unneeded)
-#EXTRA_DIST=$(CORE_MODULES:%=%-builtin.tar.gz)
-#$(CORE_MODULES:%=%-builtin.tar.gz): %-builtin.tar.gz: %-configure-stamp
-#	$(MAKE) -C$* dist PACKAGE=internal VERSION=builtin
-#	mv $*/internal-builtin.tar.gz $*-builtin.tar.gz
-#
-EXTRA_DIST=Makefile
+.SECONDARY: src/sage-build-stamp \
+            src/c_lib-configure-stamp
+
+EXTRA_DIST = Makefile
 
 # add submodule contents to dist (much better)
 @distdir_subs@
@@ -97,10 +94,6 @@ src/c_lib-configure-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib
 src/bin-configure-stamp: CORE_OPTS+= --sysconfdir=@prefix@/etc
 
 src/sage-build-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
-
-#c_lib depends from deps.in
-src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
-                           @DEP_pynac@ @DEP_python@ @DEP_singular@
 
 # doesn't make any sense to stage these, just build
 DOC = src/doc-build
@@ -580,12 +573,12 @@ $(PKGSDIR)/%-builtin:
 	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$*/* .
 
 .SECONDEXPANSION:
-$(PKGSDIR)/%/src: | @UPSTREAM@/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
+$(PKGSDIR)/%/src: | upstream/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
                   $$(shell echo >&2 $$* to3 $$(FP_$$*))
 	$(unpack)
 
 @dotPRECIOUS@: local/var/lib/sage/installed/% \
-               @UPSTREAM@/%.bz2 @UPSTREAM@/%.gz
+               upstream/%.bz2 @UPSTREAM@/%.gz
 
 # don't delete intermediate files (e.g. stamps).
 # RECHECK: does this work right?
@@ -622,3 +615,7 @@ libcheck:
 %-reunphack:
 	$(MAKE) $*-clean
 	$(MAKE) $(PKGSDIR)/$(FP_$*)
+
+#c_lib depends from deps.in
+src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
+                           @DEP_pynac@ @DEP_python@ @DEP_singular@
