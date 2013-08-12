@@ -11,3 +11,5 @@ sage-dist-install --record "$FILELIST" -d "$POLYTOPES_DATA_DIR/Full2d"
 sage-dist-install --record "$FILELIST" -t "$POLYTOPES_DATA_DIR/Full2d" src/Full2d/*
 sage-dist-install --record "$FILELIST" -d "$POLYTOPES_DATA_DIR/Full3d"
 sage-dist-install --record "$FILELIST" -t "$POLYTOPES_DATA_DIR/Full3d" src/Full3d/*
+
+sage-dist-install --record "$FILELIST" -t "$POLYTOPES_DATA_DIR" src/reflexive_polytopes_*
