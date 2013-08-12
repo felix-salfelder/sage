@@ -3,8 +3,8 @@
 ## PARI
 ###########################################
 
-if [ -z "$SAGE_LOCAL" ]; then
-    echo "SAGE_LOCAL undefined ... exiting"
+if [ -z "$SAGE_PREFIX" ]; then
+    echo "SAGE_PREFIX undefined ... exiting"
     echo "Maybe run 'sage -sh'?"
     exit 1
 fi
@@ -13,6 +13,10 @@ TOP=`pwd`
 
 SAGE_ETC=${SAGE_ETC-$SAGE_LOCAL/etc}
 
+# urghs. upstream should take care of this
+GMPINCLUDEDIR=$(dirname $( echo "#include <gmp.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
+READLINEINCLUDEDIR=$(dirname $( echo "#include <readline/readline.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
+
 #######################################################################
 # Apply all patches.  See patches/README.txt for details about the
 # patches.
@@ -20,7 +24,6 @@ SAGE_ETC=${SAGE_ETC-$SAGE_LOCAL/etc}
 ( echo "include spkg.mk" | sage-dist-make - patch-stamp ) || exit $?
 
 cd src
-
 
 # Prepare all variables for building PARI/GP, except for CFLAGS
 set_environment()
@@ -96,6 +99,10 @@ set_environment()
         echo "============================================================"
     fi
 
+    echo "GMPINCLUDEDIR=\"$GMPINCLUDEDIR\""
+    echo "READLINEINCLUDEDIR=\"$READLINEINCLUDEDIR\""
+    echo "============================================================"
+
     # Allow the user to enable PARI self-tuning.
     # This is time-consuming, but some may want to do it.
     # Comment by leif: Also, PARI's Configure calls "make" (instead of $MAKE)
@@ -142,10 +149,6 @@ set_environment()
     # The following get set because we pass the respective parameters:
     # prefix kernel with_gmp with_readline
 }
-
-# urghs. upstream should take care of this
-GMPINCLUDEDIR=$(dirname $( echo "#include <gmp.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
-READLINEINCLUDEDIR=$(dirname $( echo "#include <readline/readline.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
 
 # Build PARI/GP
 build()
@@ -249,7 +252,7 @@ else
     pari_shlib="libpari.so"
 fi
 
-# FIXME: this is a check
+# FIXME: this is a postinst check
 # if [ ! -f "$SAGE_LOCAL/lib/$pari_shlib" ]; then
 #     echo "Error: PARI's shared library '$pari_shlib' has not been installed!"
 #     exit 1
