@@ -3,6 +3,11 @@
 ## PARI
 ###########################################
 
+# makefile compatibility kludge
+if [ "$1" = "check" ]; then
+	exec ./spkg-check
+fi
+
 if [ -z "$SAGE_PREFIX" ]; then
     echo "SAGE_PREFIX undefined ... exiting"
     echo "Maybe run 'sage -sh'?"
