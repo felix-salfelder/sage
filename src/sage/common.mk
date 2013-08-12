@@ -16,7 +16,9 @@
 #
 #allpythonstuff = $(wildcard *.py *.pxd *.pxi)
 
-AM_LDFLAGS = -module -avoid-version -L@top_builddir@/../c_lib/src/.libs
+# -L@top_builddir@/../c_lib/src/.libs will be added automatically
+AM_LDFLAGS = -module -avoid-version
+
 AM_CPPFLAGS = @my_CPPFLAGS@
 
 # how to do this right? LDADD?
