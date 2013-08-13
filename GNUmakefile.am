@@ -67,12 +67,13 @@ $(CORE_MODULES:%=%-build-bypass): %-build-bypass:
 
 $(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
 
+src/%-stage-stamp: STAGETARGET = all
 src/sage-stage-stamp: STAGETARGET = py
 src/c_lib-stage-stamp: STAGETARGET = install
 
 $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	@echo $@ ...
-	$(MAKE) -C$* install
+	$(MAKE) -C$* $(STAGETARGET)
 	touch $@
 
 EXTRA_DIST = Makefile build/pipestatus
