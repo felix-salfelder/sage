@@ -4,6 +4,8 @@
 #
 bin_SCRIPTS = sage_fortran sage-setup.py
 
+EXTRA_DIST = sage-setup.py
+
 all-local: sage-dist-make sage-dist-install
 
 all-local: $(FOREIGN_ALL:%=%-dummy)
