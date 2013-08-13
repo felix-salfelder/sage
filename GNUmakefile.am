@@ -179,7 +179,7 @@ $(INST)/sagelib-builtin: STAGETARGET=stage
 $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist
 	@echo "==== staging $* ===="
-	path=$(PKGSDIR)/$*; \
+	@path=$(PKGSDIR)/$*; \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
