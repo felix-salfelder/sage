@@ -51,9 +51,9 @@ cd src/
 
 echo
 echo "Now configuring eclib..."
-GMPDIR=$(dirname $( echo "#include <gmp.h>" | $CC $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )/..
-NTLDIR=$(dirname $( echo "#include <NTL/config.h>" | $CC $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )/..
-PARIDIR=$(dirname $( echo "#include <pari/pari.h>" | $CC $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )/..
+GMPDIR=$(dirname $( echo "#include <gmp.h>"        | $CC $CPPFLAGS -M -MP -E - | grep 'gmp\.h:$' ) )/..
+NTLDIR=$(dirname $( echo "#include <NTL/config.h>" | $CC $CPPFLAGS -M -MP -E - | grep 'NTL/config\.h:$' ) )/../..
+PARIDIR=$(dirname $( echo "#include <pari/pari.h>" | $CC $CPPFLAGS -M -MP -E - | grep 'pari/pari\.h:$' ) )/../..
 echo GMPDIR $GMPDIR
 echo NTLDIR $NTLDIR
 echo PARIDIR $PARIDIR
