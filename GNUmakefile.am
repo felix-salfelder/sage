@@ -231,6 +231,11 @@ $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
 	fi
 
 # HACK: sagelib is not ready yet
+#
+# this directory currently is not used.
+build/pkgs/sagelib-builtin:
+	$(MKDIR_P) $@
+#
 $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
 	@echo "==== staging sagelib (hack) ===="
 	@path=$(PKGSDIR)/sagelib; \
