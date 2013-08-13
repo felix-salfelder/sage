@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
+if [ "$SAGE_PREFIX" = "" ]; then
+   echo "SAGE_PREFIX undefined ... exiting";
    echo "Maybe run 'sage -sh'?"
    exit 1
 fi
@@ -11,6 +11,9 @@ if [ "x$SAGE64" = xyes ]; then
    CFLAGS="-O2 -g -m64 "; export CFLAGS
    LDFLAGS="-m64 "; export LDFLAGS
 fi
+
+MPLINITFILE="$SAGE_LOCAL/lib/python2.7/site-packages/matplotlib/__init__.py"
+export MPLINITFILE
 
 # Write a configuration file to src/setup.cfg
 cp patches/make-setup-config.py .
