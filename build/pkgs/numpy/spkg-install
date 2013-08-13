@@ -28,7 +28,7 @@ cd src
 patches=""
 if [ $UNAME = "CYGWIN" ]; then
     echo "CYGWIN: Patching numpy/linalg/setup.py"
-    patches="$patches ../patches/cygwin-lapack_lite-setup.py.diff"
+    patches="$patches $CUR/patches/cygwin-lapack_lite-setup.py.diff"
 fi
 for patch in $patches; do
     patch -p1 <"$patch"
@@ -75,7 +75,7 @@ if [ $? -ne 0 ]; then
 fi
 
 
-NUMPY_INCLUDEDIR="SAGE_PREFIX/lib/python/site-packages/numpy/core/include"
+NUMPY_INCLUDEDIR="$SAGE_PREFIX/lib/python/site-packages/numpy/core/include"
 
 echo "NUMPY_INCLUDEDIR=\"$NUMPY_INCLUDEDIR\" && export NUMPY_INCLUDEDIR" > numpyenv.sh
 
