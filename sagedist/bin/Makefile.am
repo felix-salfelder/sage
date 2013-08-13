@@ -2,7 +2,7 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
-bin_SCRIPTS = sage_fortran
+bin_SCRIPTS = sage_fortran sage-setup.py
 
 all-local: sage-dist-make sage-dist-install
 
