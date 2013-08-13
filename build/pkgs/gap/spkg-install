@@ -46,7 +46,7 @@ export CFLAGS="$CFLAGS -fPIC -DPIC"
 cd src
 
 # urghs. upstream should take care of this
-GMPDIR=$(dirname $( echo "#include <gmp.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )/..
+GMPDIR=$(dirname $( echo "#include <gmp.h>" | $CC $CPPFLAGS -M -MP -E - | grep 'gmp\.h:$' ) )/..
 
 # Configure
 echo "Configuring GAP..."
