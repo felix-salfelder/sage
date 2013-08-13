@@ -33,6 +33,10 @@ AM_CPPFLAGS += @CSAGE_INCLUDES@
 # this is the directory that contains "sage"
 AM_CPPFLAGS += -I$(abs_top_srcdir)/..
 
+# BUG. that's what sage-upstream does
+AM_CFLAGS =  -fno-strict-aliasing
+AM_CXXFLAGS =  -fno-strict-aliasing
+
 # FIXME: place where required (partly done)
 LIBS += -lcsage
 
@@ -61,8 +65,8 @@ CYTHONFLAGS += -X fast_getattr=True
 # problem: include paths...
 CYTHONFLAGS += -I$(abs_top_srcdir)/.. -I$(abs_top_builddir)/..
 
-# should look like this (but doesn't)
-CYTHONFLAGS += -I$(abs_top_srcdir) -I$(abs_top_builddir)
+# should look like this (but doesn't, because we are still in src/sage
+# CYTHONFLAGS += -I$(abs_top_srcdir) -I$(abs_top_builddir)
 
 CYTHON ?= cython
 
