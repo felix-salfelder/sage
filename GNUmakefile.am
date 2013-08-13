@@ -589,16 +589,22 @@ upstream/%.gz:
 	$(downloadit)
 
 define unpackwithversion
-	@echo unpackingwithversion $@
 	$(MKDIR_P) $(PKGSDIR)/$*/src
 	cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
 	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .
-	@TAR@ -C $(PKGSDIR)/$*/src --strip-components=1 -xf $|
+	@TAR@ -C $(PKGSDIR)/$*/src --strip-components=1 -xf $(firstword $|)
 endef
 
 # HMMM: check again wheter checksum is okay?
 .SECONDEXPANSION:
-$(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2
+$(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
+                $(PKGSDIR)/$$(call packagename,$$*)/checksums.ini
+	@dlsum=$$(sha1sum $(firstword $|) | cut -f1 -d' ');\
+	refsum=$$(grep sha1 $(lastword $|) | cut -d= -f2);\
+	test $$dlsum = $$refsum || \
+	( echo expected sha1: $$refsum;\
+	  echo got      sha1: $$dlsum;\
+	  rm $@; exit 1 )
 	$(unpackwithversion)
 
 p=%
