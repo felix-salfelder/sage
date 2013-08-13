@@ -34,8 +34,8 @@ AM_CPPFLAGS += @CSAGE_INCLUDES@
 AM_CPPFLAGS += -I$(abs_top_srcdir)/..
 
 # BUG. that's what sage-upstream does
-AM_CFLAGS =  -fno-strict-aliasing
-AM_CXXFLAGS =  -fno-strict-aliasing
+AM_CFLAGS = -fno-strict-aliasing -fwrapv
+AM_CXXFLAGS = -fno-strict-aliasing -fwrapv
 
 # FIXME: place where required (partly done)
 LIBS += -lcsage
