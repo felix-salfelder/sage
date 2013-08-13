@@ -26,8 +26,11 @@ set -e
 
 # FIXME: uuh ooh. need sage ("the distribution") unpacked to build.
 
+
+# maybe call spkg-install build or stage
+
 # build c_lib
-make -C "$SAGE_ROOT" src/c_lib-install
+make -C "$SAGE_ROOT" src/c_lib-stage
 
 # build sage library
-make -C "$SAGE_ROOT" src/sage-install
+make -C "$SAGE_ROOT" src/sage-stage
