@@ -67,7 +67,6 @@ $(CORE_MODULES:%=%-build-bypass): %-build-bypass:
 
 $(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
 
-STAGETARGET = install
 src/sage-stage-stamp: STAGETARGET = py
 src/c_lib-stage-stamp: STAGETARGET = install
 
@@ -167,13 +166,19 @@ INST_VERSION_ALL = $(VERSION_ALL:%=$(INST)/%)
 version-info:
 	@for i in $(VERSION_ALL); do echo $$i; done
 
+# the usual foreign package will be installed to prefix=$SAGE_LOCAL
+# although this is not necessary in most cases.
+$(INST)/%: STAGETARGET=install
+# no need to install sagelib
+$(INST)/sagelib-builtin: STAGETARGET=stage
+
 # FIXME: better create symlinks during unpack, not here
 # overly complicated. should really use makefiles... :|
 .SECONDEXPANSION:
 $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist
 	@echo "==== staging $* ===="
-	@path=$(PKGSDIR)/$*; \
+	path=$(PKGSDIR)/$*; \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
@@ -190,7 +195,7 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 	export FILELIST="$(FILELIST)"; \
 	export SAGE_ETC="$(SAGE_ETC)"; \
 	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
-	$(PIPE) "./spkg-install install $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	if [ $$? -ne 0 ]; then \
 		echo $@ failed, deleting; \
 		rm -f $(abs_top_builddir)/$@; \
@@ -200,8 +205,8 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 		touch $(abs_top_builddir)/$@; \
 	fi
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
-	@@KEEPBUILD_FALSE@echo deleting $* source; rm -rf $(PKGSDIR)/$*
-	@@KEEPBUILD_TRUE@echo not deleting $* source
+	@@KEEPBUILT_FALSE@echo deleting $* source; rm -rf $(PKGSDIR)/$*
+	@@KEEPBUILT_TRUE@echo not deleting $* source
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
@@ -313,7 +318,6 @@ $(FOREIGN_ALL:%=%-binary): %-binary: $$($$*_DEPS)
 	(cd $$DESTDIR; fakeroot tar -czf @abs_top_builddir@/$(FP_$*)-binary.tbz2 *); \
 	rm -r $$DESTDIR
 
-.SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-info): %-info: build/pkgs/%/package-version.txt
 	@echo === $* ===
 	@not=; test -z "$(DEP_$*)" && not="not "; \
@@ -327,6 +331,11 @@ $(FOREIGN_ALL:%=%-info): %-info: build/pkgs/%/package-version.txt
 	else echo not unpacked; fi
 	@inst=$$( shopt -s nullglob; echo $(INST)/$*-* ); \
 		[ -n "$$inst" ] && echo "staged:   $$( basename $$inst ) ($$( wc -l $$inst | cut -d" " -f1 ) files)" || echo not staged
+
+.SECONDEXPANSION:
+$(FOREIGN_ALL:%=%-list): %-list: build/pkgs/%/package-version.txt
+	@inst=$$( shopt -s nullglob; echo $(INST)/$*-* ); \
+		[ -n "$$inst" ] &&  sort $$inst || echo not staged
 
 # convenience rules
 #incomplete/under construction (necessary?)

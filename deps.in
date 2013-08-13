@@ -100,7 +100,7 @@ toolchain-deps:
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = @DEP_sagelib@
+SAGERUNTIME = @DEP_sagelib@ src/sage-stage-stamp
 
 sagelib_DEPS = $(BIN) $(SAGE) $(CSAGE) $(EXTCODE) @DEP_sagenb@ @DEP_ipython@ @DEP_gap@
 
@@ -350,8 +350,8 @@ src/sage-configure-stamp: @DEP_cython@ src/c_lib-configure-stamp \
 extcode: $(EXTCODE_TARGETS)
 
 # lib_c
-$(CSAGE): $(csage_DEPS)
-csage_DEPS = @DEP_scons@ @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ @DEP_pynac@ \
+src/c_lib-configure-stamp: $(csage_DEPS)
+csage_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ @DEP_pynac@ \
              @DEP_python@ $(scripts_DEPS)
 
 #FIXME:

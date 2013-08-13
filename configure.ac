@@ -224,21 +224,20 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([endgrent endpwent floor getcwd inet_ntoa memset mkdir pathconf setenv sqrt strchr strdup strstr uname utime])
 
 AC_CHECK_PROG(GIT,git,yes)
-if test x"$GIT" = "xyes" && test -d .git; then
+have_git_repo=no
+if test x"$GIT" = "xyes" && test -d $srcdir/.git; then
    have_git_repo=yes
-else
-   have_git_repo=no
 fi
 
 ## options
-AC_ARG_ENABLE([keepbuild], AS_HELP_STRING([--enable-keepbuild], [Clean after build]),
+AC_ARG_ENABLE([keepbuilt], AS_HELP_STRING([--enable-keepbuilt], [Delete foreign package source after build]),
  [case "${enableval}" in
-  yes) $1=true ;;
-  no)  $1=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-keepbuild]) ;;
- esac],[keepbuild=$have_git_repo])
-AM_CONDITIONAL([KEEPBUILD],[test $keepbuild=yes])
-AC_SUBST([KEEPBUILD],$keepbuild)
+  yes) keepbuilt=yes ;;
+  no)  keepbuilt=no ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-keepbuilt]) ;;
+ esac],[keepbuilt=$have_git_repo])
+AM_CONDITIONAL([KEEPBUILT],[test $keepbuilt = yes])
+#AC_SUBST([KEEPBUILT],$keepbuilt)
 
 ## sage foreign package in/exclusion
 # base packages
@@ -445,6 +444,7 @@ AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
    prefix:     $prefix
+   keepbuilt:  $keepbuilt
    $packageinfo
 ])
 

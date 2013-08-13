@@ -32,7 +32,6 @@ SAGE_INSTALLDIRS = $(SAGE_INSTALL) -d
 SAGE_INSTALL_DESTDIR = $(SAGE_INSTALL) $(DESTDIR_ARG)
 SAGE_INSTALLDIRS_DESTDIR = $(SAGE_INSTALL) $(DESTDIR_ARG) -d
 
-
 all: check install
 
 check: spkg-check
@@ -55,8 +54,8 @@ SRC=src
 # Apply all patches
 # hmm, some more magic?
 patch-stamp: # | patches
-	: > $@.T
-	for patch in $(sort $(wildcard patches/*.patch)); do \
+	@: > $@.T
+	@for patch in $(sort $(wildcard patches/*.patch)); do \
 	    [ -r "$$patch" ] || continue; \
 	    patch -d $(SRC) -p1 < "$$patch"; \
 	    if [ $$? -ne 0 ]; then \
@@ -65,7 +64,7 @@ patch-stamp: # | patches
 	    fi; \
 	    echo $$patch >> $@.T; \
 	done
-	mv $@.T $@
+	@mv $@.T $@
 
 
 installtmp: DESTDIR=`pwd`/tmp
