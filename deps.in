@@ -128,9 +128,9 @@ patch_DEPS = @DEP_bzip2@
 atlas_DEPS = @DEP_lapack@ @DEP_python@
 
 # HACK?
-$(INST)/$(FP_atlas): @UPSTREAM@/lapack-3.4.2.tar
+$(INST)/$(FP_atlas): upstream/lapack-3.4.2.tar
 
-$(UPSTREAM)/lapack-3.4.2.tar: $(UPSTREAM)/lapack-3.4.2.tgz
+$(UPSTREAM)/lapack-3.4.2.tar: upstream/lapack-3.4.2.tgz
 	@echo "BUG: should take lapack tarball from lapack package, this is a different one."
 	gunzip $<
 

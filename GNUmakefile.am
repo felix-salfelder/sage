@@ -64,16 +64,31 @@ $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	$(MAKE) -C$* install
 	touch $@
 
-EXTRA_DIST = Makefile
+EXTRA_DIST = Makefile build/pipestatus
+define upstreampackages
+	$(shell  shopt -s extglob && for i in $(VERSION_ALL); do echo upstream/$${i%.p[0-9]?([0-9])}.tar.bz2; done )
+endef
 
-# add submodule contents to dist (much better)
+.SECONDEXPANSION:
+dist-hook: $$(call upstreampackages)
+	$(MKDIR_P) $(distdir)/upstream
+	cp $+ $(distdir)/upstream
+
+# add builtin submodule contents to dist (much better)
 @distdir_subs@
+
+# brute force
+EXTRA_DIST+= $(FOREIGN_ALL:%=$(PKGSDIR)/%)
+
+# hack/workaround
+EXTRA_DIST+= upstream/lapack-3.4.2.tar
 
 ### core module rules ###
 # FIXME: build src/sage out of tree
 # in src/build/sage/cythonized?!
 
 ### core module dependencies ###
+# FIXME: core modules could be handled by spkg-installs.
 
 #FIXME: install takes ages, shouldnt be necessary
 src/doc-configure-stamp: src/sage-build
@@ -121,10 +136,10 @@ define downloadit
 	$(call unat,@URL_GRABBER@ @DOWNLOAD_URL@/$(call packagename,$*)/$(notdir $@))
 endef
 
-@UPSTREAM@/pkgconfig-0.18.tar.gz:
+upstream/pkgconfig-0.18.tar.gz:
 	wget http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz
 # FIXME: checksum
-	mv pkconfig-0.18.tar.gz @UPSTREAM@
+	mv pkconfig-0.18.tar.gz upstream
 
 # this apparently is *not* prefix
 SAGE_LOCAL = @abs_top_builddir@/local
@@ -144,7 +159,8 @@ INST_VERSION_ALL = $(VERSION_ALL:%=$(INST)/%)
 version-info:
 	@for i in $(VERSION_ALL); do echo $$i; done
 
-# complicated. should really use makefiles... :|
+# FIXME: better create symlinks during unpack, not here
+# overly complicated. should really use makefiles... :|
 .SECONDEXPANSION:
 $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR)
@@ -162,11 +178,10 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 	env > $(SAGE_LOGS)/$*.env; \
 	echo "===================="; \
 	cd $$path; \
-	echo "$(abs_top_srcdir)/$$path/spkg-install FILELIST=\"$@\"" ;\
 	export FILELIST="$(FILELIST)"; \
 	export SAGE_ETC="$(SAGE_ETC)"; \
 	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
-	$(PIPE) "./spkg-install $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	$(PIPE) "./spkg-install install $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	if [ $$? -ne 0 ]; then \
 		echo $@ failed, deleting; \
 		rm -f $(abs_top_builddir)/$@; \
@@ -228,6 +243,10 @@ sagelib-clean-extra:
 # temporary, treat as the others eventually
 # no version number?
 # FP_sagelib=sagelib
+#
+# another hack: use a dummy file
+upstream/sagelib-builtin.tar.bz2:
+	touch $@
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-stage): %-stage: $(INST)/$$(FP_$$*)

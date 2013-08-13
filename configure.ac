@@ -2,8 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sage], [5.11.beta3], [sage-support@googlegroups.com])
-AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability])
+AC_INIT([sage], [5.11.beta3-autotools], [sage-support@googlegroups.com])
+# ustar: allow long filenames
+AM_INIT_AUTOMAKE([tar-ustar -Wall -Werror -Wno-portability])
 
 # Use the silent-rules feature when possible.
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
@@ -370,7 +371,8 @@ AC_SUBST([VERSION_ALL])
 # AM_SUBST_NOTMAKE([FP_VERSIONS])
 
 # include submodules in dist tarball
-distdir_subs='distdir: DIST_SUBDIRS+=$(CORE_MODULES)'
+distdir_subs='distdir: DIST_SUBDIRS+=$(CORE_MODULES)
+distdir: $(CORE_MODULES:%=%-configure-stamp)'
 AC_SUBST([distdir_subs])
 AM_SUBST_NOTMAKE([distdir_subs])
 
