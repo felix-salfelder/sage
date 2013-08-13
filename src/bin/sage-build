@@ -6,28 +6,22 @@ if [ -z "$SAGE_SRC" ]; then
     return 1
 fi
 
-if [ "$1" = "-b" ]; then
-    DO_BUILD_ALL=1
-    shift
-else
-    DO_BUILD_ALL=0
-fi
-
+# this is not necessary. (if) dependency tracking works.
+# make clean if you want to rebuild everything.
 if [ $DO_BUILD_ALL = 1 ]; then
-    echo "*** TOUCHING ALL CYTHON (.pyx) FILES ***"
-    find "$SAGE_SRC"/sage -name "*.pyx" | xargs touch 2>/dev/null
+   echo "*** TOUCHING ALL CYTHON (.pyx) FILES ***"
+   find "$SAGE_SRC"/sage -name "*.pyx" | xargs touch 2>/dev/null
 fi
 
 set -e
 
-#build "sage"
-# FIXME: what does "build" really mean?
-# wrapping to "install" for now. just build would be useless.
+# (re)build sage(lib)
 
-# FIXME: uuh ooh. need sage ("the distribution") unpacked to build.
+# better call spkg-install build or stage
+# (later)
 
 # build c_lib
-make -C "$SAGE_ROOT" src/c_lib-install
+make -C "$SAGE_ROOT"/src/c_lib
 
 # build sage library
-make -C "$SAGE_ROOT" src/sage-install
+make -C "$SAGE_ROOT"/src/sage py
