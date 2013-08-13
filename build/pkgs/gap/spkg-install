@@ -45,11 +45,15 @@ export CFLAGS="$CFLAGS -fPIC -DPIC"
 
 cd src
 
+# urghs. upstream should take care of this
+GMPDIR=$(dirname $( echo "#include <gmp.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )/..
+
 # Configure
 echo "Configuring GAP..."
+echo "GMPDIR $GMPDIR"
 ./configure \
     --prefix="$SAGE_LOCAL" PREFIX="$SAGE_LOCAL" \
-    --with-gmp=system \
+    --with-gmp=$GMPDIR \
     CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS"
 if [[ $? -ne 0 ]]; then
     echo >&2 "Error configuring GAP."
