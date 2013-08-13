@@ -273,26 +273,26 @@ fi
 
 # Prepare for running Sage, either interactively or non-interactively.
 sage_setup() {
-#    echo "skipping sage-setup (for now)" >&2
-    return
 
+    # FIXME: this check doesn't really make sense.
     # Check that we're not in a source tarball which hasn't been built yet (#13561).
-    if [ ! -d "$SAGE_LOCAL/lib/python/site-packages/sage" ]; then
-        echo >&2 '************************************************************************'
-        echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
-        echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
-        echo >&2 'finished). You should run `make` in the Sage root directory first.'
-        echo >&2 'If you did not intend to build Sage from source, you should download'
-        echo >&2 'a binary tarball instead. Read README.txt for more information.'
-        echo >&2 '************************************************************************'
-        exit 1
-    fi
+    # if [ ! -d "$SAGE_LOCAL/lib/python/site-packages/sage" ]; then
+    #     echo >&2 '************************************************************************'
+    #     echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
+    #     echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
+    #     echo >&2 'finished). You should run `make` in the Sage root directory first.'
+    #     echo >&2 'If you did not intend to build Sage from source, you should download'
+    #     echo >&2 'a binary tarball instead. Read README.txt for more information.'
+    #     echo >&2 '************************************************************************'
+    #     exit 1
+    # fi
 
     # Display the startup banner
     if [ "$SAGE_BANNER" != "no" ]; then
-        cat "$SAGE_LOCAL/etc/sage-banner"
+        cat "$SAGE_ETC/sage-banner"
     fi
 
+    return # for now
     maybe_sage_location
 
     if [ ! -d "$IPYTHONDIR" ]; then
