@@ -159,6 +159,11 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
+	echo "CPPFLAGS $$CPPFLAGS"; \
+	echo "LIBRARY_PATH $$LIBRARY_PATH"; \
+	echo "LD_LIBRARY_PATH $$LD_LIBRARY_PATH"; \
+	env > $(SAGE_LOGS)/$*.env; \
+	echo "===================="; \
 	cd $$path; \
 	echo "$(abs_top_srcdir)/$$path/spkg-install FILELIST=\"$@\"" ;\
 	export FILELIST="$(FILELIST)"; \
