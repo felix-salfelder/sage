@@ -64,9 +64,6 @@ $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	$(MAKE) -C$* install
 	touch $@
 
-.SECONDARY: src/sage-build-stamp \
-            src/c_lib-configure-stamp
-
 EXTRA_DIST = Makefile
 
 # add submodule contents to dist (much better)
@@ -589,9 +586,6 @@ $(PKGSDIR)/%/src: | upstream/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "
 @dotPRECIOUS@: local/var/lib/sage/installed/% \
                upstream/%.bz2 @UPSTREAM@/%.gz
 
-# don't delete intermediate files (e.g. stamps).
-# RECHECK: does this work right?
-.SECONDARY:
 
 unstage-local:
 	rm -rf src/*-stamp
@@ -625,6 +619,17 @@ libcheck:
 	$(MAKE) $*-clean
 	$(MAKE) $(PKGSDIR)/$(FP_$*)
 
-#c_lib depends from deps.in
+# c_lib depends from deps.in
+# this is not necessary with sagelib/spkg-install used
 src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
                            @DEP_pynac@ @DEP_python@ @DEP_singular@
+
+# don't delete intermediate files (e.g. stamps).
+# either list every single file
+# PKG_VERSION_ALL = $(VERSION_ALL:%=$(PKGSDIR)/%)
+# .SECONDARY: src/sage-build-stamp \
+#             src/c_lib-configure-stamp \
+#             $(PKG_VERSION_ALL)
+#             [incomplete]
+# or make all targets secondary (good idea?)
+.SECONDARY:
