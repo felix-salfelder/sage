@@ -19,8 +19,8 @@ TOP=`pwd`
 SAGE_ETC=${SAGE_ETC-$SAGE_LOCAL/etc}
 
 # urghs. upstream should take care of this
-GMPINCLUDEDIR=$(dirname $( echo "#include <gmp.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
-READLINEINCLUDEDIR=$(dirname $( echo "#include <readline/readline.h>" | gcc $CPPFLAGS -M -E - | head -n 1 | cut -d' ' -f 3 ) )
+GMPDIR=$(dirname $( echo "#include <gmp.h>" | $CC $CPPFLAGS -M -MP -E - | grep 'gmp\.h:$' ) )/..
+READLINEDIR=$(dirname $( echo "#include <readline/readline.h>" | $CC $CPPFLAGS -M -MP -E - | grep 'readline/readline\.h:$' ) )/../..
 
 #######################################################################
 # Apply all patches.  See patches/README.txt for details about the
@@ -104,8 +104,8 @@ set_environment()
         echo "============================================================"
     fi
 
-    echo "GMPINCLUDEDIR=\"$GMPINCLUDEDIR\""
-    echo "READLINEINCLUDEDIR=\"$READLINEINCLUDEDIR\""
+    echo "GMPDIR=\"$GMPDIR\""
+    echo "READLINEDIR=\"$READLINEDIR\""
     echo "============================================================"
 
     # Allow the user to enable PARI self-tuning.
@@ -165,7 +165,7 @@ build()
     #
     # Note that "--graphic=none" is (usually) added to PARI_CONFIGURE:
     bash ./Configure --prefix="$SAGE_PREFIX" \
-        --with-readline="$READLINEINCLUDEDIR" --with-gmp="$GMPINCLUDEDIR" \
+        --with-readline="$READLINEDIR" --with-gmp="$GMPDIR" \
         --kernel=gmp $PARI_CONFIGURE
 
     if [ $? -ne 0 ]; then
