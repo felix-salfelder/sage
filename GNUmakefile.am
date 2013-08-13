@@ -9,6 +9,10 @@
 #
 SUBDIRS = sagedist
 
+# this apparently is *not* prefix
+SAGE_LOCAL = @abs_top_builddir@/local
+ENV_SH = sagedist/etc/env.sh
+
 # just pkgs?
 PKGSDIR=build/pkgs
 
@@ -16,6 +20,10 @@ PIPE = $(abs_top_srcdir)/build/pipestatus
 V_ = 0 # $(AM_DEFAULT_VERBOSITY)
 V_0 = 0
 V_1 = 1
+
+.sagedist:
+	$(MAKE) -C sagedist
+	touch $@
 
 # need absolute path, passed to other build scripts.
 SAGE_LOGS = @abs_top_builddir@/pkgs/logs
@@ -28,7 +36,7 @@ CORE_OPTS = --prefix="@prefix@" --with-dbdir="@prefix@/share"
 # FIXME: treat all modules the same?
 
 $(CORE_MODULES:%=%-configure): %-configure: %-configure-stamp
-$(CORE_MODULES:%=%-configure-stamp): %-configure-stamp: $(abs_srcdir)/%/configure
+$(CORE_MODULES:%=%-configure-stamp): %-configure-stamp: $(abs_srcdir)/%/configure | .sagedist
 	+$(MKDIR_P) $*
 	source $(ENV_SH); cd $*; \
 	    $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
@@ -58,6 +66,10 @@ $(CORE_MODULES:%=%-build-bypass): %-build-bypass:
 	$(MAKE) -C$* V=$(V_$(V))
 
 $(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
+
+STAGETARGET = install
+src/sage-stage-stamp: STAGETARGET = py
+src/c_lib-stage-stamp: STAGETARGET = install
 
 $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	@echo $@ ...
@@ -91,7 +103,7 @@ EXTRA_DIST+= upstream/lapack-3.4.2.tar
 # FIXME: core modules could be handled by spkg-installs.
 
 #FIXME: install takes ages, shouldnt be necessary
-src/doc-configure-stamp: src/sage-build
+src/doc-configure-stamp: src/sage-configure-stamp
 
 src/sage-configure-stamp: # src/c_lib-build-stamp
 
@@ -141,10 +153,6 @@ upstream/pkgconfig-0.18.tar.gz:
 # FIXME: checksum
 	mv pkconfig-0.18.tar.gz upstream
 
-# this apparently is *not* prefix
-SAGE_LOCAL = @abs_top_builddir@/local
-ENV_SH = sagedist/etc/env.sh
-
 ### generic build stamp rule
 # FIXME: call $(MAKE) -f spkg-install (after transition?)
 # FIXME: don't export FILELIST
@@ -163,7 +171,7 @@ version-info:
 # overly complicated. should really use makefiles... :|
 .SECONDEXPANSION:
 $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
-           $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR)
+           $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist
 	@echo "==== staging $* ===="
 	@path=$(PKGSDIR)/$*; \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
@@ -172,6 +180,7 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
+	echo "PATH $$PATH"; \
 	echo "CPPFLAGS $$CPPFLAGS"; \
 	echo "LIBRARY_PATH $$LIBRARY_PATH"; \
 	echo "LD_LIBRARY_PATH $$LD_LIBRARY_PATH"; \
@@ -191,6 +200,8 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
 		touch $(abs_top_builddir)/$@; \
 	fi
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
+	@@KEEPBUILD_FALSE@echo deleting $* source; rm -rf $(PKGSDIR)/$*
+	@@KEEPBUILD_TRUE@echo not deleting $* source
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
