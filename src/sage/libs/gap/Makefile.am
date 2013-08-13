@@ -98,3 +98,7 @@ libgap.lo: libgap.c libGAP.h
 	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgap_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT $@ -MD -MP -MF $(DEPDIR)/libgap_la-libgap.Tpo -c -o $@ `test -f 'libgap.c' || echo '$(srcdir)/'`libgap.c
 	$(AM_V_at)$(am__mv) $(DEPDIR)/libgap_la-libgap.Tpo $(DEPDIR)/libgaphmmm
 	objcopy --redefine-syms=<( grep ^libGAP @srcdir@/libgap.link | tr ';' ' '| awk '{printf("%s %s\n", $$3, $$1)}' ) .libs/libgap.o
+
+noinst_HEADERS = libgap_wrap.h
+
+EXTRA_DIST = $(LIBGAP_HACKED:%=%.c) libgap.link libgap.version
