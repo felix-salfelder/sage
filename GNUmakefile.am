@@ -216,6 +216,13 @@ $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
 	fi
 	@[ -s "$(abs_top_builddir)/$@" ] || echo "BUG, empty filelist?! (ignored)" || :
 
+sagelib-clean: sagelib-clean-extra
+sagelib-clean-extra:
+	-for i in $(CORE_MODULES); do \
+	  [ -f $$i/Makefile ] && $(MAKE) -C $$i clean; \
+	done
+.PHONY: sagelib-clean-extra
+
 # temporary, treat as the others eventually
 # no version number?
 # FP_sagelib=sagelib
@@ -400,9 +407,6 @@ clean-local: @VPATH_BUILD_FALSE@ $(FOREIGN_ALL:%=%-clean)
 	@echo "Deleting package build directories..."
 	rm -rf local/var/tmp/sage/build
 
-	-for i in $(CORE_MODULES); do \
-	  [ -f $$i/Makefile ] && $(MAKE) -C $$i clean; \
-	done
 	rm -f $(LOCKFILE)
 	@VPATH_BUILD_TRUE@rm -rf build
 
