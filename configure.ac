@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sage], [5.11.beta3~autotools1], [sage-support@googlegroups.com])
+AC_INIT([sage], [5.11.beta3-autotools1], [sage-support@googlegroups.com])
 # ustar: allow long filenames
 AM_INIT_AUTOMAKE([tar-ustar -Wall -Werror -Wno-portability])
 

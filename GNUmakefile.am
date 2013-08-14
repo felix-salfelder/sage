@@ -180,7 +180,6 @@ $(INST)/%: $$($$(firstword $$(subst -, ,$$*))_DEPS) $(PHONYDEP) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist
 	@echo "==== staging $* ===="
 	@path=$(PKGSDIR)/$*; \
-	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
 	export CC="@CC@" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
 	       srcdir="$(abs_top_srcdir)/$$path" \
@@ -235,6 +234,8 @@ $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
 # this directory currently is not used.
 build/pkgs/sagelib-builtin:
 	$(MKDIR_P) $@
+	cd $@; $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/sagelib/* .
+
 #
 $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
 	@echo "==== staging sagelib (hack) ===="
