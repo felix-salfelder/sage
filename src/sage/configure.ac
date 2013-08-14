@@ -155,9 +155,9 @@ AC_SUBST([SINGULAR_SO])
 
 # singular needs singular and factory
 OLDCPPFLAGS=$CPPFLAGS
-CPPFLAGS=" -I`dirname $SINGULAR`/../include/singular -I`dirname $SINGULAR`/../include/factory"
+SINGULAR_INCLUDES="-I$SINGULAR_BIN/../include/singular -I$SINGULAR_BIN/../include/factory"
+CPPFLAGS="$SINGULAR_INCLUDES $CPPFLAGS"
 AC_CHECK_HEADER([si_gmp.h],,[AC_MSG_ERROR(cannot find singular header)])
-SINGULAR_INCLUDES=$CPPFLAGS
 AC_SUBST([SINGULAR_INCLUDES])
 CPPFLAGS=$OLDCPPFLAGS
 
