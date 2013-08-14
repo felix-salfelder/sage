@@ -3,8 +3,10 @@
 # license: gplv3+
 #
 
-# these are the environment bits required to run spkg-install programs
-# and also things like $prefix/bin/sage -i
+# these are the environment bits required to build packages and to run sage on
+# sage ("the distribution").
+
+# FIXME: relocation, probably triggered here
 
 SAGE_ROOT="@abs_top_builddir@"
 export SAGE_ROOT
@@ -31,7 +33,8 @@ PATH="$SAGE_LOCAL/bin:$PATH"
 PATH="$SAGE_ROOT/build/bin:$PATH"
 export PATH
 
-CPPFLAGS="$CPPFLAGS -I$SAGE_LOCAL/include"
+CPPFLAGS+=" -I$SAGE_LOCAL/include"
+CPPFLAGS+=" -I$SAGE_LOCAL/include/csage"
 export CPPFLAGS
 
 # maxima build will fail if LDFLAGS contains extra whitespace (d'0h)
