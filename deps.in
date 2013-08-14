@@ -303,9 +303,6 @@ pygments_DEPS+= @DEP_sqlalchemy@
 # Sage library (e.g. JINJA2), and on the
 # other hand all dependencies for Cython files (e.g. PARI, NTL, MPIR).
 #
-# this is unneeded.
-# src/sage-configure-stamp: src/c_lib-build
-
 # WHY?! this way ./sage -sh fails until all of them have been compiled
 scripts_DEPS = \
     @DEP_atlas@ \
