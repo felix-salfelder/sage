@@ -67,9 +67,13 @@ $(CORE_MODULES:%=%-build-bypass): %-build-bypass:
 
 $(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
 
+# need to do different things for staging. probably this should move to
+# sagelib/spkg-install, not so sure
 src/%-stage-stamp: STAGETARGET = all
 src/sage-stage-stamp: STAGETARGET = py
 src/c_lib-stage-stamp: STAGETARGET = install
+src/bin-stage-stamp: STAGETARGET = install
+src/ext-stage-stamp: STAGETARGET = install
 
 $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	@echo $@ ...
