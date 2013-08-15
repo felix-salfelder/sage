@@ -101,6 +101,7 @@ sagelib_DEPS+= @DEP_sagenb@ @DEP_ipython@ @DEP_gap@ $(DEP_gcc_maybe)
 
 ###############################################################################
 # Building the base system
+# FIXME: this wont work properly
 #
 # This consists of packages which are required for the Sage build system
 # but not for Sage itself.  Since nothing explicitly depends on these,
@@ -118,6 +119,12 @@ bzip2):
 patch_DEPS = @DEP_bzip2@
 
 ###############################################################################
+# toolchain deps
+$(INST)/toolchain_$(FP_ppl): $(INST)/toolchain_$(FP_mpir)
+$(INST)/toolchain_$(FP_mpc): $(INST)/toolchain_$(FP_mpir)
+$(INST)/toolchain_$(FP_mpfr): $(INST)/toolchain_$(FP_mpir)
+
+###############################################################################
 # normal packages dependencies
 ###############################################################################
 atlas_DEPS = @DEP_lapack@ @DEP_python@ $(DEP_gcc_maybe)
@@ -126,6 +133,8 @@ atlas_DEPS = @DEP_lapack@ @DEP_python@ $(DEP_gcc_maybe)
 $(INST)/$(FP_atlas): upstream/lapack-3.4.2.tar
 
 blas_DEPS  = $(DEP_gcc_maybe)
+
+cliquer_DEPS  = $(DEP_gcc_maybe)
 
 $(UPSTREAM)/lapack-3.4.2.tar: upstream/lapack-3.4.2.tgz
 	@echo "BUG: should take lapack tarball from lapack package, this is a different one."
@@ -164,6 +173,8 @@ ipython_DEPS = @DEP_python@ $(DEP_gcc_maybe)
 
 iml_DEPS = @DEP_mpir@ @DEP_gsl@ @DEP_atlas@ $(DEP_gcc_maybe)
 
+jmol_DEPS = @DEP_sagenb@
+
 lapack_DEPS = $(DEP_gcc_maybe)
 
 libgap_DEPS = @DEP_gap@ $(DEP_gcc_maybe)
@@ -172,6 +183,16 @@ linbox_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
               @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
               @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@ \
               $(DEP_gcc_maybe)
+
+libpng_DEPS = @DEP_zlib@ $(DEP_gcc_maybe)
+
+networkx_DEPS = @DEP_python@
+
+mpmath_DEPS = @DEP_python@
+
+matplotlib_DEPS = \
+    @DEP_python@ @DEP_numpy@ @DEP_freetype@ @DEP_libpng@ \
+    @DEP_gdmodule@ $(DEP_gcc_maybe)
 
 mpir_DEPS = @DEP_iconv@ @DEP_gcc@
 
@@ -190,7 +211,7 @@ pari_DEPS = @DEP_readline@ @DEP_mpir@ $(DEP_gcc_maybe)
 polybori_DEPS = @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
                 @DEP_libm4ri@ @DEP_gd@ $(DEP_gcc_maybe)
 
-polytopes_db):
+polytopes_db_DEPS =
 
 ppl_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
 
@@ -202,6 +223,8 @@ ppl_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
 python_DEPS = @DEP_zlib@ @DEP_readline@ @DEP_sqlite@ @DEP_libpng@ $(DEP_gcc_maybe)
 
 readline_DEPS = @DEP_termcap@ $(DEP_gcc_maybe)
+
+pycrypto_DEPS = @DEP_python@ $(DEP_gcc_maybe)
 
 pynac_DEPS = @DEP_python@
 
@@ -226,19 +249,8 @@ setuptools_DEPS = @DEP_python@
 
 singular_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_readline@ @DEP_mpfr@ $(DEP_gcc_maybe)
 
-pycrypto_DEPS = @DEP_python@ $(DEP_gcc_maybe)
+termcap_DEPS  = $(DEP_gcc_maybe)
 
-networkx_DEPS = @DEP_python@
-
-mpmath_DEPS = @DEP_python@
-
-jmol_DEPS = @DEP_sagenb@
-
-libpng_DEPS = @DEP_zlib@ $(DEP_gcc_maybe)
-
-matplotlib_DEPS = \
-    @DEP_python@ @DEP_numpy@ @DEP_freetype@ @DEP_libpng@ \
-    @DEP_gdmodule@ $(DEP_gcc_maybe)
 
 cddlib_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
 
@@ -356,7 +368,7 @@ $(INST)/ccache: $(BASE) @DEP_zlib@
 	touch $(INST)/ccache
 
 # make gcc dependencies explicit.
-gcc_DEPS = $(toolchain_DEPS)
+gcc_OO_DEPS = $(toolchain_DEPS)
 
 # "toolchain" is not a real package.
 toolchain_DEPS = \

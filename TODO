@@ -6,6 +6,8 @@ CHECK: must gcc build build toolchain twice? (done?)
 
 FIXME: trap INT TERM EXIT during spkg-install (delete install-stamp!)
 
+FIXME: order-only dependencies on toolchain links
+
 paths are suboptimal.
 /build/pkgs should be /pkgs
 /src should be pkgs/sagelib
@@ -14,7 +16,7 @@ dependencies must be where packages are, not in "deps"
 
 CORE_MODULES should be built with VPATH (?) but with spkg-install
 
-failing doctests, due to hardcoded paths
+failing doctests due to hardcoded paths
 
 what about doctesting optional packages (lrcalc and the like?)
 
@@ -24,7 +26,7 @@ make -n doesnt work very well
 
 recheck: stage unstages before build has completed (good idea?)
 
-suppress useless "Entering directory" output
+suppress useless "Entering directory" output (--no-print-directory)
 
 decruft dependencies (sagelibspkg vs parts of it)
 

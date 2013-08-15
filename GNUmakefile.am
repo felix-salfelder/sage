@@ -109,6 +109,18 @@ else
 UPSTREAM_DIST_TRUE=$(if $(filter $(DISTFLAGS),upstream),,\#)
 endif
 
+if KEEPBUILT
+# keep built unless user requests to delete it
+# invoke with make dist BUILDFLAGS=clean
+MYKEEPBUILT_TRUE=$(if $(filter $(BUILDFLAGS),clean),\#,)
+MYKEEPBUILT_FALSE=$(if $(filter $(BUILDFLAGS),clean),,\#)
+else
+# delete source after build user requests it
+# invoke with make dist BUILDFLAGS=keep
+MYKEEPBUILT_TRUE=$(if $(filter $(BUILDFLAGS),keep),,\#)
+MYKEEPBUILT_FALSE=$(if $(filter $(BUILDFLAGS),keep),\#,)
+endif
+
 .SECONDEXPANSION:
 dist-hook: $$(call upstreampackages)
 	$(MKDIR_P) $(distdir)/upstream
@@ -207,28 +219,39 @@ $(INST)/sagelib-builtin: STAGETARGET=stage
 $(INST)/%: EXTRA_COMMANDS=
 
 # bypass dummy gcc for a few packages. done differently
-# bug. use maybe_sage_CC?
-$(INST)/$(FP_mpir) $(INST)/$(FP_mpc) $(INST)/$(FP_mpfr) $(INST)/$(FP_gcc) $(INST)/$(FP_zlib) $(INST)/$(FP_ppl): \
-    EXTRA_COMMANDS=export CC=$(shell which gcc);
-
+# FIXME: provide/use maybe_sage_CC? will fail within sage-env
 # toolchain: build package (if enabled) with toolchain-flags, stamp and forget.
+#
+$(INST)/toolchain_$(FP_mpir) $(INST)/toolchain_$(FP_mpc) \
+$(INST)/toolchain_$(FP_mpfr) $(INST)/toolchain_$(FP_gcc) \
+$(INST)/toolchain_$(FP_zlib) $(INST)/toolchain_$(FP_ppl): \
 $(INST)/toolchain_%:
 	[ x$(SAGE_$(call packagename,$*)) = xyes ] && \
-		SAGE_BUILD_TOOLCHAIN=yes $(MAKE) $(INST)/$* && \
-		rm $(INST)/$* || :
+	    $(MAKE) $(INST)/$* CC=$(shell which gcc) \
+	                       SAGE_BUILD_TOOLCHAIN=yes \
+	                       KEEPBUILT=yes \
+	                       BUILDFLAGS=keep,toolchain \
+	                       FILELIST="@abs_top_builddir@/$@" && \
+	    rm $(INST)/$* || :
 	touch $@
 
-$(INST)/toolchain_%: SAGE_BUILD_TOOLCHAIN=yes
+# build gcc with system gcc, FIXME: use maybe_sage_CC
+$(INST)/$(FP_gcc): CC=$(shell which gcc)
 
 # FIXME: better create symlinks during unpack, not here
+#
 # overly complicated. should really use makefiles... :|
+# this totally sucks. maybe check whether spkg-install is a makefile?
+#
 .SECONDEXPANSION:
 $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
-           $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist
-	@echo "==== staging $* toolchain: $(SAGE_BUILD_TOOLCHAIN) ===="
+           $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist \
+           $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_OO_DEPS))
+	@echo "==== staging $* $(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),\(toolchain\)) ===="
 	@path=$(PKGSDIR)/$*; \
-	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
+	       SAGE_BUILD_TOOLCHAIN=$(SAGE_BUILD_TOOLCHAIN) \
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
@@ -253,8 +276,8 @@ $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst
 		touch $(abs_top_builddir)/$@; \
 	fi
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
-	@@KEEPBUILT_FALSE@echo deleting $* source; rm -rf $(PKGSDIR)/$*
-	@@KEEPBUILT_TRUE@echo not deleting $* source
+	@$(MYKEEPBUILT_FALSE)echo deleting $* source; rm -rf $(PKGSDIR)/$*
+	@$(MYKEEPBUILT_TRUE)echo not deleting $* source
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
@@ -288,7 +311,7 @@ build/pkgs/sagelib-builtin:
 $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
 	@echo "==== staging sagelib (hack) ===="
 	@path=$(PKGSDIR)/sagelib; \
-	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
 	       srcdir="$(abs_top_srcdir)/$$path"; \
 	source $(ENV_SH); \
@@ -642,13 +665,10 @@ upstream/%.gz:
 	$(downloadit)
 
 define unpackwithversion
-	$(MKDIR_P) $(PKGSDIR)/$*/src
-	cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
-	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .
 	@TAR@ -C $(PKGSDIR)/$*/src --strip-components=1 -xf $(firstword $|)
 endef
 
-# HMMM: check again wheter checksum is okay?
+# FIXME: don't rechecksum if dirty.
 .SECONDEXPANSION:
 $(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
                 $(PKGSDIR)/$$(call packagename,$$*)/checksums.ini
@@ -658,7 +678,14 @@ $(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p)
 	( echo expected sha1: $$refsum;\
 	  echo got      sha1: $$dlsum;\
 	  rm $@; exit 1 )
-	$(unpackwithversion)
+	if [ -d $(PKGSDIR)/$* ]; then \
+	  	 touch $(PKGSDIR)/$*/dirty-stamp; \
+	else \
+	    $(MKDIR_P) $(PKGSDIR)/$*/src; \
+	    $(unpackwithversion); \
+	    cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
+	        $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .; \
+	fi
 
 p=%
 define unpack
@@ -737,3 +764,19 @@ src/c_lib-configure-stamp: @DEP_mpir@ @DEP_ntl@ @DEP_pari@ @DEP_polybori@ \
 #             [incomplete]
 # or make all targets secondary (good idea?)
 .SECONDARY:
+
+help:
+	@echo "make dist                     create dist tarball"
+	@echo "                              depending on configure options"
+	@echo "make dist DISTFLAGS=tiny      dont include upstream source"
+	@echo "make dist DISTFLAGS=upstream  include upstream source"
+	@echo
+	@echo "make <package>-stage          make <package> ready to use by sage,"
+	@echo "                              often \"install <package> to \$$SAGE_LOCAL\""
+	@echo "make <package>-unstage        revert <package>-stage (if implemented)"
+	@echo "make <package>-check          (compile <package> and) run <package> checks"
+	@echo "make <package>-distcheck"
+	@echo "make <package>-info           print info about <package>"
+	@echo "make <package>-list           list <package> contents"
+
+.PHONY: help

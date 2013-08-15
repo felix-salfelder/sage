@@ -91,6 +91,10 @@ if test $# -ne 0 && test -z "$dir_arg$dst_arg"; then
   # Otherwise, the last argument is the destination.  Remove it from $@.
   for arg
   do
+    if test x$verbose = xyes; then
+      echo "dst_arg" $dst_arg "at" $@
+    fi
+
     if test -n "$dst_arg"; then
       # $@ is not empty: it contains at least $arg.
       set "$@" "$dst_arg"
@@ -108,6 +112,10 @@ esac
 
 
 if test -n "$filelist"; then
+  if test x$verbose = xyes; then
+    echo "waiting for $filelist.lock"
+  fi
+
   set -C
   trap 'rm -f $filelist.lock; exit $?' INT TERM EXIT
   until 2> /dev/null > $filelist.lock; do :; done
