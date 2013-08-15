@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sage], [5.11.beta3-autotools1], [sage-support@googlegroups.com])
+AC_INIT([sage], [5.11.beta3-autotools2], [sage-support@googlegroups.com])
 # ustar: allow long filenames
 AM_INIT_AUTOMAKE([tar-ustar -Wall -Werror -Wno-portability])
 
@@ -237,7 +237,14 @@ AC_ARG_ENABLE([keepbuilt], AS_HELP_STRING([--enable-keepbuilt], [Delete foreign 
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-keepbuilt]) ;;
  esac],[keepbuilt=$have_git_repo])
 AM_CONDITIONAL([KEEPBUILT],[test $keepbuilt = yes])
-#AC_SUBST([KEEPBUILT],$keepbuilt)
+
+AC_ARG_ENABLE([distupstream], AS_HELP_STRING([--enable-distupstream], [include upstream tarball in dist, default=yes]),
+ [case "${enableval}" in
+  yes) distupstream=yes ;;
+  no)  distupstream=no ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-distupstream]) ;;
+ esac],[distupstream=yes])
+AM_CONDITIONAL([DISTUPSTREAM],[test $distupstream = yes])
 
 ## sage foreign package in/exclusion
 # base packages

@@ -71,8 +71,11 @@ make <package>-info     # list information on the package status. Every package
 								# has a version number, but due to up/downgrades,
 								# different versions of one package might be unpackaged
 								# or staged.
+make <package>-check    # (compile <package> and) run the <package> preinst-checks.
+make <package>-list     # show list of staged files from <package>
 make <package>-stage    # install <package> into the local staging directory.
 make <package>-unstage  # the reverse of the above.
+make <package>-distcheck# consistency check
 make stage-decruft      # unstage all packages that are not enabled. e.g. after
                         # ./configure with different options
 make <package>-binary   # create a ready-to-use binary tarball for <package>.

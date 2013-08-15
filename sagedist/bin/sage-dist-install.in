@@ -132,7 +132,11 @@ for src in $@; do
   shift
 done
 
-cmd="@INSTALL@ -C $args $@ $extra_destarg"
+# INSTALL="@INSTALL@" # does not understand -C
+# this one always works
+INSTALL="@abs_top_srcdir@/install-sh"
+
+cmd="$INSTALL -C $args $@ $extra_destarg"
 if test x$verbose = xyes; then
   echo calling $cmd
 fi

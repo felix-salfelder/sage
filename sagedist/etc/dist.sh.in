@@ -6,18 +6,34 @@
 # these are the environment bits required to build packages and to run sage on
 # sage ("the distribution").
 
-# FIXME: relocation, probably triggered here
-
-SAGE_ROOT="@abs_top_builddir@"
-export SAGE_ROOT
-
-LIBRARY_PATH="$LIBRARY_PATH:$SAGE_LOCAL/lib"
-export LIBRARY_PATH
+# FIXME: relocation, must probably be triggered here
 
 # must be exported here, so it gets included into bin/env.sh when
 # running inside sage-the-distribution
 SAGE_LOCAL=@abs_top_builddir@/local
 export SAGE_LOCAL
+
+SAGE_ROOT="@abs_top_builddir@"
+export SAGE_ROOT
+
+maybe_colon=
+[ -z "$LIBRARY_PATH" ] || maybe_colon=:
+LIBRARY_PATH="$LIBRARY_PATH#maybe_colon$SAGE_LOCAL/lib"
+export LIBRARY_PATH
+
+# Add some directories to $LD_LIBRARY_PATH:
+# * lib/openmpi is needed for openmpi.
+# * lib/R/lib is needed for R in case the Sage install is moved.
+# * lib32 and lib64 are needed for GCC, see #12405.
+for d in lib/openmpi lib/R/lib lib32 lib64 lib; do
+    libdir="$SAGE_LOCAL/$d"
+    # Add only existing directories
+    if [ -d "$libdir" ]; then
+        [ -z "$LD_LIBRARY_PATH" ] || LD_LIBRARY_PATH=":${LD_LIBRARY_PATH}"
+        LD_LIBRARY_PATH="${libdir}$LD_LIBRARY_PATH"
+    fi
+done
+export LD_LIBRARY_PATH
 
 # stage packages into SAGE_LOCAL for now.
 SAGE_PREFIX=$SAGE_LOCAL
@@ -53,6 +69,16 @@ export SAGE_DOC_SRC
 
 SAGE_DISTFILES="@abs_top_builddir@/upstream"
 export SAGE_DISTFILES
+
+# PKG_CONFIG_PATH is used by 'pkg-config' on Solaris and Linux,
+# but at least some versions of OS X do not have the pkg-config
+# command, so relying on this is not wise on OS X.
+if [ -z "$PKG_CONFIG_PATH" ]; then
+    PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig"
+else
+    PKG_CONFIG_PATH="$SAGE_LOCAL/lib/pkgconfig:$PKG_CONFIG_PATH"
+fi
+export PKG_CONFIG_PATH
 
 ###### FIXME: decruft ######
 

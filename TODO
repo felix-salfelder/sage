@@ -1,15 +1,16 @@
 rebase cliquer paching to sage-upstream
 
+<package>-distcheck should run -check
+
+CHECK: must gcc build build toolchain twice? (done?)
+
+FIXME: trap INT TERM EXIT during spkg-install (delete install-stamp!)
+
 paths are suboptimal.
 /build/pkgs should be /pkgs
-/build/etc should be /dist/etc (maybe not?)
-/build/bin should be /dist/bin (maybe not?)
-/src should be pkgs/libsage or sagelib
+/src should be pkgs/sagelib
 
 dependencies must be where packages are, not in "deps"
-
-PYTHON dependency, currently using SAGE_LOCAL/bin/python unconditionally
-(do it like singular) (done?)
 
 CORE_MODULES should be built with VPATH (?) but with spkg-install
 
@@ -17,15 +18,13 @@ failing doctests, due to hardcoded paths
 
 what about doctesting optional packages (lrcalc and the like?)
 
-uninstall before fresh install
-
-check checksum before unpack. maybe not after download (?)
-
-KEEP_BUILDDIR feature
+unstage before fresh stage (when automatically staging?)
 
 make -n doesnt work very well
 
 recheck: stage unstages before build has completed (good idea?)
+
+suppress useless "Entering directory" output
 
 decruft dependencies (sagelibspkg vs parts of it)
 
@@ -33,7 +32,7 @@ lapack, atlas. (argh). the lapack package does not install lapack. disabling atl
 
 hook sage -b etc, complete old Makefile interface.
 
-BUG: do git hopping, make
+BUG (sometimes? randomly?): do git hopping, make
 ../configure: line 5703: syntax error near unexpected token `Cython,CHK_cython=negative'
 ../configure: line 5703: `   SAGE_CHECK_PYTHON_MODULE(Cython,CHK_cython=negative)'
 make: *** [config.status] Error 2

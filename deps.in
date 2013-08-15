@@ -173,11 +173,11 @@ linbox_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
               @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@ \
               $(DEP_gcc_maybe)
 
-mpir_DEPS = @DEP_iconv@
+mpir_DEPS = @DEP_iconv@ @DEP_gcc@
 
-mpc_DEPS = @DEP_mpir@ @DEP_mpfr@
+mpc_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_gcc@
 
-mpfr_DEPS = @DEP_mpir@
+mpfr_DEPS = @DEP_mpir@ @DEP_gcc@
 
 mpfi_DEPS = @DEP_mpir@ @DEP_mpfr@ $(DEP_gcc_maybe)
 
@@ -355,8 +355,6 @@ $(INST)/ccache: $(BASE) @DEP_zlib@
 	+$(PIPE) "$(SAGE_SPKG) ccache 2>&1" "tee -a $(SAGE_LOGS)/ccache.log"
 	touch $(INST)/ccache
 
-# hmm, this is weird.
-# gcc_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@
 # make gcc dependencies explicit.
 gcc_DEPS = $(toolchain_DEPS)
 
