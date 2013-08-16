@@ -29,6 +29,10 @@ install-env: 00sagelibenv.sh
 # this is the runtime environment for sage-the-library within
 # sage-the-distribution
 # just treat it like all the other packages.
+#
+# FIXME: not everything here makes sense.
+#        remove parts that belong to 00dist
+#
 00sagelibenv.sh:
 	echo '[ -n "$$PYTHONPATH" ] && maybe_colon=:' > $@
 	echo 'PYTHONPATH="$(SAGE_ROOT)/src$$maybe_colon$$PYTHONPATH"' >> $@
@@ -44,13 +48,14 @@ install-env: 00sagelibenv.sh
 	echo 'SAGE_SPKG_INST="$$SAGE_LOCAL/var/lib/sage/installed"' >> $@
 	echo 'SAGE_EXTCODE="$$SAGE_SHARE/sage/ext"' >> $@
 
-	# doesnt make sense. maybe later (just build csage?)
-	# echo 'LD_LIBRARY_PATH="$(SAGE_LOCAL)/lib:$LD_LIBRARY_PATH"' >> $@
+	doesnt make sense. maybe later (just build csage?)
+	echo 'LD_LIBRARY_PATH="$(SAGE_ROOT)/src/c_lib/src/.libs:$LD_LIBRARY_PATH"' >> $@
+	echo 'CPPFLAGS="-I$(SAGE_ROOT)/src/c_lib/include $CPPFLAGS"' >> $@
 
-	echo "export LD_LIBRARY_PATH\
-	             PYTHONPATH PATH SAGE_ETC SAGE_EXTCODE\
-	             SAGE_LOCAL SAGE_PREFIX SAGE_DOC\
-	             SAGE_ROOT\
+	echo "export LD_LIBRARY_PATH CPPFLAGS \
+	             PYTHONPATH PATH SAGE_ETC SAGE_EXTCODE \
+	             SAGE_LOCAL SAGE_PREFIX SAGE_DOC \
+	             SAGE_ROOT \
                 SAGE_SHARE SAGE_SPKG_INST" >> $@
 
 # what else? GPRC?
