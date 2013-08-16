@@ -242,14 +242,16 @@ $(INST)/$(FP_gcc): CC=$(shell which gcc)
 # overly complicated. should really use makefiles... :|
 # this totally sucks. maybe check whether spkg-install is a makefile?
 #
-# writing $(MAKE) in a rule has sideffects. use this instead
-unmagicMAKE=$(MAKE)
+
+# writing $(MAKE) causes this rule to be executed even if n \in $(MAKEFLAGS)
+# (see manual). this requires workarounds if some spkg-installs are not
+# makefiles.
 
 .SECONDEXPANSION:
 $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist \
-           $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_OO_DEPS))
-	@echo "==== staging $* $(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),\(toolchain\)) ===="
+           $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_OODEPS))
+	@echo "==== staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain))$(if $(findstring n,$(MAKEFLAGS)),(no act) )===="
 	$(AM_V_at)path=$(PKGSDIR)/$*; \
 	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
@@ -262,17 +264,26 @@ $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst
 	cd $$path; \
 	export FILELIST="$(FILELIST)"; \
 	export SAGE_ETC="$(SAGE_ETC)"; \
-	export MAKE="$(unmagicMAKE)"; \
+	export MAKE="$(MAKE)"; \
 	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
-	$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
-	if [ $$? -ne 0 ]; then \
-		echo $@ failed, deleting; \
-		rm -f $(abs_top_builddir)/$@; \
+	ismakefile=$$(awk -F: 'NR > 1 {exit}; /sage-dist-make/{print "yes"}' spkg-install); \
+	echo $(MAKEFLAGS), $(firstword $(MAKEFLAGS)); \
+	ret=0; \
+	if test x$$ismakefile = xyes; then \
+	    $(MAKE) -f spkg-install -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log; \
+	    ret=$${PIPESTATUS[0]}; \
+	elif test -z "$(findstring n,$(firstword $(MAKEFLAGS)))"; then \
+	    $(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES) 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	    ret=$$?; \
+	fi; \
+	if [ $$ret -ne 0 ]; then \
+		echo $* build failed, deleting; \
+		rm -f $@; \
 		exit 1; \
 	else \
-		echo $@ succeeded; \
-		touch $(abs_top_builddir)/$@; \
+		echo $* staged successfully; \
 	fi
+	touch $@;
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
 	@$(MYKEEPBUILT_FALSE)echo deleting $* source; rm -rf $(PKGSDIR)/$*
 	@$(MYKEEPBUILT_TRUE)echo not deleting $* source
@@ -305,7 +316,7 @@ build/pkgs/sagelib-builtin:
 	$(MKDIR_P) $@
 	cd $@; $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/sagelib/* .
 
-#
+# unneeded?
 $(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
 	@echo "==== staging sagelib (hack) ===="
 	@path=$(PKGSDIR)/sagelib; \
@@ -778,3 +789,13 @@ help:
 	@echo "make <package>-list           list <package> contents"
 
 .PHONY: help
+
+############################################
+## HACKS:
+
+$(UPSTREAM)/lapack-3.4.2.tar: upstream/lapack-3.4.2.tgz
+	@echo "BUG: should take lapack tarball from lapack package, this is a different one."
+	gunzip $<
+
+$(UPSTREAM)/lapack-3.4.2.tgz:
+	cd $(UPSTREAM); wget http://www.netlib.org/lapack/lapack-3.4.2.tgz
