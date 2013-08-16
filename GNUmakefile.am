@@ -216,7 +216,6 @@ $(INST)/sagelib-builtin: STAGETARGET=stage
 # allow system gcc durin toolchain build
 
 # sometimes extra commands need to be injected
-$(INST)/%: EXTRA_COMMANDS=
 
 # bypass dummy gcc for a few packages. done differently
 # FIXME: provide/use maybe_sage_CC? will fail within sage-env
@@ -243,29 +242,28 @@ $(INST)/$(FP_gcc): CC=$(shell which gcc)
 # overly complicated. should really use makefiles... :|
 # this totally sucks. maybe check whether spkg-install is a makefile?
 #
+# writing $(MAKE) in a rule has sideffects. use this instead
+unmagicMAKE=$(MAKE)
+
 .SECONDEXPANSION:
 $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist \
            $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_OO_DEPS))
 	@echo "==== staging $* $(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),\(toolchain\)) ===="
-	@path=$(PKGSDIR)/$*; \
+	$(AM_V_at)path=$(PKGSDIR)/$*; \
 	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
 	       SAGE_BUILD_TOOLCHAIN=$(SAGE_BUILD_TOOLCHAIN) \
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
-	echo "PATH $$PATH"; \
-	echo "CPPFLAGS $$CPPFLAGS"; \
-	echo "LIBRARY_PATH $$LIBRARY_PATH"; \
-	echo "LD_LIBRARY_PATH $$LD_LIBRARY_PATH"; \
 	env > $(SAGE_LOGS)/$*.env; \
 	echo "===================="; \
 	cd $$path; \
 	export FILELIST="$(FILELIST)"; \
 	export SAGE_ETC="$(SAGE_ETC)"; \
+	export MAKE="$(unmagicMAKE)"; \
 	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
-	$(EXTRA_COMMANDS) \
 	$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	if [ $$? -ne 0 ]; then \
 		echo $@ failed, deleting; \
