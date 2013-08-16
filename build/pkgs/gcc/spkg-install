@@ -16,7 +16,7 @@ set -e
 
 # Build in a separate directory, not in src/ (a.k.a. a VPATH build).
 # This is the recommended way to build GCC.
-mkdir gcc-build
+[ -d gcc-build ] || mkdir gcc-build
 cd gcc-build
 
 
