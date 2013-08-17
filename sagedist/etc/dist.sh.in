@@ -18,7 +18,7 @@ export SAGE_ROOT
 
 maybe_colon=
 [ -z "$LIBRARY_PATH" ] || maybe_colon=:
-LIBRARY_PATH="$LIBRARY_PATH#maybe_colon$SAGE_LOCAL/lib"
+LIBRARY_PATH="$LIBRARY_PATH$maybe_colon$SAGE_LOCAL/lib"
 export LIBRARY_PATH
 
 # Add some directories to $LD_LIBRARY_PATH:
