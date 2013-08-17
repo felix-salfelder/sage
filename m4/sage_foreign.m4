@@ -18,7 +18,7 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
    $1=no
   else
    DEP_$1=$our_package
-   SAGE_$1=yes
+   SAGE_$1=$1
    $1=yes
   fi
  elif test $$1 = true; then
@@ -27,7 +27,7 @@ AC_DEFUN([SAGE_FOREIGN_PACKAGE],
    AC_MSG_NOTICE(["forcefully overriding available system package: $1"])
   fi
   DEP_$1=$our_package
-  SAGE_$1=yes
+  SAGE_$1=$1
  else # --disable-<packagename>
   FOREIGN_DISABLED+=" $1"
   if test x$CHK_$1 = xnegative; then

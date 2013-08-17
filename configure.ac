@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sage], [5.11.beta3-autotools4], [sage-support@googlegroups.com])
+AC_INIT([sage], [5.11.beta3-autotools6], [sage-support@googlegroups.com])
 # ustar: allow long filenames
 AM_INIT_AUTOMAKE([tar-ustar -Wall -Werror -Wno-portability])
 
@@ -32,13 +32,21 @@ AC_PROG_MAKE_SET
 AC_PROG_GREP     # required to build singular
 AC_PROG_SED      # used here and there.
 
+### stage patch when needed
+AC_PATH_PROG(PATCH, patch)
+CHK_patch=negative
+AS_IF([ test -n "$PATCH" ],
+      [CHK_patch=positive]
+      )
+
+### stage pkg
 PKG_PROG_PKG_CONFIG
 CHK_pkgconfig=negative
 if test -n "$PKG_CONFIG"; then
    CHK_pkgconfig=positive
 fi
 
-# install GCC when needed.
+### stage GCC when needed.
 # FIXME: override this (former SAGE_INSTALL_GCC environment)
 CHK_gcc=positive
 
@@ -285,6 +293,7 @@ SAGE_FOREIGN_PACKAGE([cliquer])
 SAGE_FOREIGN_PACKAGE([blas])
 SAGE_FOREIGN_PACKAGE([boehm_gc])
 SAGE_FOREIGN_PACKAGE([boost_cropped])
+SAGE_FOREIGN_PACKAGE([bzip2])
 SAGE_FOREIGN_PACKAGE([cddlib])
 SAGE_FOREIGN_PACKAGE([cephes])
 SAGE_FOREIGN_PACKAGE([conway_polynomials])
@@ -337,6 +346,7 @@ SAGE_FOREIGN_PACKAGE([ntl])
 SAGE_FOREIGN_PACKAGE([numpy])
 SAGE_FOREIGN_PACKAGE([palp])
 SAGE_FOREIGN_PACKAGE([pari])
+SAGE_FOREIGN_PACKAGE([patch],[patch])
 SAGE_FOREIGN_PACKAGE([pexpect])
 SAGE_FOREIGN_PACKAGE([pil])
 SAGE_FOREIGN_PACKAGE([pkgconfig])

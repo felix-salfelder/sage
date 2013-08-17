@@ -21,6 +21,10 @@ V_ = 0 # $(AM_DEFAULT_VERBOSITY)
 V_0 = 0
 V_1 = 1
 
+# comment out things that shall not be executed if -n
+IFNOTNOACT:= $(if $(findstring n,$(firstword $(MAKEFLAGS))),\#)
+
+
 # Usage: newest_version $pkg
 # return version number of latest standard package $pkg
 define newest_version
@@ -42,6 +46,9 @@ endef
 # need absolute path, passed to other build scripts.
 SAGE_LOGS = @abs_top_builddir@/pkgs/logs
 
+all-local: $(FOREIGN_DEP)
+
+########## CORE_MODULES ###########################
 CORE_MODULES = src/c_lib src/sage src/doc src/bin src/ext # src/mac-app src/whatever
 CORE_ENV = dummy=1
 CORE_OPTS = --prefix="@prefix@" --with-dbdir="@prefix@/share"
@@ -51,13 +58,13 @@ CORE_OPTS = --prefix="@prefix@" --with-dbdir="@prefix@/share"
 
 $(CORE_MODULES:%=%-configure): %-configure: %-configure-stamp
 $(CORE_MODULES:%=%-configure-stamp): %-configure-stamp: $(abs_srcdir)/%/configure | .sagedist
-	+$(MKDIR_P) $*
+	$(MKDIR_P) $*
 	source $(ENV_SH); cd $*; \
 	    $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
 	touch $@
 
 $(CORE_MODULES:%=%-reconfigure): %-reconfigure: $(abs_srcdir)/%/configure
-	+$(MKDIR_P) $*
+	$(MKDIR_P) $*
 	source $(ENV_SH); cd $*; \
 	    $(abs_top_srcdir)/$*/configure $(CORE_OPTS) $(CORE_ENV)
 	touch $(dirname $@/$*-configure-stamp)
@@ -67,7 +74,7 @@ $(CORE_MODULES:%=%-build): %-build: %-build-stamp
 $(CORE_MODULES:%=%-build-stamp): %-build-stamp: %-configure-stamp
 	export $(CORE_ENV); \
 	source $(ENV_SH); \
-	$(MAKE) -C$* V=$(V_$(V)) $(BUILDTARGET)
+	[ ! -d $* ] || $(MAKE) -C$* V=$(V_$(V)) $(BUILDTARGET)
 	touch $@
 
 src/sage-build-stamp: BUILDTARGET = py
@@ -91,12 +98,13 @@ src/ext-stage-stamp: STAGETARGET = install
 
 $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	@echo $@ ...
-	$(MAKE) -C$* $(STAGETARGET)
+	[ ! -d $* ] || $(MAKE) -C$* $(STAGETARGET)
 	touch $@
 
 EXTRA_DIST = Makefile build/pipestatus
 define upstreampackages
-	$(shell  shopt -s extglob && for i in $(VERSION_ALL); do echo upstream/$${i%.p[0-9]?([0-9])}.tar.bz2; done )
+	$(shell shopt -s extglob && for i in $(filter-out bzip2-%,$(VERSION_ALL)); do echo upstream/$${i%.p[0-9]?([0-9])}.tar.bz2; done ) \
+		upstream/bzip2-1.0.6.tar.gz
 endef
 
 if DISTUPSTREAM
@@ -188,15 +196,17 @@ define downloadit
 	$(call unat,@URL_GRABBER@ @DOWNLOAD_URL@/$(call packagename,$*)/$(notdir $@))
 endef
 
+upstream/bzip2-1.0.6.tar.gz:
+
 upstream/pkgconfig-0.18.tar.gz:
 	wget http://pkgconfig.freedesktop.org/releases/pkgconfig-0.18.tar.gz
 # FIXME: checksum
 	mv pkconfig-0.18.tar.gz upstream
 
+#####################################
 ### generic build stamp rule
-# FIXME: call $(MAKE) -f spkg-install (after transition?)
 # FIXME: don't export FILELIST
-# FIXME: don't export srcdir
+# FIXME: don't export srcdir?
 $(INST)/%: FILELIST = $(abs_top_builddir)/$@
 
 # default prefix for packages
@@ -213,45 +223,62 @@ $(INST)/%: STAGETARGET=install
 # no need to install sagelib
 $(INST)/sagelib-builtin: STAGETARGET=stage
 
-# allow system gcc durin toolchain build
-
-# sometimes extra commands need to be injected
-
 # bypass dummy gcc for a few packages. done differently
-# FIXME: provide/use maybe_sage_CC? will fail within sage-env
+# FIXME: provide/use maybe_sage_CC? will fail within sage-env otherwise
 # toolchain: build package (if enabled) with toolchain-flags, stamp and forget.
 #
-$(INST)/toolchain_$(FP_mpir) $(INST)/toolchain_$(FP_mpc) \
-$(INST)/toolchain_$(FP_mpfr) $(INST)/toolchain_$(FP_gcc) \
-$(INST)/toolchain_$(FP_zlib) $(INST)/toolchain_$(FP_ppl): \
-$(INST)/toolchain_%:
-	[ x$(SAGE_$(call packagename,$*)) = xyes ] && \
-	    $(MAKE) $(INST)/$* CC=$(shell which gcc) \
+# this is slow. but its used only once and not needed on non-toolchain systems
+$(INST)/toolchain-mpir $(INST)/toolchain-mpc \
+$(INST)/toolchain-mpfr \
+$(INST)/toolchain-ppl: \
+$(INST)/toolchain-%:
+	[ ! -f $(INST)/$(FP_$*) ] # sanity check, must not try to build toolchain more than once
+	[ -n "$(SAGE_$*)" ] && \
+	    $(MAKE) $(INST)/$(FP_$*) CC=$(shell which gcc) \
 	                       SAGE_BUILD_TOOLCHAIN=yes \
 	                       KEEPBUILT=yes \
 	                       BUILDFLAGS=keep,toolchain \
 	                       FILELIST="@abs_top_builddir@/$@" && \
-	    rm $(INST)/$* || :
+	    rm -f $(INST)/$(FP_$*)
 	touch $@
+
+#something like this might be faster (call make just once, incomplete)
+# $(INST)/toolchai%_mpir $(INST)/toolchai%_mpc) \
+# $(INST)/toolchai%_mpfr \
+# $(INST)/toolchai%_zlib $(INST)/toolchai%_ppl): \
+# 	[ -n "$(SAGE_$(call packagename,$*))" ] && \
+# 	    $(MAKE) $(INST)/$* CC=$(shell which gcc) \
+# 	                       SAGE_BUILD_TOOLCHAIN=yes \
+# 	                       KEEPBUILT=yes \
+# 	                       BUILDFLAGS=keep,toolchain \
+# 	                       FILELIST="@abs_top_builddir@/$@" && \
+# 	    rm $(INST)/$* || :
+# 	touch $@
+
+# these dont trigger gcc reverse dependency rebuild
+SOME_EXCEPTIONS = mpfr mpir mpc zlib bzip2 patch gcc
+
+# just depend on patch for all packages, except these.
+# this way, deps.in looks better
+DOES_NOT_NEED_PATCH = patch bzip2
 
 # build gcc with system gcc, FIXME: use maybe_sage_CC
 $(INST)/$(FP_gcc): CC=$(shell which gcc)
 
-# FIXME: better create symlinks during unpack, not here
-#
-# overly complicated. should really use makefiles... :|
-# this totally sucks. maybe check whether spkg-install is a makefile?
-#
+# this totally sucks. for now check whether spkg-install is a makefile.
 
-# writing $(MAKE) causes this rule to be executed even if n \in $(MAKEFLAGS)
-# (see manual). this requires workarounds if some spkg-installs are not
-# makefiles.
+# writing $(MAKE) causes make to execute the block below even if n \in
+# $(MAKEFLAGS) (see manual). this needs to be taken into account.
 
 .SECONDEXPANSION:
-$(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
+$(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
            $(PKGSDIR)/% $(SAGE_LOGS) $(INST) $(PKGSDIR) .sagedist \
-           $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst -, ,$$*))_OODEPS))
-	@echo "==== staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain))$(if $(findstring n,$(MAKEFLAGS)),(no act) )===="
+           $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),, \
+              $$($$(firstword $$(subst -, ,$$*))_OODEPS) \
+              $$(if $$(filter $$(call packagename,$$*),$(SOME_EXCEPTIONS)),,$(GCC_REVERSE_DEPS)) \
+              $$(if $$(filter $$(call packagename,$$*),$(DOES_NOT_NEED_PATCH)),,@DEP_patch@)) \
+           $(PKGSDIR)/$$(call packagename,$$*)/spkg-install
+	@echo "==== $(if $(findstring n,$(MAKEFLAGS)),(not really) )staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain) )===="
 	$(AM_V_at)path=$(PKGSDIR)/$*; \
 	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
@@ -259,34 +286,40 @@ $(INST)/%: $$(if $(filter $(SAGE_BUILD_TOOLCHAIN),yes),,$$($$(firstword $$(subst
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
 	source $(ENV_SH); \
-	env > $(SAGE_LOGS)/$*.env; \
+	$(IFNOTNOACT)env > $(SAGE_LOGS)/$*.env; \
 	echo "===================="; \
-	cd $$path; \
 	export FILELIST="$(FILELIST)"; \
 	export SAGE_ETC="$(SAGE_ETC)"; \
 	export MAKE="$(MAKE)"; \
 	export SAGE_PREFIX="$(SAGE_PREFIX)"; \
-	ismakefile=$$(awk -F: 'NR > 1 {exit}; /sage-dist-make/{print "yes"}' spkg-install); \
-	echo $(MAKEFLAGS), $(firstword $(MAKEFLAGS)); \
 	ret=0; \
+	ismakefile=$$(awk -F: 'NR > 1 {exit}; /sage-dist-make/{print "yes"}' $(lastword $|)); \
 	if test x$$ismakefile = xyes; then \
-	    $(MAKE) -f spkg-install -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log; \
+	    [ -d $$path ] && $(MAKE) -f $(abspath $(lastword $|)) -C $$path -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log && \
 	    ret=$${PIPESTATUS[0]}; \
-	elif test -z "$(findstring n,$(firstword $(MAKEFLAGS)))"; then \
-	    $(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES) 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
-	    ret=$$?; \
+	else :;\
+	    $(IFNOTNOACT)cd $$path; \
+	    $(IFNOTNOACT)$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES) 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	    $(IFNOTNOACT)ret=$$?; \
 	fi; \
 	if [ $$ret -ne 0 ]; then \
 		echo $* build failed, deleting; \
 		rm -f $@; \
 		exit 1; \
-	else \
-		echo $* staged successfully; \
+	else :;\
+		$(IFNOTNOACT)echo $* staged successfully; \
 	fi
 	touch $@;
 	@[ -s "$(FILELIST)" ] || echo "BUG, empty filelist $(FILELIST)?! probably spkg-install is incomplete (ignored)" || :
 	@$(MYKEEPBUILT_FALSE)echo deleting $* source; rm -rf $(PKGSDIR)/$*
 	@$(MYKEEPBUILT_TRUE)echo not deleting $* source
+
+# exception for toolchain
+$(INST)/toolchain: $(toolchain_DEPS)
+	@echo "==== staging toolchain $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain) )$(if $(findstring n,$(MAKEFLAGS)),(no act) )===="
+	echo @abs_top_builddir@/$(INST)/toolchain > $@
+
+toolchain-stage: $(INST)/toolchain
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
@@ -387,6 +420,12 @@ $(FOREIGN_ALL:%=%-distcheck): %-distcheck: $$($$*_DEPS)
 	else \
 	   echo BUG: $$FILELIST $$DESTDIR differ; \
 	fi
+
+$(FOREIGN_ALL:%=%-unpack): %-unpack: $(PKGSDIR)/$$(FP_$$*)
+	:
+
+$(FOREIGN_ALL:%=%-patch): %-patch:
+	@echo not yet
 
 $(FOREIGN_ALL:%=%-binary): SAGE_ETC=@prefix@/etc
 
@@ -644,6 +683,8 @@ copy:
    $(FOREIGN_ALL:%=%-stage) \
    $(FOREIGN_ALL:%=%-binary) \
    $(FOREIGN_ALL:%=%-distcheck) \
+   $(FOREIGN_ALL:%=%-unpack) \
+   $(FOREIGN_ALL:%=%-patch) \
    $(FOREIGN_ALL:%=%-check) \
    $(FOREIGN_ALL:%=%-info) \
    unstage-clean \
@@ -696,6 +737,25 @@ $(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p)
 	        $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .; \
 	fi
 
+# FIXME: don't rechecksum if dirty.
+.SECONDEXPANSION:
+$(PKGSDIR)/%: | upstream/$$(shell a=$$* && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.gz \
+                $(PKGSDIR)/$$(call packagename,$$*)/checksums.ini
+	@dlsum=$$(sha1sum $(firstword $|) | cut -f1 -d' ');\
+	refsum=$$(grep sha1 $(lastword $|) | cut -d= -f2);\
+	test $$dlsum = $$refsum || \
+	( echo expected sha1: $$refsum;\
+	  echo got      sha1: $$dlsum;\
+	  rm $@; exit 1 )
+	if [ -d $(PKGSDIR)/$* ]; then \
+	  	 touch $(PKGSDIR)/$*/dirty-stamp; \
+	else \
+	    $(MKDIR_P) $(PKGSDIR)/$*/src; \
+	    $(unpackwithversion); \
+	    cd $(abs_top_builddir)/$(PKGSDIR)/$*; \
+	        $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$(call packagename,$*)/* .; \
+	fi
+
 p=%
 define unpack
 	@echo unpacking $@
@@ -707,21 +767,11 @@ define unpack
 	  $(call unat,mv $(PKGSDIR)/$*/$${a%.p[0-9]?([0-9])} $@)
 endef
 
-.SECONDEXPANSION:
-$(PKGSDIR)/%/src: | upstream/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$${a$$(p).p[0-9]?([0-9])}" ).tar.bz2 \
-                  $$(shell echo >&2 $$* to2 $$(FP_$$*))
-	$(unpack)
-
 # no need to download exception
 $(PKGSDIR)/%-builtin:
 	$(MKDIR_P) $(PKGSDIR)/$*-builtin/src
 	cd $(abs_top_builddir)/$(PKGSDIR)/$*-builtin; \
 	    $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/$*/* .
-
-.SECONDEXPANSION:
-$(PKGSDIR)/%/src: | upstream/$$(shell a=$$(FP_$$*) && shopt -s extglob && echo "$$$$a" ).tar.gz \
-                  $$(shell echo >&2 $$* to3 $$(FP_$$*))
-	$(unpack)
 
 @dotPRECIOUS@: local/var/lib/sage/installed/% \
                upstream/%.bz2 @UPSTREAM@/%.gz

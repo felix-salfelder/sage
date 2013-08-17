@@ -26,7 +26,7 @@ SAGE_SPKG = sage-spkg $${SAGE_SPKG_OPTS}
 # as prerequisite of GCC.
 all-old:
 	$(MAKE) base # FIXME: isnt base a part of toolchain?
-	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain
+	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain # toolchain builds gcc, gcc deletes mp{3} stamps
 	$(MAKE) toolchain-deps # actually reverse deps?
 	$(MAKE) all-sage
 
@@ -60,8 +60,6 @@ endef
 
 scripts: $(BIN)
 
-all-local: $(FOREIGN_DEP)
-
 # nonsense? no. but not needed. covered by sagelib spkg
 #     $(BIN) \
 #     $(SAGE) \
@@ -70,12 +68,6 @@ all-local: $(FOREIGN_DEP)
 
 # toolchain is a virtual "package"
 TOOLCHAIN = $(INST)/toolchain
-
-# we need gcc (if enabled) to build it.
-$(INST)/toolchain: @DEP_gcc@
-	echo @abs_top_builddir@/$(INST) > $@
-
-toolchain: $(TOOLCHAIN)
 
 # note on $(DEP_gcc_maybe)
 # set
@@ -88,20 +80,17 @@ toolchain: $(TOOLCHAIN)
 # unconditionally. We still use the dependency checking from $(MAKE),
 # so this will not trigger useless rebuilds.
 # See http://trac.sagemath.org/sage_trac/ticket/14168
-# FIXME, serial rule! ouch. these are toolchain *reverse* deps
-toolchain-deps:
-	test -n @DEP_zlib@ && $(MAKE) @DEP_zlib@
-	test -n @DEP_mpir@ && $(MAKE) @DEP_mpir@
-	test -n @DEP_mpfr@ && $(MAKE) @DEP_mpfr@
-	test -n @DEP_mpc@ && $(MAKE) @DEP_mpc@
+toolchain-deps: $(GCC_REVERSE_DEPS)
 
-# toolchain deps
-# this is tricky, the first toolchain build does not need to be serialized...
-# hmmm
-$(INST)/toolchain_$(FP_ppl): $(INST)/toolchain_$(FP_mpir)
-$(INST)/toolchain_$(FP_mpc): $(INST)/toolchain_$(FP_mpir)
-$(INST)/toolchain_$(FP_mpc): $(INST)/toolchain_$(FP_mpfr)
-$(INST)/toolchain_$(FP_mpfr): $(INST)/toolchain_$(FP_mpir)
+GCC_REVERSE_DEPS = @DEP_zlib@ @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@
+
+# toolchain inner dependencies, must add patch manually
+$(INST)/toolchain-mpir: @DEP_patch@
+$(INST)/toolchain-mpc: $(INST)/toolchain-mpir @DEP_patch@
+$(INST)/toolchain-mpc: $(INST)/toolchain-mpfr @DEP_patch@
+$(INST)/toolchain-mpfr: $(INST)/toolchain-mpir @DEP_patch@
+# needed? why?
+$(INST)/toolchain-ppl: $(INST)/toolchain-mpir @DEP_patch@
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
@@ -121,6 +110,7 @@ sagelib_DEPS+= @DEP_sagenb@ @DEP_ipython@ @DEP_gap@ $(DEP_gcc_maybe)
 # an update of these packages will not trigger a rebuild of every other
 # package during an upgrade, see #13415.
 ###############################################################################
+# this should be not required.
 base: @DEP_bzip2@ @DEP_patch@
 
 # If we are upgrading from a version 4.x of Sage, don't build bzip2.
@@ -140,18 +130,15 @@ atlas_DEPS = @DEP_lapack@ @DEP_python@ $(DEP_gcc_maybe)
 $(INST)/$(FP_atlas): upstream/lapack-3.4.2.tar
 
 blas_DEPS = $(DEP_gcc_maybe)
-blas_OODEPS = $(TOOLCHAIN)
+blas_OODEPS = $(GCC_REVERSE_DEPS)
 
 cephes_DEPS = @DEP_cython@
 
 boehm_gc_DEPS = $(DEP_gcc_maybe)
-boehm_gc_OODEPS = $(TOOLCHAIN)
 
 cliquer_DEPS = $(DEP_gcc_maybe)
-cliquer_OODEPS = $(TOOLCHAIN)
 
 cddlib_DEPS = @DEP_mpir@
-cddlib_OODEPS = $(TOOLCHAIN)
 
 # CONWAY depends on SAGERUNTIME because it runs Sage code to
 # generate a Sage object (.sobj). FIXME: use juliens build
@@ -161,121 +148,93 @@ cvxopt_DEPS = \
     @DEP_lapack@ @DEP_blas@ @DEP_numpy@ \
     @DEP_atlas@ @DEP_cephes@ @DEP_gsl@ \
     @DEP_glpk@ $(DEP_gcc_maybe)
-cvxopt_OODEPS = $(TOOLCHAIN)
 
 # matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
 cvxopt_DEPS+= $(if filter($(SAGE_CHECK),yes),$(INST)/$(FP_matplotlib))
 
 docutils_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-docutils_OODEPS = $(TOOLCHAIN)
 
 elliptic_curves_DEPS = @DEP_python@ @DEP_sqlite@ $(DEP_gcc_maybe)
-elliptic_curves_OODEPS = $(TOOLCHAIN)
 
 eclib_DEPS = @DEP_mpir@ @DEP_pari@ @DEP_ntl@ $(DEP_gcc_maybe)
-eclib_OODEPS = $(TOOLCHAIN)
 
 ecm_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
-ecm_OODEPS = $(TOOLCHAIN)
 
 fflas_ffpack_DEPS = @DEP_mpir@ @DEP_givaro@ @DEP_gsl@ @DEP_atlas@ $(DEP_gcc_maybe)
-fflas_ffpack_OODEPS = $(TOOLCHAIN)
 
-freetype_OODEPS = $(TOOLCHAIN)
+freetype_DEPS =
 
 gap_DEPS = @DEP_termcap@ @DEP_readline@ @DEP_mpir@ $(DEP_gcc_maybe)
-gap_OODEPS = $(TOOLCHAIN)
 
 genus2reduction_DEPS = @DEP_pari@
 
 # git_DEPS = @DEP_zlib@ @DEP_python@
 
 gd_DEPS = @DEP_libpng@ @DEP_freetype@ @DEP_iconv@ $(DEP_gcc_maybe)
-gd_OODEPS = $(TOOLCHAIN)
 
 gdmodule_DEPS = @DEP_python@ @DEP_gd@ @DEP_iconv@ $(DEP_gcc_maybe)
-gdmodule_OODEPS = $(TOOLCHAIN)
 
 givaro_DEPS = @DEP_mpir@
-givaro_OODEPS = $(TOOLCHAIN)
 
 glpk_DEPS = @DEP_mpir@ @DEP_zlib@ $(DEP_gcc_maybe)
-glpk_OODEPS = $(TOOLCHAIN)
 
-gf2x_OODEPS = $(TOOLCHAIN)
+gf2x_DEPS =
 
 gfan_DEPS = @DEP_mpir@ @DEP_cddlib@ $(DEP_gcc_maybe)
-gfan_OODEPS = $(TOOLCHAIN)
 
 gsl_DEPS = @DEP_atlas@ $(DEP_gcc_maybe)
-gsl_OODEPS = $(TOOLCHAIN)
 
 lcalc_DEPS = @DEP_pari@ @DEP_mpfr@ $(DEP_gcc_maybe)
-lcalc_OODEPS = $(TOOLCHAIN)
 
 ipython_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-ipython_OODEPS = $(TOOLCHAIN)
 
 iml_DEPS = @DEP_mpir@ @DEP_gsl@ @DEP_atlas@ $(DEP_gcc_maybe)
-iml_OODEPS = $(TOOLCHAIN)
 
 jmol_DEPS = @DEP_sagenb@
 
 lapack_DEPS = $(DEP_gcc_maybe)
-lapack_OODEPS = $(TOOLCHAIN)
 
 libgap_DEPS = @DEP_gap@ $(DEP_gcc_maybe)
-libgap_OODEPS = $(TOOLCHAIN)
 
 linbox_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_givaro@ \
               @DEP_mpfr@ @DEP_libfplll@ @DEP_iml@ \
               @DEP_libm4ri@ @DEP_libm4rie@ @DEP_fflas_ffpack@ \
               $(DEP_gcc_maybe)
-linbox_OODEPS = $(TOOLCHAIN)
 
 libpng_DEPS = @DEP_zlib@ $(DEP_gcc_maybe)
-libpng_OODEPS = $(TOOLCHAIN)
 
 libfplll_DEPS = @DEP_mpir@ @DEP_mpfr@ $(DEP_gcc_maybe)
-libfplll_OODEPS = $(TOOLCHAIN)
 
-lrcalc_OODEPS = $(TOOLCHAIN)
+lrcalc_DEPS =
 
 mpmath_DEPS = @DEP_python@
 
 matplotlib_DEPS = \
     @DEP_python@ @DEP_numpy@ @DEP_freetype@ @DEP_libpng@ \
     @DEP_gdmodule@ $(DEP_gcc_maybe)
-matplotlib_OODEPS = $(TOOLCHAIN)
 
-mpir_DEPS = @DEP_iconv@ @DEP_gcc@
+mpir_DEPS = @DEP_iconv@ @DEP_gcc@ @DEP_zlib@
 
 mpc_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_gcc@
 
 mpfr_DEPS = @DEP_mpir@ @DEP_gcc@
 
 mpfi_DEPS = @DEP_mpir@ @DEP_mpfr@ $(DEP_gcc_maybe)
-mpfi_OODEPS = $(TOOLCHAIN)
 
 networkx_DEPS = @DEP_python@
 
 ntl_DEPS = @DEP_mpir@ @DEP_gf2x@ $(DEP_gcc_maybe)
-ntl_OODEPS = $(TOOLCHAIN)
 
 numpy_DEPS = @DEP_python@ @DEP_lapack@ @DEP_blas@ @DEP_atlas@ $(DEP_gcc_maybe)
-numpy_OODEPS = $(TOOLCHAIN)
 
 pari_DEPS = @DEP_readline@ @DEP_mpir@ $(DEP_gcc_maybe)
-pari_OODEPS = $(TOOLCHAIN)
 
 polybori_DEPS = @DEP_python@ @DEP_ipython@ @DEP_scons@ @DEP_boost_cropped@ \
                 @DEP_libm4ri@ @DEP_gd@ $(DEP_gcc_maybe)
-polybori_OODEPS = $(TOOLCHAIN)
 
 polytopes_db_DEPS =
 
 ppl_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
-ppl_OODEPS = $(TOOLCHAIN)
 
 # Python links against -lbz2.  Technically speaking, we should add
 # BZIP2 as dependency here.  But we don't do that to avoid needless
@@ -285,83 +244,61 @@ ppl_OODEPS = $(TOOLCHAIN)
 python_DEPS = @DEP_zlib@ @DEP_readline@ @DEP_sqlite@ @DEP_libpng@ $(DEP_gcc_maybe)
 
 readline_DEPS = @DEP_termcap@ $(DEP_gcc_maybe)
-readline_OODEPS = $(TOOLCHAIN)
 
 pycrypto_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-pycrypto_OODEPS = $(TOOLCHAIN)
 
 pil_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-pil_OODEPS = $(TOOLCHAIN)
 
 pynac_DEPS = @DEP_python@
 
 pexpect_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-pexpect_OODEPS = $(TOOLCHAIN)
 
 scons_DEPS = @DEP_python@
 
-rubiks_OODEPS = $(TOOLCHAIN)
+rubiks_DEPS =
 
 scipy_DEPS = @DEP_lapack@ @DEP_blas@ @DEP_numpy@ $(DEP_gcc_maybe)
-scipy_OODEPS = $(TOOLCHAIN)
 
 sqlite_DEPS = @DEP_readline@ $(DEP_gcc_maybe)
-sqlite_OODEPS = $(TOOLCHAIN)
 
 # To build SageTeX, you just need Python, but to test (SAGE_CHECK=yes)
 # SageTeX, you actually need to run sage, produce plots,...
 sagetex_DEPS = @DEP_python@ $(SAGERUNTIME) @DEP_maxima@ @DEP_scipy@ \
                @DEP_matplotlib@ @DEP_pil@ @DEP_tachyon@ $(DEP_gcc_maybe)
-sagetex_OODEPS = $(TOOLCHAIN)
 
 setuptools_DEPS = @DEP_python@
 
 singular_DEPS = @DEP_mpir@ @DEP_ntl@ @DEP_readline@ @DEP_mpfr@ $(DEP_gcc_maybe)
-singular_OODEPS = $(TOOLCHAIN)
 
 termcap_DEPS  = $(DEP_gcc_maybe)
-termcap_OODEPS = $(TOOLCHAIN)
 
 tachyon_DEPS = @DEP_libpng@ $(DEP_gcc_maybe)
-tachyon_OODEPS = $(TOOLCHAIN)
 
 ratpoints_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
-ratpoints_OODEPS = $(TOOLCHAIN)
 
 ecl_DEPS = @DEP_mpir@ @DEP_readline@ @DEP_boehm_gc@ $(DEP_gcc_maybe)
-ecl_OODEPS = $(TOOLCHAIN)
 
 maxima_DEPS = @DEP_ecl@ $(DEP_gcc_maybe)
-maxima_OODEPS = $(TOOLCHAIN)
 
 r_DEPS = @DEP_atlas@ @DEP_iconv@ @DEP_readline@ $(DEP_gcc_maybe)
-r_OODEPS = $(TOOLCHAIN)
 
 rpy2_DEPS = @DEP_python@ @DEP_r@ $(DEP_gcc_maybe)
-rpy2_OODEPS = $(TOOLCHAIN)
 
 sympy_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-sympy_OODEPS = $(TOOLCHAIN)
 
 cython_DEPS = @DEP_python@ $(DEP_gcc_maybe)
-cython_OODEPS = $(TOOLCHAIN)
 
 flintqs_DEPS = @DEP_mpir@ $(DEP_gcc_maybe)
-flintqs_OODEPS = $(TOOLCHAIN)
 
 flint_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_ntl@ $(DEP_gcc_maybe)
-flint_OODEPS = $(TOOLCHAIN)
 
 libm4ri_DEPS = @DEP_libpng@ $(DEP_gcc_maybe)
-libm4ri_OODEPS = $(TOOLCHAIN)
 
 libm4rie_DEPS = @DEP_libm4ri@ @DEP_givaro@ @DEP_ntl@ $(DEP_gcc_maybe)
-libm4rie_OODEPS = $(TOOLCHAIN)
 
 # zn_poly really does depend on Python, despite this is far from obvious.
 # The 'configure' script in zn_poly calls Python to make a 'makefile'.
 zn_poly_DEPS = @DEP_mpir@ @DEP_python@ $(DEP_gcc_maybe)
-zn_poly_OODEPS = $(TOOLCHAIN)
 
 sagenb_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_pexpect@ \
               @DEP_jinja2@ @DEP_sphinx@ @DEP_docutils@
@@ -375,11 +312,11 @@ sphinx_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_docutils@ \
 jinja2_DEPS = @DEP_python@ @DEP_setuptools@ @DEP_docutils@
 jinja2_DEPS+= @DEP_pygments@
 
-palp_OODEPS = $(TOOLCHAIN)
+palp_DEPS =
 
-symmetrica_OODEPS = $(TOOLCHAIN)
+symmetrica_DEPS =
 
-sympow_OODEPS = $(TOOLCHAIN)
+sympow_DEPS =
 
 pygments_DEPS = @DEP_python@ @DEP_setuptools@
 pygments_DEPS+= @DEP_sqlalchemy@
@@ -441,7 +378,6 @@ src/sage-configure-stamp: @DEP_cython@ src/c_lib-configure-stamp \
 extcode: $(EXTCODE_TARGETS)
 
 zlib_DEPS = $(DEP_gcc_maybe)
-zlib_OODEPS = $(TOOLCHAIN)
 
 # lib_c
 src/c_lib-configure-stamp: $(csage_DEPS)
@@ -453,13 +389,21 @@ $(INST)/ccache: $(BASE) @DEP_zlib@
 	+$(PIPE) "$(SAGE_SPKG) ccache 2>&1" "tee -a $(SAGE_LOGS)/ccache.log"
 	touch $(INST)/ccache
 
-# make gcc dependencies explicit.
-gcc_OODEPS = \
-    $(INST)/toolchain_$(FP_mpir) \
-    $(INST)/toolchain_$(FP_mpfr) \
-    $(INST)/toolchain_$(FP_mpc) \
-    $(INST)/toolchain_$(FP_ppl) \
-    $(INST)/toolchain_$(FP_zlib)
+# actual gcc dependencies
+GCC_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_mpir@ @DEP_mpc@ @DEP_ppl@ @DEP_zlib@
+
+# gcc dependency hack, escape bootstrapping phase
+gcc_DEPS = $(if $(wildcard $(INST)/gcc-*),$(GCC_DEPS),$(toolchain_DEPS))
+
+# these need to be built twice (before & after gcc)
+toolchain_DEPS = \
+    $(INST)/toolchain-mpir \
+    $(INST)/toolchain-mpfr \
+    $(INST)/toolchain-mpc
+#    $(INST)/toolchain-ppl really?
+
+debug:
+	echo gcc_DEPS $(gcc_DEPS)
 
 ###############################################################################
 
