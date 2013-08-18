@@ -129,10 +129,11 @@ class DocBuilder(object):
         self.name = os.path.join(*doc)
         self.lang = lang
         self.dir = os.path.join(SAGE_DOC_SRC, self.lang, self.name)
+        self.outdir = os.path.join(SAGE_DOC, self.lang, self.name)
 
         #Make sure the .static and .templates directories are there
-        mkdir(os.path.join(self.dir, "static"))
-        mkdir(os.path.join(self.dir, "templates"))
+        mkdir(os.path.join(self.outdir, "static"))
+        mkdir(os.path.join(self.outdir, "templates"))
 
     def _output_dir(self, type):
         """
@@ -464,7 +465,7 @@ class ReferenceBuilder(AllBuilder):
         top-level document and its components.
         """
         for lang in LANGUAGES:
-            refdir = os.path.join(SAGE_DOC, lang, self.name)
+            refdir = os.path.join(SAGE_DOC_SRC, lang, self.name)
             if not os.path.exists(refdir):
                 continue
             output_dir = self._output_dir(format, lang)
@@ -678,7 +679,7 @@ class ReferenceSubBuilder(DocBuilder):
         _sage = os.path.join(self.dir, '_sage')
         if os.path.exists(_sage):
             logger.info("Copying over custom .rst files from %s ...", _sage)
-            shutil.copytree(_sage, os.path.join(self.dir, 'sage'))
+            shutil.copytree(_sage, os.path.join(self.outdir, 'sage'))
 
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
@@ -920,7 +921,7 @@ class ReferenceSubBuilder(DocBuilder):
             sage: builder.ReferenceSubBuilder("reference").auto_rest_filename("sage.combinat.partition")
             '.../doc/en/reference/sage/combinat/partition.rst'
         """
-        return self.dir + os.path.sep + module_name.replace('.',os.path.sep) + '.rst'
+        return self.outdir + os.path.sep + module_name.replace('.',os.path.sep) + '.rst'
 
     def write_auto_rest_file(self, module_name):
         """
