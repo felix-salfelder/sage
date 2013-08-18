@@ -251,8 +251,12 @@ edit_in_place('src/ATLAS/CONFIG/src/config.c') \
     .close()
 
 if os.path.isdir(BUILD_LIB_DIR):
+    # shutil.chmod is a pain. os.system should work fine
+    os.system("chmod -R +w " + BUILD_LIB_DIR)
     shutil.rmtree(BUILD_LIB_DIR)
 shutil.copytree(os.path.join(PATCH_DIR, 'ATLAS-lib'), BUILD_LIB_DIR)
+# shutil.chmod is a pain. os.system should work fine
+os.system("chmod -R +w " + BUILD_LIB_DIR)
 
 
 ######################################################################
@@ -306,6 +310,8 @@ def configure(arch=None, isa_ext=None, archdef_dir=None):
         ', archdef dir '+str(archdef_dir)
     os.chdir(conf['SPKG_DIR'])
     if os.path.isdir(BUILD_DIR):
+		  # shutil.chmod is a pain. os.system should work fine
+        os.system("chmod -R +w " + BUILD_DIR)
         shutil.rmtree(BUILD_DIR)
     os.mkdir(BUILD_DIR)
     os.chdir(BUILD_DIR)
@@ -522,6 +528,8 @@ def configure_atlas_library():
     static_library_dir = os.path.join(BUILD_DIR, 'lib')
     for static_lib in glob.glob(os.path.join(static_library_dir, 'lib*.a')):
         shutil.copy(static_lib, BUILD_LIB_DIR)
+    # shutil.chmod is a pain. os.system should work fine
+    os.system("chmod -R +w " + BUILD_LIB_DIR)
     cmd = './configure'
     cmd += ' --prefix=' + conf['SAGE_LOCAL']
     cmd += ' --libdir=' + os.path.join(conf['SAGE_LOCAL'],'lib')
