@@ -296,8 +296,8 @@ $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst
 	    [ -d $$path ] && $(MAKE) -f $(abspath $(lastword $|)) -C $$path -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log && \
 	    ret=$${PIPESTATUS[0]}; \
 	else :;\
-	    $(IFNOTNOACT)cd $$path; echo `pwd` \
-	    $(IFNOTNOACT)$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES) 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
+	    $(IFNOTNOACT)cd $$path; \
+	    $(IFNOTNOACT)$(PIPE) "./spkg-install 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	    $(IFNOTNOACT)ret=$$?; \
 	fi; \
 	if [ $$ret -ne 0 ]; then \
