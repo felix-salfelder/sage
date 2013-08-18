@@ -166,6 +166,10 @@ pycheck-local:
 #don't delete .cc .c just because gcc fails.
 @am__leading_dot@PRECIOUS: %.cc %.c
 
+if VPATH_BUILD
+FILE_OVERRIDE=-
+endif
+
 # yes, this is ugly, may be replaced with make 3.82
 #
 # FIXME: cleanup, remove __file__ quirk if not VPATH
@@ -175,7 +179,7 @@ pycheck-local:
 %.pyo: SHELL=/usr/bin/env bash
 %.pyc: %.py
 	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
-	$(AM_V_PYC)echo -e "\n__file__='$<'" | cat "$<" - | $(PYTHON) -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'
+	$(AM_V_PYC)echo -e "\n__file__='$<'" | cat "$<" $(FILE_OVERRIDE) | $(PYTHON) -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'
 %.pyo: %.py
 	@VPATH_TRUE@@$(MKDIR_P) $(dir $@)
-	$(AM_V_PYO)echo -e "\n__file__='$<'" | cat "$<" - | $(PYTHON) -O -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'
+	$(AM_V_PYO)echo -e "\n__file__='$<'" | cat "$<" $(FILE_OVERRIDE) | $(PYTHON) -O -c 'import py_compile; py_compile.compile("/dev/stdin","$@","$<")'

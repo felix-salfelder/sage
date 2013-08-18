@@ -59,7 +59,7 @@ def trace(code, preparse=True):
     ::
 
         sage: print s.before[s.before.find('-'):]
-        ---...
+        --...
         ipdb> c
         2 * 5
 
