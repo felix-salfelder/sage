@@ -35,9 +35,12 @@ AC_PROG_SED      # used here and there.
 ### stage patch when needed
 AC_PATH_PROG(PATCH, patch)
 CHK_patch=negative
-AS_IF([ test -n "$PATCH" ],
-      [CHK_patch=positive]
-      )
+AS_IF([ test -n "$PATCH" ], [CHK_patch=positive])
+
+### stage bzip2 when needed
+AC_PATH_PROG(BZIP2, bzip2)
+CHK_bzip2=negative
+AS_IF([ test -n "$BZIP2" ], [CHK_bzip2=positive])
 
 ### stage pkg
 PKG_PROG_PKG_CONFIG

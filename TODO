@@ -1,3 +1,7 @@
+make -n |& grep dropped # ?!
+
+make might be faster when using := where appropriate
+
 rebase cliquer paching to sage-upstream
 
 <package>-distcheck should run -check

@@ -14,7 +14,7 @@ SAGE_LOCAL = @abs_top_builddir@/local
 ENV_SH = sagedist/etc/env.sh
 
 # just pkgs?
-PKGSDIR=build/pkgs
+PKGSDIR = build/pkgs
 
 PIPE = $(abs_top_srcdir)/build/pipestatus
 V_ = 0 # $(AM_DEFAULT_VERBOSITY)
@@ -102,9 +102,10 @@ $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	touch $@
 
 EXTRA_DIST = Makefile build/pipestatus
-define upstreampackages
+define upstreamtarballs
 	$(shell shopt -s extglob && for i in $(filter-out bzip2-%,$(VERSION_ALL)); do echo upstream/$${i%.p[0-9]?([0-9])}.tar.bz2; done ) \
-		upstream/bzip2-1.0.6.tar.gz
+		upstream/bzip2-1.0.6.tar.gz \
+      upstream/lapack-3.4.2.tar
 endef
 
 if DISTUPSTREAM
@@ -120,28 +121,26 @@ endif
 if KEEPBUILT
 # keep built unless user requests to delete it
 # invoke with make dist BUILDFLAGS=clean
-MYKEEPBUILT_TRUE=$(if $(filter $(BUILDFLAGS),clean),\#,)
-MYKEEPBUILT_FALSE=$(if $(filter $(BUILDFLAGS),clean),,\#)
+MYKEEPBUILT_TRUE=$(if $(filter clean,$(BUILDFLAGS)),\#,)
+MYKEEPBUILT_FALSE=$(if $(filter clean,$(BUILDFLAGS)),,\#)
 else
 # delete source after build user requests it
 # invoke with make dist BUILDFLAGS=keep
-MYKEEPBUILT_TRUE=$(if $(filter $(BUILDFLAGS),keep),,\#)
-MYKEEPBUILT_FALSE=$(if $(filter $(BUILDFLAGS),keep),\#,)
+MYKEEPBUILT_TRUE=$(if $(filter keep,$(BUILDFLAGS)),,\#)
+MYKEEPBUILT_FALSE=$(if $(filter keep,$(BUILDFLAGS)),\#,)
 endif
 
 .SECONDEXPANSION:
-dist-hook: $$(call upstreampackages)
+dist-hook: $$(call upstreamtarballs)
 	$(MKDIR_P) $(distdir)/upstream
 	$(UPSTREAM_DIST_TRUE)cp $+ $(distdir)/upstream
+	find build -name '*~' -delete
 
 # add builtin submodule contents to dist (much better)
 @distdir_subs@
 
 # brute force
 EXTRA_DIST+= $(FOREIGN_ALL:%=$(PKGSDIR)/%)
-
-# hack/workaround
-EXTRA_DIST+= upstream/lapack-3.4.2.tar
 
 ### core module rules ###
 # FIXME: build src/sage out of tree
@@ -228,16 +227,17 @@ $(INST)/sagelib-builtin: STAGETARGET=stage
 # toolchain: build package (if enabled) with toolchain-flags, stamp and forget.
 #
 # this is slow. but its used only once and not needed on non-toolchain systems
+.SECONDEXPANSION:
 $(INST)/toolchain-mpir $(INST)/toolchain-mpc \
 $(INST)/toolchain-mpfr \
 $(INST)/toolchain-ppl: \
-$(INST)/toolchain-%:
+$(INST)/toolchain-%: $(PKGSDIR)/$$(FP_$$*)
 	[ ! -f $(INST)/$(FP_$*) ] # sanity check, must not try to build toolchain more than once
 	[ -n "$(SAGE_$*)" ] && \
 	    $(MAKE) $(INST)/$(FP_$*) CC=$(shell which gcc) \
 	                       SAGE_BUILD_TOOLCHAIN=yes \
 	                       KEEPBUILT=yes \
-	                       BUILDFLAGS=keep,toolchain \
+	                       BUILDFLAGS="keep toolchain" \
 	                       FILELIST="@abs_top_builddir@/$@" && \
 	    rm -f $(INST)/$(FP_$*)
 	touch $@
@@ -250,7 +250,7 @@ $(INST)/toolchain-%:
 # 	    $(MAKE) $(INST)/$* CC=$(shell which gcc) \
 # 	                       SAGE_BUILD_TOOLCHAIN=yes \
 # 	                       KEEPBUILT=yes \
-# 	                       BUILDFLAGS=keep,toolchain \
+# 	                       BUILDFLAGS="keep toolchain" \
 # 	                       FILELIST="@abs_top_builddir@/$@" && \
 # 	    rm $(INST)/$* || :
 # 	touch $@
@@ -265,10 +265,8 @@ DOES_NOT_NEED_PATCH = patch bzip2
 # build gcc with system gcc, FIXME: use maybe_sage_CC
 $(INST)/$(FP_gcc): CC=$(shell which gcc)
 
-# this totally sucks. for now check whether spkg-install is a makefile.
-
 # writing $(MAKE) causes make to execute the block below even if n \in
-# $(MAKEFLAGS) (see manual). this needs to be taken into account.
+# $(MAKEFLAGS) (see manual). this needs to be taken into account (IFNOTNOACT).
 
 .SECONDEXPANSION:
 $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst -, ,$$*))_DEPS)) |\
@@ -278,7 +276,7 @@ $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst
               $$(if $$(filter $$(call packagename,$$*),$(SOME_EXCEPTIONS)),,$(GCC_REVERSE_DEPS)) \
               $$(if $$(filter $$(call packagename,$$*),$(DOES_NOT_NEED_PATCH)),,@DEP_patch@)) \
            $(PKGSDIR)/$$(call packagename,$$*)/spkg-install
-	@echo "==== $(if $(findstring n,$(MAKEFLAGS)),(not really) )staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain) )===="
+	@echo "==== $(if $(findstring \#,$(IFNOTNOACT)),(not really) )staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain) )===="
 	$(AM_V_at)path=$(PKGSDIR)/$*; \
 	export CC="$(CC)" CFLAGS="@CFLAGS@" \
 	       UNAME="@UNAME@" \
@@ -298,7 +296,7 @@ $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst
 	    [ -d $$path ] && $(MAKE) -f $(abspath $(lastword $|)) -C $$path -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log && \
 	    ret=$${PIPESTATUS[0]}; \
 	else :;\
-	    $(IFNOTNOACT)cd $$path; \
+	    $(IFNOTNOACT)cd $$path; echo `pwd` \
 	    $(IFNOTNOACT)$(PIPE) "./spkg-install $(STAGETARGET) $(MAKEOVERRIDES) 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	    $(IFNOTNOACT)ret=$$?; \
 	fi; \
@@ -389,9 +387,10 @@ $(FOREIGN_ALL:%=%-stage): %-stage: $(INST)/$$(FP_$$*)
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-restage): %-restage:
-	$(MAKE) $*-unstage
-	$(MAKE) $*-stage
+	$(MAKE) --no-print-directory $*-unstage
+	$(MAKE) --no-print-directory $*-stage
 
+# fixme: -n might not work
 # the diff command needs work
 # e.g. it must not be pedantic with directories in the right way
 # FIXME: don't use $SAGE_LOCAL here
@@ -788,9 +787,13 @@ LIB_WHITELIST = libpthread libm\. libc\. linux-vdso ld-linux\
                 libutil\. libquadmath\. libgfortran\. libdl\.\
                 libffi\.
 
+space :=
+space +=
+SAGE_LIBDIRS = lib/openmpi lib/R/lib lib32 lib64 lib
+libcheck: SHELL=/usr/bin/env bash
 libcheck:
 	source $(ENV_SH); \
-	for i in local/lib/*.so* local/bin/*; do \
+	for i in local/{$(SAGE_LIBDIRS:${space}=,)}/*.so* local/bin/*; do \
 		echo $$i; \
 		ldd $$i |grep -v 'statically linked' | grep -v 'not a dynamic executable' \
 		        $(LIB_WHITELIST:%=| grep -v '%'); \
@@ -837,6 +840,10 @@ help:
 	@echo "make <package>-distcheck"
 	@echo "make <package>-info           print info about <package>"
 	@echo "make <package>-list           list <package> contents"
+	@echo "make <package>-unpack         unpack package tarball in $(UPSTREAM)"
+	@echo "make <package>-patch          (unpack and) patch tarball"
+	@echo
+	@echo "make libcheck                 list system libraries that are linked against"
 
 .PHONY: help
 

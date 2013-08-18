@@ -82,7 +82,7 @@ TOOLCHAIN = $(INST)/toolchain
 # See http://trac.sagemath.org/sage_trac/ticket/14168
 toolchain-deps: $(GCC_REVERSE_DEPS)
 
-GCC_REVERSE_DEPS = @DEP_zlib@ @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@
+GCC_REVERSE_DEPS = @DEP_zlib@ @DEP_mpir@ @DEP_mpfr@ @DEP_mpc@ @DEP_ppl@
 
 # toolchain inner dependencies, must add patch manually
 $(INST)/toolchain-mpir: @DEP_patch@
@@ -390,10 +390,12 @@ $(INST)/ccache: $(BASE) @DEP_zlib@
 	touch $(INST)/ccache
 
 # actual gcc dependencies
-GCC_DEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_mpir@ @DEP_mpc@ @DEP_ppl@ @DEP_zlib@
+GCC_OODEPS = @DEP_mpir@ @DEP_mpfr@ @DEP_mpir@ @DEP_mpc@ @DEP_ppl@ @DEP_zlib@
 
 # gcc dependency hack, escape bootstrapping phase
-gcc_DEPS = $(if $(wildcard $(INST)/gcc-*),$(GCC_DEPS),$(toolchain_DEPS))
+gcc_DEPS = $(if $(wildcard $(INST)/gcc-*),,$(toolchain_DEPS))
+gcc_OODEPS = $(if $(wildcard $(INST)/gcc-*),$(GCC_OODEPS))
+
 
 # these need to be built twice (before & after gcc)
 toolchain_DEPS = \
