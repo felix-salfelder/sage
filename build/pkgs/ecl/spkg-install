@@ -67,7 +67,8 @@ export CPPFLAGS
 export LDFLAGS
 
 # BUG: Building ECL in parallel doesn't work, so use only 1 thread
-EXTRA_MAKEFLAG=-j1
+MAKE="$MAKE -j1"
+export MAKE
 
 if [ "`uname -sm`" = "SunOS i86pc" ] && [ "x$SAGE64" = xyes ]; then
     # Need to add --with-dffi=no to disable assembly code on OpenSolaris x64.
@@ -98,7 +99,7 @@ fi
 # Before running make we touch build/TAGS so its building process is never triggered
 touch build/TAGS
 
-$MAKE $EXTRA_MAKEFLAG
+$MAKE
 if [ $? -ne 0 ]; then
     echo >&2 "Error - Failed to build ECL ... exiting"
     exit 1
@@ -108,7 +109,7 @@ fi
 # FILELIST/unstage takes care of this
 # rm -rf "$SAGE_PREFIX/lib/ecl-"*
 
-$MAKE $EXTRA_MAKEFLAG install INSTALL=sage-dist-install
+$MAKE install INSTALL=sage-dist-install
 if [ $? -ne 0 ]; then
     echo >&2 "Error - Failed to install ECL ... exiting"
     exit 1
