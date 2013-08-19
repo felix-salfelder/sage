@@ -50,7 +50,7 @@ PATH="$SAGE_ROOT/build/bin:$PATH"
 export PATH
 
 CPPFLAGS+=" -I$SAGE_LOCAL/include"
-CPPFLAGS+=" -I$SAGE_LOCAL/include/csage"
+# CPPFLAGS+=" -I$SAGE_LOCAL/include/csage"
 export CPPFLAGS
 
 # maxima build will fail if LDFLAGS contains extra whitespace (d'0h)
