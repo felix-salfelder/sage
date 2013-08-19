@@ -18,7 +18,9 @@ from common.conf import *
 
 # settings for the intersphinx extension:
 
-ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
+# actually SAGE_DOC_SRC, but sphinx doesnt support it.
+# see builder.py for a workaround
+ref_src = os.path.join(SAGE_DOC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'output', 'html', 'en', 'reference')
 intersphinx_mapping[ref_out] = None
 

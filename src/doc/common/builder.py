@@ -128,7 +128,11 @@ class DocBuilder(object):
 
         self.name = os.path.join(*doc)
         self.lang = lang
-        self.dir = os.path.join(SAGE_DOC_SRC, self.lang, self.name)
+
+        # hmm actually, we take stuff from SAGE_DOC_SRC, but some parts are not
+        # there yet. put/link everything together in SAGE_DOC for now...
+        self.dir = os.path.join(SAGE_DOC_SRC, self.lang, self.name) # overridden for reference
+        self.srcdir = os.path.join(SAGE_DOC_SRC, self.lang, self.name)
         self.outdir = os.path.join(SAGE_DOC, self.lang, self.name)
 
         #Make sure the .static and .templates directories are there
@@ -441,6 +445,8 @@ class ReferenceBuilder(AllBuilder):
 
         self.name = doc[0]
         self.lang = lang
+        # override (VPATH workaround)
+        self.dir = os.path.join(SAGE_DOC, self.lang, self.name)
 
     def _output_dir(self, type, lang='en'):
         """
@@ -614,6 +620,20 @@ for a webpage listing all of the documents.''' % (output_dir,
 
         return [ doc[1] for doc in sorted(documents) ]
 
+def symlink_recursive(src,dst):
+    if os.path.isdir(dst):
+        pass
+    elif os.path.isfile(dst):
+        raise OSError("cannot mkdir %s, theres a file in the way" %dst)
+    else:
+        os.mkdir(dst)
+    for file in os.walk(src).next()[2]:
+        try:
+           os.symlink(os.path.join(src,file),os.path.join(dst,file))
+        except OSError:
+           pass
+    for dir in os.walk(src).next()[1]:
+        symlink_recursive(os.path.join(src,dir),os.path.join(dst,dir))
 
 class ReferenceSubBuilder(DocBuilder):
     """
@@ -633,6 +653,8 @@ class ReferenceSubBuilder(DocBuilder):
     def __init__(self, *args, **kwds):
         DocBuilder.__init__(self, *args, **kwds)
         self._wrap_builder_helpers()
+        # override (VPATH workaround)
+        self.dir = os.path.join(SAGE_DOC, self.lang, self.name)
 
     def _wrap_builder_helpers(self):
         from functools import partial, update_wrapper
@@ -680,6 +702,10 @@ class ReferenceSubBuilder(DocBuilder):
         if os.path.exists(_sage):
             logger.info("Copying over custom .rst files from %s ...", _sage)
             shutil.copytree(_sage, os.path.join(self.outdir, 'sage'))
+        # VPATH workaround. sphinx is not able to locate files in self.srcdir
+        if self.srcdir != self.dir:
+            logger.info("Copying over some source files from %s ...", self.srcdir)
+            symlink_recursive(self.srcdir, self.dir)
 
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 

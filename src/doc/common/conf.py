@@ -103,8 +103,9 @@ todo_include_todos = True
 # intersphinx_mapping = {'http://docs.python.org/': None}
 #intersphinx_mapping = {'python': ('http://docs.python.org/',
 #                                  'python-inv.txt')}
+from sage.env import SAGE_DOC_SRC
 intersphinx_mapping = {
-    'http://docs.python.org/': get_doc_abspath('common/python.inv')}
+    'http://docs.python.org/': get_doc_abspath(SAGE_DOC_SRC + '/common/python.inv')}
 
 def set_intersphinx_mappings(app):
     """
