@@ -98,6 +98,7 @@ src/ext-stage-stamp: STAGETARGET = install
 
 $(CORE_MODULES:%=%-stage-stamp): %-stage-stamp: %-configure-stamp
 	@echo $@ ...
+	source $(ENV_SH); \
 	[ ! -d $* ] || $(MAKE) -C$* $(STAGETARGET)
 	touch $@
 
@@ -296,6 +297,7 @@ $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst
 	    [ -d $$path ] && $(MAKE) -f $(abspath $(lastword $|)) -C $$path -I@abs_top_builddir@/sagedist $(STAGETARGET) 2>&1 | tee -a $(SAGE_LOGS)/$*.log && \
 	    ret=$${PIPESTATUS[0]}; \
 	else :;\
+	    $(IFNOTNOACT)export -n MAKEFLAGS; \
 	    $(IFNOTNOACT)cd $$path; \
 	    $(IFNOTNOACT)$(PIPE) "./spkg-install 2>&1" 'tee -a $(SAGE_LOGS)/$*.log'; \
 	    $(IFNOTNOACT)ret=$$?; \
@@ -387,8 +389,8 @@ $(FOREIGN_ALL:%=%-stage): %-stage: $(INST)/$$(FP_$$*)
 
 .SECONDEXPANSION:
 $(FOREIGN_ALL:%=%-restage): %-restage:
-	$(MAKE) --no-print-directory $*-unstage
-	$(MAKE) --no-print-directory $*-stage
+	$(MAKE) $*-unstage
+	$(MAKE) $*-stage
 
 # fixme: -n might not work
 # the diff command needs work
