@@ -46,6 +46,7 @@ AS_IF([ test -n "$BZIP2" ], [CHK_bzip2=positive])
 PKG_PROG_PKG_CONFIG
 CHK_pkgconfig=negative
 if test -n "$PKG_CONFIG"; then
+   PKG_CONFIG_PATH=`$PKG_CONFIG --variable pc_path pkg-config`
    CHK_pkgconfig=positive
 fi
 
