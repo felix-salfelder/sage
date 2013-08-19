@@ -51,12 +51,12 @@ install-env: 00sagelibenv.sh
    # don't mess with SAGE_LOCAL, just use things from where they are.
 	# will only be done for "stage". so it will not leak into tarballs
 	echo 'LD_LIBRARY_PATH="$(SAGE_ROOT)/src/c_lib/src/.libs:$$LD_LIBRARY_PATH"' >> $@
-	echo 'CPPFLAGS="-I$(SAGE_ROOT)/src/c_lib/include $$CPPFLAGS"' >> $@
+	echo 'CSAGE_INCLUDES="-I$(SAGE_ROOT)/src/c_lib/include"' >> $@
 	# VPATH builds
-	echo 'CPPFLAGS="-I$(SAGE_SRC)/c_lib/include $$CPPFLAGS"' >> $@
+	echo 'CSAGE_INCLUDES="-I$(SAGE_SRC)/c_lib/include"' >> $@
 	echo 'LDFLAGS="-L$(SAGE_ROOT)/src/c_lib/src/.libs $$LDFLAGS"' >> $@
 
-	echo "export LD_LIBRARY_PATH CPPFLAGS LDFLAGS \
+	echo "export LD_LIBRARY_PATH CPPFLAGS LDFLAGS CSAGE_INCLUDES\
 	             PYTHONPATH PATH SAGE_ETC SAGE_EXTCODE \
 	             SAGE_LOCAL SAGE_PREFIX SAGE_DOC \
 	             SAGE_ROOT \
