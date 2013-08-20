@@ -53,6 +53,8 @@ interpreters: \
     wrapper_py.pyx interp_py.c interp_py.h \
     wrapper_el.pyx interp_el.c interp_el.h
 
+all-local: __init__.pyc
+
 .PHONY: interpreters
 
 CLEANFILES+= *.h *.c *.pyx *.pxd timestamp

@@ -35,4 +35,6 @@ noinst_HEADERS = \
     python_rich_object.pxi python_slice.pxi random.pxi signals.pxi \
     stdsage.pxi
 
+all-local: __init__.pyc
+
 .PHONY: interpreters-stamp
