@@ -16,7 +16,7 @@ docbuild: common/builder.py common/build_options.py
 	for i in $(LANGDIRS); do \
 	    $(MKDIR_P) $$i/reference; \
 	    ( cd $$i/reference; [ -L footer.txt -o -f footer.txt ] ||\
-		    $(LN_S) @abs_top_srcdir@/$$i/reference/footer.txt . ); \
+	        $(LN_S) @abs_top_srcdir@/$$i/reference/footer.txt . ); \
 	done
 	export SAGE_DOC="@abs_top_builddir@"; \
 	export SAGE_DOC_SRC="@abs_top_srcdir@"; \
@@ -32,6 +32,11 @@ docbuild: common/builder.py common/build_options.py
 install-data-local:
 	$(INSTALL) -d $(docdir)
 	cp -r output/* $(docdir)
+
+clean-local:
+	for i in $(LANGDIRS); do \
+	    ( cd $$i/reference; [ ! -L footer.txt ] || rm -f footer.txt ) \
+	done
 
 
 docenvconfdir=$(sysconfdir)/env.d
