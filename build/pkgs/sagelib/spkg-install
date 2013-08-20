@@ -5,21 +5,37 @@
 #
 # the other parts are still put together by the toplevel makefile :|
 
-stage: install-env py scripts ext
+stage: install-env scripts ext py
 
 DIST_MK = spkg.mk
 include $(DIST_MK)
 
-py:
+py: csage ext
+	@echo staging sagelib/sage
 	$(MAKE) -C $(SAGE_ROOT)/src/sage py
+
+csage:
+	@echo staging sagelib/csage
+	$(MAKE) -C $(SAGE_ROOT)/src/c_lib
 
 scripts:
 	$(MAKE) -C $(SAGE_ROOT)/src/bin install
 
 ext:
+	@echo staging sagelib/ext
 	$(MAKE) -C $(SAGE_ROOT)/src/ext install
 
-.PHONY: install-env
+doc:
+	$(MAKE) -C $(SAGE_ROOT)/src/doc
+
+check:
+	@echo not yet
+
+.PHONY: install-env py csage scripts ext doc
+
+# will not work yet
+install:
+	$(MAKE) -C $(SAGE_ROOT)/src
 
 install-env: 00sagelibenv.sh
 	$(SAGE_INSTALL) -d $(DESTDIR)$(SAGE_ETC)/env.d
@@ -34,7 +50,8 @@ install-env: 00sagelibenv.sh
 #        remove parts that belong to 00dist
 #
 00sagelibenv.sh:
-	echo '[ -n "$$PYTHONPATH" ] && maybe_colon=:' > $@
+	echo 'maybe_colon=:' > $@
+	echo '[ -z "$$PYTHONPATH" ] || maybe_colon=:' >> $@
 	echo 'PYTHONPATH="$(SAGE_ROOT)/src$$maybe_colon$$PYTHONPATH"' >> $@
 	echo 'PATH="$(SAGE_LOCAL)/bin:$$PATH"' >> $@
 	echo 'SAGE_PREFIX="$(SAGE_PREFIX)"' >> $@
@@ -53,7 +70,7 @@ install-env: 00sagelibenv.sh
 	echo 'LD_LIBRARY_PATH="$(SAGE_ROOT)/src/c_lib/src/.libs:$$LD_LIBRARY_PATH"' >> $@
 	echo 'CSAGE_INCLUDES="-I$(SAGE_ROOT)/src/c_lib/include"' >> $@
 	# VPATH builds
-	echo 'CSAGE_INCLUDES="-I$(SAGE_SRC)/c_lib/include"' >> $@
+	echo 'CSAGE_INCLUDES+=" -I$(SAGE_SRC)/c_lib/include"' >> $@
 	echo 'LDFLAGS="-L$(SAGE_ROOT)/src/c_lib/src/.libs $$LDFLAGS"' >> $@
 
 	echo "export LD_LIBRARY_PATH CPPFLAGS LDFLAGS CSAGE_INCLUDES\
