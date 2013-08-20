@@ -94,8 +94,8 @@ AM_V_PYO = $(am__v_PYO_$(V))
 am__v_PYO_ = $(am__v_PYO_$(AM_DEFAULT_VERBOSITY))
 am__v_PYO_0 = @echo "  PYO   " $@;
 
-# ouch, trailing colon triggers python bug: empty string will be misinterpreted
-# as '.'.
+# ouch, trailing colon.
+# empty string will be (mis)interpreted as '.'.
 PYTHONPATHENV = PYTHONPATH="@abs_top_builddir@/..$(PYTHONPATH:%=:%)"
 
 define cython_call
@@ -131,7 +131,7 @@ py-local: $(LTLIBRARIES:%.la=%.so) $(PYCS) $(PYOS)
 	
 # FIXME: V
 $(LTLIBRARIES:%.la=%.so): %.so: | %.la
-	-$(LN_S) .libs/$@ .
+	$(AM_V_at)[ ! -f $@ ] || $(LN_S) .libs/$@ .
 
 # this is probably nonsense
 # @VPATH_TRUE@pys: $(PYS)

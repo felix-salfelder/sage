@@ -25,9 +25,9 @@ sage_PYTHON = \
     all.py
 
 # FIXME: move to post_commands?
-@VPATH_TRUE@all: | __init__.py
-@VPATH_TRUE@__init__.py:
-@VPATH_TRUE@	touch $@
+@VPATH_TRUE@all: | __init__.pyc
+# @VPATH_TRUE@__init__.py:
+# @VPATH_TRUE@	touch $@
 
 # this implements the currently
 # unavaible AM_EXTRA_RECURSIVE_TARGETS, see common.mk
