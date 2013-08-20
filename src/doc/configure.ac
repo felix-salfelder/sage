@@ -6,6 +6,7 @@ AC_INIT([sage-doc], [none], [sage-devel@googlegroups.com])
 AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability foreign])
 
 # Checks for programs.
+AC_PROG_LN_S
 AC_CHECK_PROG(SAGE, sage, yes)
 if test ! x"$SAGE" = "xyes"; then
 	AC_MSG_NOTICE([cannot find sage])
