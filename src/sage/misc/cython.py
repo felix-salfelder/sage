@@ -67,9 +67,10 @@ def atlas():
     else:
         return 'atlas'
 
-from sage.env import CSAGE_INCLUDES, LOCAL_INCLUDEDIR, PYTHON_INCLUDEDIR, NUMPY_INCLUDEDIR
+from sage.env import CSAGE_INCLUDEDIRS, LOCAL_INCLUDEDIR, PYTHON_INCLUDEDIR, NUMPY_INCLUDEDIR
 
-include_dirs = [LOCAL_INCLUDEDIR, \
+include_dirs = CSAGE_INCLUDEDIRS + \
+               [LOCAL_INCLUDEDIR, \
                 PYTHON_INCLUDEDIR, \
                 NUMPY_INCLUDEDIR, \
                 os.path.join(SAGE_SRC,'sage','ext'), \
@@ -211,7 +212,8 @@ def pyx_preparse(s):
         ...,
         'ntl',
         'csage'],
-        ['.../include/csage',
+        ['.../include',
+        '.../include',
         '.../include',
         '.../include/python2.7',
         '.../lib/python/site-packages/numpy/core/include',
@@ -239,7 +241,8 @@ def pyx_preparse(s):
 
         sage: inc
         ['bar',
-        '.../include/csage',
+        '.../include',
+        '.../include',
         '.../include',
         '.../include/python2.7',
         '.../lib/python/site-packages/numpy/core/include',
@@ -275,7 +278,7 @@ def pyx_preparse(s):
     if lang != "c++": # has issues with init_csage()
         s = """\ninclude "interrupt.pxi"  # ctrl-c interrupt block support\ninclude "stdsage.pxi"  # ctrl-c interrupt block support\n""" + s
     args, s = parse_keywords('cargs', s)
-    args = ['-w','-O2', CSAGE_INCLUDES] + args
+    args = ['-w','-O2'] + args
 
     return s, libs, inc, lang, additional_source_files, args
 
