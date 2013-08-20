@@ -94,12 +94,14 @@ $(INST)/toolchain-ppl: $(INST)/toolchain-mpir @DEP_patch@
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = @DEP_sagelib@ src/sage-stage-stamp
+SAGERUNTIME = @DEP_sagelib@
 
 # hmm this might be a temporary kludge
-sagelib_DEPS = $(CORE_MODULES:%=%-configure-stamp)
+sagelib_DEPS = $(CORE_MODULES:%=%-configure-stamp) \
+               src/sage-stage-stamp
 
 sagelib_DEPS+= @DEP_sagenb@ @DEP_ipython@ @DEP_gap@ $(DEP_gcc_maybe)
+
 
 ###############################################################################
 # Building the base system

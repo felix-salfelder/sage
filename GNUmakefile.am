@@ -168,8 +168,10 @@ src/bin-configure-stamp: CORE_OPTS+= --sysconfdir=@prefix@/etc
 src/sage-build-stamp: CORE_ENV+= LD_LIBRARY_PATH="$(abs_builddir)/local/lib:$$LD_LIBRARY_PATH"
 
 # doesn't make any sense to stage these, just build
-DOC = src/doc-build
-SAGE = src/sage-build-stamp
+DOC = src/doc-stage
+SAGE = src/sage-stage-stamp
+
+src/sage-stage-stamp: src/sage-configure-stamp
 
 # doesn't make any sense to stage these, currently required
 BIN = src/bin-stage-stamp
@@ -257,7 +259,7 @@ $(INST)/toolchain-%: $(PKGSDIR)/$$(FP_$$*)
 # 	touch $@
 
 # these dont trigger gcc reverse dependency rebuild
-SOME_EXCEPTIONS = mpfr mpir mpc zlib bzip2 patch gcc
+SOME_EXCEPTIONS = mpfr mpir mpc zlib bzip2 patch gcc ppl
 
 # just depend on patch for all packages, except these.
 # this way, deps.in looks better
@@ -349,25 +351,25 @@ build/pkgs/sagelib-builtin:
 	$(MKDIR_P) $@
 	cd $@; $(LN_S) $(abs_top_srcdir)/$(PKGSDIR)/sagelib/* .
 
-# unneeded?
-$(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
-	@echo "==== staging sagelib (hack) ===="
-	@path=$(PKGSDIR)/sagelib; \
-	export CC="$(CC)" CFLAGS="@CFLAGS@" \
-	       UNAME="@UNAME@" \
-	       srcdir="$(abs_top_srcdir)/$$path"; \
-	source $(ENV_SH); \
-	cd $$path; \
-	$(PIPE) "$(abs_top_builddir)/$< $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
-	if [ $$? -ne 0 ]; then \
-		echo $@ failed, deleting; \
-		rm -f $(abs_top_builddir)/$@; \
-		exit 1; \
-	else \
-		echo $@ succeeded; \
-		touch $(abs_top_builddir)/$@; \
-	fi
-	@[ -s "$(abs_top_builddir)/$@" ] || echo "BUG, empty filelist?! (ignored)" || :
+## unneeded?
+#$(INST)/sagelib: $(PKGSDIR)/sagelib-builtin/spkg-install
+#	@echo "==== staging sagelib (hack) ===="
+#	@path=$(PKGSDIR)/sagelib; \
+#	export CC="$(CC)" CFLAGS="@CFLAGS@" \
+#	       UNAME="@UNAME@" \
+#	       srcdir="$(abs_top_srcdir)/$$path"; \
+#	source $(ENV_SH); \
+#	cd $$path; \
+#	$(PIPE) "$(abs_top_builddir)/$< $(MAKEOVERRIDES)" 'tee -a $(SAGE_LOGS)/$*.log'; \
+#	if [ $$? -ne 0 ]; then \
+#		echo $@ failed, deleting; \
+#		rm -f $(abs_top_builddir)/$@; \
+#		exit 1; \
+#	else \
+#		echo $@ succeeded; \
+#		touch $(abs_top_builddir)/$@; \
+#	fi
+#	@[ -s "$(abs_top_builddir)/$@" ] || echo "BUG, empty filelist?! (ignored)" || :
 
 sagelib-clean: sagelib-clean-extra
 sagelib-clean-extra:
@@ -376,9 +378,8 @@ sagelib-clean-extra:
 	done
 .PHONY: sagelib-clean-extra
 
-# temporary, treat as the others eventually
-# no version number?
-# FP_sagelib=sagelib
+# treat as the others eventually
+# FP_sagelib=sagelib-builtin
 #
 # another hack: use a dummy file
 upstream/sagelib-builtin.tar.bz2:
