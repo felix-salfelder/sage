@@ -131,7 +131,7 @@ py-local: $(LTLIBRARIES:%.la=%.so) $(PYCS) $(PYOS)
 	
 # FIXME: V
 $(LTLIBRARIES:%.la=%.so): %.so: | %.la
-	$(AM_V_at)[ ! -f $@ ] || $(LN_S) .libs/$@ .
+	$(AM_V_at)[ -f $@ ] || $(LN_S) .libs/$@ .
 
 # this is probably nonsense
 # @VPATH_TRUE@pys: $(PYS)

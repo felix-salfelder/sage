@@ -8,7 +8,8 @@ include common.mk
 
 # FIXME: fallback to setup.py if desired
 SUBDIRS = \
-    libs algebras calculus categories coding combinat crypto databases ext finance functions games geometry \
+    libs algebras calculus categories coding combinat crypto databases \
+    ext finance functions games geometry \
     graphs groups gsl homology \
     interfaces interacts lfunctions logic \
     matrix media misc modular modules monoids numerical \
@@ -259,4 +260,4 @@ noinst_HEADERS = \
 if BUILD_DOC
 DOCPY=py
 endif
-all-local: $(DOCPY)
+all-local: __init__.pyc $(DOCPY)
