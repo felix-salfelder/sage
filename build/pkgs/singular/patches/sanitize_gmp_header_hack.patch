@@ -32,7 +32,7 @@ diff -Naur Singular-3-1-5.orig/factory/GNUmakefile.in Singular-3-1-5/factory/GNU
  		examples/GNUmakefile examples/application.cc \
  		examples/factorize.cc examples/gcd.cc \
  		bin/folding.el bin/fold-docu.el \
-@@ -693,9 +696,18 @@
+@@ -693,9 +696,19 @@
  config.status:	configure
  		./config.status --recheck
  
@@ -52,8 +52,9 @@ diff -Naur Singular-3-1-5.orig/factory/GNUmakefile.in Singular-3-1-5/factory/GNU
 +# to gmp.h in order to create a modified copy of it (i.e., cf_gmp.h) below.
 +# (If '--with-gmp=...' was given to 'configure', one could also just use the
 +# path determined by that.)
-+cf_gmp.h: GNUmakefile gen_cf_gmp.cc
++cf_gmp.h: gen_cf_gmp.cc
 +	GMP_H=`$(CXX) $(LIBCXXFLAGS) -M gen_cf_gmp.cc|tr ' ' '\n'|$(GREP) 'gmp\.h$$'`; \
 +	echo "Generating $@ from $${GMP_H}..."; \
 +	test -f "$${GMP_H}" || { echo >&2 "Error determining location of gmp.h"; exit 1; }; \
-+	$(EGREP) -v '__GMP_DECLSPEC_XX|std::FILE' $${GMP_H} > $@
++	$(EGREP) -v '__GMP_DECLSPEC_XX|std::FILE' $${GMP_H} > $@T
++	diff $@T $@ >/dev/null 2>/dev/null && rm $@T || mv $@T $@
