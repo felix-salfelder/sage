@@ -1,0 +1,85 @@
+#!/usr/bin/env sage-dist-make
+# this is the spkg-install file for sage-the-library
+#
+# currently it just sets up runtime environment
+#
+# the other parts are still put together by the toplevel makefile :|
+
+stage: install-env scripts ext py
+
+DIST_MK = spkg.mk
+include $(DIST_MK)
+
+py: csage ext
+	@echo staging sagelib/sage
+	$(MAKE) -C $(SAGE_ROOT)/src/sage py
+
+csage:
+	@echo staging sagelib/csage
+	$(MAKE) -C $(SAGE_ROOT)/src/c_lib
+
+scripts:
+	$(MAKE) -C $(SAGE_ROOT)/src/bin install
+
+ext:
+	@echo staging sagelib/ext
+	$(MAKE) -C $(SAGE_ROOT)/src/ext install
+
+doc:
+	$(MAKE) -C $(SAGE_ROOT)/src/doc
+
+check:
+	@echo not yet
+
+configure-stamp:
+	cd $(SRC); ./configure $(FOREIGN_OPTS)
+
+.PHONY: install-env py csage scripts ext doc
+
+# will not work yet
+install:
+	$(MAKE) -C $(SAGE_ROOT)/src
+
+install-env: 00sagelibenv.sh
+	$(SAGE_INSTALL) -d $(DESTDIR)$(SAGE_ETC)/env.d
+	$(SAGE_INSTALL) -t $(DESTDIR)$(SAGE_ETC)/env.d $<
+	rm $<
+
+# this is the runtime environment for sage-the-library within
+# sage-the-distribution
+# just treat it like all the other packages.
+#
+# FIXME: not everything here makes sense.
+#        remove parts that belong to 00dist
+#
+00sagelibenv.sh:
+	echo 'maybe_colon=' > $@
+	echo '[ -z "$$PYTHONPATH" ] || maybe_colon=:' >> $@
+	echo 'PYTHONPATH="$(SAGE_ROOT)/src$$maybe_colon$$PYTHONPATH"' >> $@
+	echo 'PATH="$(SAGE_LOCAL)/bin:$$PATH"' >> $@
+	echo 'SAGE_PREFIX="$(SAGE_PREFIX)"' >> $@
+	echo 'SAGE_LOCAL="$$SAGE_PREFIX"' >> $@
+	echo 'SAGE_LOG="$(SAGE_LOG)"' >> $@
+	echo 'SAGE_ROOT="$(SAGE_ROOT)"' >> $@ # ?!
+	# not yet (still in 00dist.sh)
+	# echo 'SAGE_SRC="$(SAGE_SRC)"' >> $@
+	# echo 'export SAGE_SRC' >> $@
+	echo 'SAGE_SHARE="$(SAGE_SHARE)"' >> $@
+	echo 'SAGE_SPKG_INST="$$SAGE_LOCAL/var/lib/sage/installed"' >> $@
+	echo 'SAGE_EXTCODE="$$SAGE_SHARE/sage/ext"' >> $@
+
+   # don't mess with SAGE_LOCAL, just use things from where they are.
+	# will only be done for "stage". so it will not leak into tarballs
+	echo 'LD_LIBRARY_PATH="$(SAGE_ROOT)/src/c_lib/src/.libs:$$LD_LIBRARY_PATH"' >> $@
+	echo 'LIBCSAGE_INCLUDES="-I$(SAGE_ROOT)/src/c_lib/include"' >> $@
+	# VPATH builds
+	echo 'LIBCSAGE_INCLUDES+=" -I$(SAGE_SRC)/c_lib/include"' >> $@
+	echo 'LDFLAGS="-L$(SAGE_ROOT)/src/c_lib/src/.libs $$LDFLAGS"' >> $@
+
+	echo "export LD_LIBRARY_PATH CPPFLAGS LDFLAGS LIBCSAGE_INCLUDES\
+	             PYTHONPATH PATH SAGE_ETC SAGE_EXTCODE \
+	             SAGE_LOCAL SAGE_PREFIX SAGE_DOC \
+	             SAGE_ROOT \
+                SAGE_SHARE SAGE_SPKG_INST" >> $@
+
+# what else? GPRC?
