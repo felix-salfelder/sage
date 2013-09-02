@@ -70,7 +70,7 @@ ifeq ($(SAGE64),yes)
     endif
 endif
 
-CPPFLAGS+=-I$(SAGE_LOCAL)/include
+CPPFLAGS+=-I$(SAGE_PREFIX)/include
 
 # we are building everything fPIC, this might impose a slight
 # performance hit, need to evaluate:
@@ -108,10 +108,10 @@ patch-pre-stamp:
 
 # unnecessary once uninstall works
 clean-hack:
-	rm -f $(SAGE_LOCAL)/bin/Singular*
-	rm -f $(SAGE_LOCAL)/include/factory.h
-	rm -f $(SAGE_LOCAL)/include/factoryconf.h
-	rm -rf $(SAGE_LOCAL)/include/singular
+	rm -f $(SAGE_PREFIX)/bin/Singular*
+	rm -f $(SAGE_PREFIX)/include/factory.h
+	rm -f $(SAGE_PREFIX)/include/factoryconf.h
+	rm -rf $(SAGE_PREFIX)/include/singular
 
 # configure notes:
 # 1) We really need to add --exec-prefix and --bindir as Singular
@@ -128,15 +128,17 @@ configure: configure-stamp
 	@echo dont expect anything to be configured now.
 	@echo see install target for the workaround
 
+# fixme: unhardwire gmp
+
 configure-stamp: patch-stamp
 	export CFLAGS="$(CFLAGS)" \
 	       CXXFLAGS="$(CXXFLAGS)" \
 	       GREP_OPTIONS=""; \
 	cd $(SRC); ./configure \
-	            --prefix="$(SAGE_LOCAL)" \
-	            --exec-prefix="$(SAGE_LOCAL)" \
-	            --bindir="$(SAGE_LOCAL)"/bin \
-	            --libdir="$(SAGE_LOCAL)"/lib \
+	            --prefix="$(SAGE_PREFIX)" \
+	            --exec-prefix="$(SAGE_PREFIX)" \
+	            --bindir="$(SAGE_PREFIX)"/bin \
+	            --libdir="$(SAGE_PREFIX)"/lib \
 	            --with-apint=gmp \
 	            --with-malloc=system \
 	            --with-NTL \
@@ -158,17 +160,17 @@ configure-stamp: patch-stamp
 	       CXXFLAGS="$(CXXFLAGS)" \
 	       GREP_OPTIONS=""; \
 	cd $(SRC)/factory; ./configure \
-	            --prefix="$(SAGE_LOCAL)" \
-	            --includedir="$(SAGE_LOCAL)/include/factory" \
-	            --exec-prefix="$(SAGE_LOCAL)" \
-	            --bindir="$(SAGE_LOCAL)"/bin \
-	            --libdir="$(SAGE_LOCAL)"/lib \
+	            --prefix="$(SAGE_PREFIX)" \
+	            --includedir="$(SAGE_PREFIX)/include/factory" \
+	            --exec-prefix="$(SAGE_PREFIX)" \
+	            --bindir="$(SAGE_PREFIX)"/bin \
+	            --libdir="$(SAGE_PREFIX)"/lib \
 	            --enable-gmp \
-	            --with-gmp="$(SAGE_LOCAL)" \
+	            --with-gmp="$(SAGE_PREFIX)" \
 	            --enable-NTL \
-	            --with-NTL="$(SAGE_LOCAL)" \
+	            --with-NTL="$(SAGE_PREFIX)" \
 	            --without-flint \
-	            --with-gmp="$(SAGE_LOCAL)" \
+	            --with-gmp="$(SAGE_PREFIX)" \
 					--with-Singular=yes \
 	            $(ENABLE_DEBUGOUTPUT)
 
@@ -177,19 +179,20 @@ configure-stamp: patch-stamp
 	       CXXFLAGS="$(CXXFLAGS)"; \
 	       GREP_OPTIONS=""; \
 	cd $(SRC)/libfac; ./configure \
-	            --prefix="$(SAGE_LOCAL)" \
-	            --exec-prefix="$(SAGE_LOCAL)" \
-	            --bindir="$(SAGE_LOCAL)"/bin \
-	            --libdir="$(SAGE_LOCAL)"/lib \
+	            --prefix="$(SAGE_PREFIX)" \
+	            --exec-prefix="$(SAGE_PREFIX)" \
+	            --bindir="$(SAGE_PREFIX)"/bin \
+	            --libdir="$(SAGE_PREFIX)"/lib \
 	            --with-Singular=yes \
 	            $(WITH_DEBUG)
 
 	touch $@
 
 #singular ignores DESTDIR, so here it goes.
-S_I=$(SAGE_INSTALL) -D '$(DESTDIR)'
-S_I_D=$(SAGE_INSTALL) -D '$(DESTDIR)' -d
+S_I = $(SAGE_INSTALL) -D '$(DESTDIR)'
+S_I_D = $(SAGE_INSTALL) -D '$(DESTDIR)' -d
 
+# this is mostly nonsense
 MAKEENV = INSTALL="$(S_I)" MKINSTALLDIRS="$(S_I_D)"
 MAKEENV+= CXXFLAGS="$(CXXFLAGS)"
 MAKEENV+= CFLAGS="$(CFLAGS)"
@@ -215,14 +218,14 @@ install-singular: clean-hack build
 #install-rest: # former build_factory, build_libfac
 	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/factory all
 	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/factory install
-	$(S_I) $(SRC)/factory/factoryconf.h "$(SAGE_LOCAL)/include/"
+	$(S_I) $(SRC)/factory/factoryconf.h "$(SAGE_PREFIX)/include/"
 	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/libfac all
 	export $(MAKEENV); $(MAKE) $(MYMAKEFLAGS) -C$(SRC)/libfac install
 
-	$(S_I) $(SRC)/Singular/singular "$(SAGE_LOCAL)/bin"
+	$(S_I) $(SRC)/Singular/singular "$(SAGE_PREFIX)/bin"
 
 install-docs:
-	$(S_I) -t $(SAGE_LOCAL)/share/singular/ $(SHARED)/singular.hlp $(SHARED)/singular.idx
+	$(S_I) -t $(SAGE_PREFIX)/share/singular/ $(SHARED)/singular.hlp $(SHARED)/singular.idx
 
 install-env: singular.sh
 	$(SAGE_INSTALL) -d $(DESTDIR)$(SAGE_ETC)/env.d
