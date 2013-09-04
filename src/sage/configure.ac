@@ -139,30 +139,6 @@ fi
 AC_MSG_RESULT($cygdb)
 AM_CONDITIONAL([CYGDB], [test $cygdb = yes])
 
-# find clib. might be obsolete
-# AC_ARG_WITH(blas, --with-clib   choose c_lib, [clib=$with_clib], [])
-
-AC_CHECK_HEADERS([math.h assert.h sys/sysmacros.h fcntl.h mach/mach.h sys/mman.h])
-AC_CHECK_HEADERS([sgtty.h stdlib.h string.h sys/ioctl.h sys/param.h sys/time.h sys/resource.h])
-AC_CHECK_HEADERS([termio.h termios.h unistd.h signal.h stdio.h libc.h sys/times.h sys/wait.h])
-AC_CHECK_HEADERS([vfork.h dirent.h errno.h setjmp.h])
-
-AC_FUNC_VFORK
-AC_FUNC_FORK
-AC_FUNC_MALLOC
-AC_CHECK_FUNCS([getpseudotty _getpty getpt ptsname_r])
-AC_CHECK_FUNCS([setpgid setjmp sbrk])
-AC_CHECK_FUNCS([rld_load])
-AC_CHECK_FUNCS([times getrusage])
-AC_CHECK_FUNCS([vm_allocate])
-AC_CHECK_FUNCS([fork popen waitpid wait4])
-AC_CHECK_FUNCS([dup2 floor memmove mkdir pow rint])
-AC_CHECK_FUNCS([ttyname strerror select])
-AC_CHECK_FUNCS([access lstat unlink mkdir mkdtemp mkstemp rmdir link rename])
-AC_CHECK_FUNCS([symlink readlink chmod fchmod chown fchown lchown dup dup2 mknod mkfifo])
-AC_CHECK_FUNCS([socket listen accept connect bind getsockname recv recvfrom recvmsg send])
-AC_CHECK_FUNCS([sendto sendmsg getsockopt setsockopt getprotobyname gethostbyname])
-AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir])
 
 ### singular
 AC_PATH_PROGS([SINGULAR],
@@ -519,6 +495,7 @@ if test "$ac_cv_type_signal" = "void"; then
     AC_DEFINE([HAVE_SIGNAL_VOID], [1] ,[void as signal type??])
 fi
 
+# taken from libgap.
 AC_DEFINE(HAVE_STRERROR, 1, [Everybody has that])
 AC_DEFINE(HAVE_SYS_ERRLIST, 1, [Or GAP will define its own])
 
@@ -591,6 +568,30 @@ AS_IF([test -x $SAGE_LOCAL/gap/latest/bin/*/gap],
       [AC_MSG_ERROR([cannot find gap])])
 AC_SUBST([GAP_LIB_DIR])
 AC_MSG_RESULT([$GAP_LIB_DIR])
+
+### sanity checks. these should not cause trouble.
+
+AC_CHECK_HEADERS([math.h assert.h sys/sysmacros.h fcntl.h mach/mach.h sys/mman.h])
+AC_CHECK_HEADERS([sgtty.h stdlib.h string.h sys/ioctl.h sys/param.h sys/time.h sys/resource.h])
+AC_CHECK_HEADERS([termio.h termios.h unistd.h signal.h stdio.h libc.h sys/times.h sys/wait.h])
+AC_CHECK_HEADERS([vfork.h dirent.h errno.h setjmp.h])
+
+AC_FUNC_VFORK
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([getpseudotty _getpty getpt ptsname_r])
+AC_CHECK_FUNCS([setpgid setjmp sbrk])
+AC_CHECK_FUNCS([rld_load])
+AC_CHECK_FUNCS([times getrusage])
+AC_CHECK_FUNCS([vm_allocate])
+AC_CHECK_FUNCS([fork popen waitpid wait4])
+AC_CHECK_FUNCS([dup2 floor memmove mkdir pow rint])
+AC_CHECK_FUNCS([ttyname strerror select])
+AC_CHECK_FUNCS([access lstat unlink mkdir mkdtemp mkstemp rmdir link rename])
+AC_CHECK_FUNCS([symlink readlink chmod fchmod chown fchown lchown dup dup2 mknod mkfifo])
+AC_CHECK_FUNCS([socket listen accept connect bind getsockname recv recvfrom recvmsg send])
+AC_CHECK_FUNCS([sendto sendmsg getsockopt setsockopt getprotobyname gethostbyname])
+AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir])
 
 #### output files
 
