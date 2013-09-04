@@ -10,7 +10,7 @@ Root system data for affine Cartan types
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.free_module import CombinatorialFreeModule
-from weight_lattice_realizations import WeightLatticeRealizations
+from sage.combinat.root_system.weight_lattice_realizations import WeightLatticeRealizations
 
 class AmbientSpace(CombinatorialFreeModule):
     r"""
