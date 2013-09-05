@@ -38,12 +38,17 @@ dist_bin_SCRIPTS = \
     sage-startuptime.py \
     sage-test-import
 
+# this is ugly. but bare sagelib requires these files....
 sageconfdir=$(sysconfdir)
 sageconf_DATA = \
     env.sh \
     sage-banner \
     sage-started.txt \
+    sage-maxima.lisp \
     sage-current-location.txt
+
+sage-maxima.lisp:
+	echo '(setf *prompt-prefix* "<sage-display>")' > $@
 
 sage-started.txt:
 	touch $@
@@ -54,10 +59,6 @@ sage-current-location.txt:
 
 #FIXME: this does not exactly belong here
 EXTRA_DIST = sage-banner
-
-#FIXME: ext(code)?
-sageconf_DATA+= sage-maxima.lisp
-EXTRA_DIST+= sage-maxima.lisp
 
 # fixme: create symlink?
 # sage-bdist
