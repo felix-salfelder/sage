@@ -288,7 +288,7 @@ $(INST)/%: $$(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),,$$($$(firstword $$(subst
            $(PKGSDIR)/$$(call packagename,$$*)/spkg-install
 	@echo "==== $(if $(findstring \#,$(IFNOTNOACT)),(not really) )staging $* $(if $(filter yes,$(SAGE_BUILD_TOOLCHAIN)),(toolchain) )===="
 	$(AM_V_at)path=$(BUILDDIR)/$*; \
-	export CC="$(CC)" CFLAGS="@CFLAGS@" \
+	export CC="$(CC)" CFLAGS="@CFLAGS@" CXX="$(CXX)" \
 	       UNAME="@UNAME@" \
 	       SAGE_BUILD_TOOLCHAIN=$(SAGE_BUILD_TOOLCHAIN) \
 	       srcdir="$(abs_top_srcdir)/$$path" \
@@ -335,7 +335,7 @@ $(FOREIGN_ALL:%=%-check): %-check: $$($$*_DEPS)
 	@echo "==== checking $* ===="
 	@path=$(BUILDDIR)/$(FP_$*); \
 	[ -d $$path/patches -o -h $$path/patches ] || $(LN_S) $(abs_top_srcdir)/$$path/patches $$path;\
-	export CC="@CC@" CFLAGS="@CFLAGS@" \
+	export CC="$(CC)" CFLAGS="@CFLAGS@" CXX="$(CXX)" \
 	       UNAME="@UNAME@" \
 	       srcdir="$(abs_top_srcdir)/$$path" \
 	       abs_top_srcdir="$(abs_top_srcdir)"; \
