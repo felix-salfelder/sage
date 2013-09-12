@@ -1,0 +1,24 @@
+diff -ru singular-3.1.5.orig/Singular/configure singular-3.1.5/Singular/configure
+--- singular-3.1.5.orig/Singular/configure	2012-07-11 12:00:13.000000000 +0200
++++ singular-3.1.5/Singular/configure	2013-05-31 11:46:34.000000000 +0200
+@@ -10377,7 +10377,7 @@
+ 
+   case $ac_file$ac_mode in
+     "default":C) \
+- cp mod2.h ../kernel/mod2.h; \
++ diff mod2.h ../kernel/mod2.h &>/dev/null || cp mod2.h ../kernel/mod2.h; \
+  if test "$CONFIG_HEADERS"; then echo timestamp > stamp-h; fi ;;
+ 
+   esac
+Only in singular-3.1.5/Singular: configure~
+diff -ru singular-3.1.5.orig/Singular/configure.in singular-3.1.5/Singular/configure.in
+--- singular-3.1.5.orig/Singular/configure.in	2012-07-11 12:00:13.000000000 +0200
++++ singular-3.1.5/Singular/configure.in	2013-05-31 11:46:28.000000000 +0200
+@@ -1505,5 +1505,5 @@
+ fi
+ 
+ AC_OUTPUT(${OUTPUT_MAKEFILES}, \
+- cp mod2.h ../kernel/mod2.h; \
++ diff mod2.h ../kernel/mod2.h &>/dev/null || cp mod2.h ../kernel/mod2.h; \
+  if test "$CONFIG_HEADERS"; then echo timestamp > stamp-h; fi)
+Only in singular-3.1.5/Singular: configure.in~

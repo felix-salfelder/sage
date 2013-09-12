@@ -1,0 +1,72 @@
+diff -rup src.orig/Singular/Makefile.in src/Singular/Makefile.in
+--- src.orig/Singular/Makefile.in	2013-06-14 13:28:20.000000000 +0200
++++ src/Singular/Makefile.in	2013-06-14 14:00:42.000000000 +0200
+@@ -210,7 +210,7 @@ endif
+ CXXSOURCES=grammar.cc scanner.cc attrib.cc \
+     blackbox.cc eigenval_ip.cc\
+     extra.cc fehelp.cc feOpt.cc \
+-    ipassign.cc ipconv.cc ipid.cc iplib.cc \
++    ipassign.cc ipconv.cc ipid.cc \
+     ipprint.cc ipshell.cc \
+     newstruct.cc lists.cc \
+     sdb.cc \
+@@ -358,6 +358,10 @@ GFTABLES = $(wildcard LIB/gftables/[1-9]
+ 
+ .cc.o:	
+ 	${CXX} ${CXXFLAGS} ${CXXTEMPLFLAGS} ${CPPFLAGS} ${DEFS} -c $<
++
++iplib_lib.o: iplib.cc
++	${CXX} ${CXXFLAGS} ${CXXTEMPLFLAGS} -DLIBSINGULAR ${CPPFLAGS} ${DEFS} -c $< -o $@
++
+ .c.o:
+ 	${CC} ${CFLAGS} ${CPPFLAGS} ${DEFS} -c $<
+ 
+@@ -375,16 +379,17 @@ Singular-static: version.h
+ 	echo "#undef HAVE_STATIC" > static.h
+ 
+ Singular${S_EXT}: mod2.h Makefile version.h $(WIN_LIBS) scanner.cc  ${OBJS} \
+-          iparith.o tesths.cc libparse.cc claptmpl.o mpsr_Tok.o $(DL_LIBS) 
++          iparith.o tesths.cc libparse.cc claptmpl.o mpsr_Tok.o $(DL_LIBS) iplib.o
+ 	${CXX} ${CXXFLAGS} ${CPPFLAGS} ${CXXTEMPLFLAGS} ${DEFS} \
+ 	  -o Singular${S_EXT} \
+ 	  tesths.cc iparith.o mpsr_Tok.o claptmpl.o\
+-	  ${OBJS} ${LDFLAGS} ${LIBS} ../kernel/mmalloc.o 
++	  ${OBJS} iplib.o ${LDFLAGS} ${LIBS} ../kernel/mmalloc.o 
+ 
+ libsingular: mod2.h Makefile version.h $(WIN_LIBS) scanner.cc  ${OBJS} \
+-         iparith.o libparse.cc claptmpl.o mpsr_Tok.o $(DL_LIBS) 
++         iparith.o libparse.cc claptmpl.o mpsr_Tok.o $(DL_LIBS) mmInit.o iplib_lib.o
+ 	$(LIBSINGULAR_LD) ${SLDFLAGS} ${LIBSINGULAR_FLAGS} -o libsingular.${SO_SUFFIX} \
+-	iparith.o mpsr_Tok.o claptmpl.o \
++	iparith.o mpsr_Tok.o claptmpl.o mmInit.o \
++	iplib_lib.o \
+ 	${OBJS} -lkernel -L../kernel -L../factory -L../libfac -L${libdir} ${LIBSINGULAR_LIBS}
+ 
+ libsingular.a: mod2.h Makefile version.h $(WIN_LIBS) scanner.cc  ${OBJS} \
+diff -rup src.orig/Singular/misc_ip.cc src/Singular/misc_ip.cc
+--- src.orig/Singular/misc_ip.cc	2013-06-14 13:28:20.000000000 +0200
++++ src/Singular/misc_ip.cc	2013-06-14 13:43:51.000000000 +0200
+@@ -1170,11 +1170,4 @@ void siInit(char *name)
+ }
+ 
+ #ifdef LIBSINGULAR
+-#ifdef HAVE_FACTORY
+-// the init routines of factory need mmInit
+-int mmInit( void )
+-{
+-  return 1;
+-}
+-#endif
+ #endif
+diff -rup src.orig/Singular/mmInit.cc src/Singular/mmInit.cc
+--- src.orig/Singular/mmInit.cc	2013-06-14 14:29:52.000000000 +0200
++++ src/Singular/mmInit.cc	2013-06-14 14:28:39.000000000 +0200
+@@ -0,0 +1,8 @@
++#include <kernel/mod2.h>
++#ifdef HAVE_FACTORY
++// the init routines of factory need mmInit
++int mmInit( void )
++{
++  return 1;
++}
++#endif

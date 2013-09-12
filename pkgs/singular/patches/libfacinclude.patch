@@ -1,0 +1,13 @@
+diff -rup src.orig/libfac/Makefile.in src/libfac/Makefile.in
+--- src.orig/libfac/Makefile.in	2013-06-11 11:40:38.000000000 +0200
++++ src/libfac/Makefile.in	2013-06-11 11:43:24.000000000 +0200
+@@ -36,7 +36,7 @@ MKINSTALLDIRS	= ./mkinstalldirs
+ ##
+ CXXFLAGS	= @CXXFLAGS@
+ CXXTEMPLFLAGS	= @CXXTEMPLFLAGS@
+-CPPFLAGS	= -I${srcdir}/factor -I${srcdir}/charset -I${srcdir} -I.. -I${prefix} @CPPFLAGS@ 
++CPPFLAGS	= -I${srcdir}/factor -I${srcdir}/charset -I${srcdir} -I.. -I../factory @CPPFLAGS@ 
+ DEFS		= @DEFS@ 
+ LDFLAGS		= @LDFLAGS@
+ LIBS		= -lfac -lcf -lcfmem -lgmp @LIBS@
+Only in src/libfac: Makefile.in~
