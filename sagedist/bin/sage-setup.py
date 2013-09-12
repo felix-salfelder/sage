@@ -23,6 +23,7 @@ newargv=[]
 
 # distutils does not support destdir. hack it in.
 # good idea? better put into spkg-install files later...
+# NB: there seems to be a --root option. is this destdir?
 for i in sys.argv:
 	newargv.append(i)
 	if i == "install":
