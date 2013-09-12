@@ -1,17 +1,18 @@
-make -n |& grep dropped # ?!
-
-*.Pcython files...
+sagedist/etc/dist.sh must be properly configurable
 
 make might be faster when using := where appropriate
 
+make -n |& grep dropped # ?!
+
 <package>-distcheck should run -check
 
-FIXME: trap INT TERM EXIT during spkg-install (delete stage-stamp!)
+*.Pcython files...
 
-FIXME: order-only dependencies on toolchain links
+TODO: trap INT TERM EXIT during spkg-install (delete stage-stamp!)
+
+CHECK: order-only dependencies on toolchain links
 
 paths are suboptimal.
-/build/pkgs should be /pkgs
 /src should be pkgs/sagelib
 
 dependencies must be where packages are, not in "deps"
@@ -30,7 +31,7 @@ complete old Makefile interface.
 
 remove this file
 
-installation: can be implemented as follows:
+installation: can be implemented as follows (low priority):
 - make DESTDIR work (e.g. through sage-dist-install)
 - configure sage (the distribution) with a prefix, as usual
 - build sage (will install with DESTDIR=@top_builddir@/.local
@@ -41,4 +42,4 @@ conditional silent rules does not work:
 m4_ifdef([AM_SILENT_RULES],AM_SILENT_RULES([yes]))
 does not set default to "silent",
 AM_SILENT_RULES([yes])
-does (?!)
+does (?!). probably better to not support old autotools at all.
