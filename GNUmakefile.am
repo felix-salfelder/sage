@@ -97,6 +97,8 @@ $(CORE_MODULES:%=%-stage): %-stage: %-stage-stamp
 src/%-stage-stamp: STAGETARGET = all
 src/sage-stage-stamp: STAGETARGET = py
 src/c_lib-stage-stamp: STAGETARGET = install
+
+# these are probably stupid, transition ...
 src/bin-stage-stamp: STAGETARGET = install
 src/ext-stage-stamp: STAGETARGET = install
 
