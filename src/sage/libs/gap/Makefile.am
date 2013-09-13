@@ -10,16 +10,18 @@ inst_PYTHON = all.py gap_functions.py \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = element.la libsagegap.la util.la
-element_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ -lgap -lm
+element_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ $(GAP_LIBS) -lm
 element_la_CPPFLAGS = $(AM_CPPFLAGS)
 
-libsagegap_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ -lgap -lm
+libsagegap_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ $(GAP_LIBS) -lm
 libsagegap_la_CPPFLAGS = $(AM_CPPFLAGS)
 
-util_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ -lgap -lm
+util_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@ $(GAP_LIBS) -lm
 util_la_CPPFLAGS = $(AM_CPPFLAGS)
 
 if HAVE_LIBGAP
+
+GAP_LIBS = -lgap
 
 AM_CPPFLAGS+=-DHAVE_LIBGAP
 CLEANFILES+= libgap.la
@@ -29,9 +31,12 @@ else
 libGAP.h: libGAPify.py
 	$(PYTHON) $< --modify @GAP_INCLUDEDIR@ > $@
 
+BUILT_SOURCES = libGAP.h
+element.lo libsagegap.lo util.lo: $(BUILT_SOURCES)
+
 CLEANFILES += libGAP.h syms
 
-
+GAP_LIBS = libgap.la
 lib_LTLIBRARIES = libgap.la
 .o.lo:
 	@echo creating mangled libtool object $@ from $<
