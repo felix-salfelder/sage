@@ -568,6 +568,7 @@ clean-local: @VPATH_BUILD_FALSE@ $(FOREIGN_ALL:%=%-clean)
 	for i in $(CORE_MODULES); do \
 	  [ ! -f $$i/Makefile ] || $(MAKE) -C $$i clean; \
 	done
+	rm -f src/*-stamp
 	rm -f $(LOCKFILE)
 	@VPATH_BUILD_TRUE@rm -rf build
 
