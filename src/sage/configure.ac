@@ -266,9 +266,13 @@ AC_CHECK_HEADER([zn_poly/zn_poly.h],,[AC_MSG_ERROR(cannot find zn_poly header)])
 AC_CHECK_HEADER([symmetrica/macro.h],,[AC_MSG_ERROR(cannot find symmetrica header)])
 AC_CHECK_HEADER([ecm.h],,[AC_MSG_ERROR(cannot find ecm header)])
 AC_CHECK_HEADER([gd.h],,[AC_MSG_ERROR(cannot find gd header)])
+AC_CHECK_HEADER([mpfi.h],,[AC_MSG_ERROR(cannot find mpfi header)])
+AC_CHECK_HEADER([ratpoints.h],,[AC_MSG_ERROR(cannot find ratpoints header)])
+AC_CHECK_HEADER([mpc.h],,[AC_MSG_ERROR(cannot find mpc header)])
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER([polybori/groebner/add_up.h],,[AC_MSG_ERROR(cannot find polybori groebner header)])
+AC_CHECK_HEADER([ppl.hh],,[AC_MSG_ERROR(cannot find ppl header)])
 
 # linbox-sage.h doesn't work right fix later, maybe
 # AC_CHECK_HEADER([linbox/linbox-sage.h],,[AC_MSG_ERROR(cannot find linbox-sage header)])
