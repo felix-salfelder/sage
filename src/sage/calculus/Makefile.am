@@ -14,4 +14,4 @@ calculus_LTLIBRARIES = interpolators.la riemann.la var.la
 interpolators_la_CPPFLAGS = @NUMPY_INCLUDES@ $(AM_CPPFLAGS)
 
 riemann_la_CPPFLAGS = @NUMPY_INCLUDES@ $(AM_CPPFLAGS)
-riemann_la_LIBADD = -lcsage
+riemann_la_LIBADD = @CSAGE_LIBS@

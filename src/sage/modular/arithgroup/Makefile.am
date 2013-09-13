@@ -11,8 +11,8 @@ modular_arithgroup_PYTHON = \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 modular_arithgroup_LTLIBRARIES = congroup_pyx.la farey_symbol.la arithgroup_element.la
-congroup_pyx_la_LIBADD = -lcsage
+congroup_pyx_la_LIBADD = @CSAGE_LIBS@
 farey_symbol_la_SOURCES = farey_symbol.pyxx farey.cpp sl2z.cpp
-farey_symbol_la_LIBADD = @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -lcsage
+farey_symbol_la_LIBADD = @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 noinst_HEADERS = sl2z.hpp farey.hpp

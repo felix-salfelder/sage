@@ -17,5 +17,5 @@ hypellfrob_la_SOURCES = \
 	 hypellfrob.pyxx hypellfrob/hypellfrob_cc.cpp hypellfrob/recurrences_ntl.cpp \
     hypellfrob/recurrences_zn_poly.cpp
 
-hypellfrob_la_LIBADD = -lntl -lstdc++ @GMP_OR_MPIR_LIBS@ -lzn_poly -lcsage
+hypellfrob_la_LIBADD = -lntl -lstdc++ @GMP_OR_MPIR_LIBS@ -lzn_poly @CSAGE_LIBS@
 hypellfrob_la_CPPFLAGS = -I@srcdir@/../../libs/ntl -I@srcdir@/hypellfrob $(AM_CPPFLAGS)

@@ -13,7 +13,7 @@ sets_PYTHON = \
 AM_DEFAULT_SOURCE_EXT = .pyx
 sets_LTLIBRARIES = disjoint_set.la finite_set_map_cy.la
 
-finite_set_map_cy_la_LIBADD = -lcsage
+finite_set_map_cy_la_LIBADD = @CSAGE_LIBS@
 
-disjoint_set_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint -lcsage
+disjoint_set_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint @CSAGE_LIBS@
 disjoint_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)

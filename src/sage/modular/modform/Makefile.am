@@ -10,5 +10,5 @@ eis_series.py notes.py ambient_eps.py periods.py ambient_R.py numerical.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 modular_modform_LTLIBRARIES = eis_series_cython.la
-eis_series_cython_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint -lcsage
+eis_series_cython_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint @CSAGE_LIBS@
 eis_series_cython_la_CFLAGS = -std=c99 $(AM_CFLAGS)

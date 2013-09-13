@@ -12,4 +12,4 @@ groups_perm_gpsdir = $(pythondir)/sage/groups/perm_gps
 AM_DEFAULT_SOURCE_EXT = .pyx
 groups_perm_gps_LTLIBRARIES = permgroup_element.la
 
-permgroup_element_la_LIBADD = -lcsage
+permgroup_element_la_LIBADD = @CSAGE_LIBS@

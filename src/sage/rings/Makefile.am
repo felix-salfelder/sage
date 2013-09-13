@@ -33,55 +33,55 @@ rings_LTLIBRARIES = \
     real_mpfr.la residue_field.la ring.la
 
 bernmm_la_SOURCES = bernmm.pyxx bernmm/bern_modp.cpp bernmm/bern_modp_util.cpp bernmm/bern_rat.cpp
-bernmm_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lpthread -lcsage
+bernmm_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lpthread @CSAGE_LIBS@
 bernmm_la_CPPFLAGS = -DUSE_THREADS=1 -DTHREAD_STACK_SIZE=4096 $(AM_CPPFLAGS)
 
 bernoulli_mod_p_la_LIBADD = -lntl
 bernoulli_mod_p_la_SOURCES = bernoulli_mod_p.pyxx
 bernoulli_mod_p_la_CPPFLAGS = -I@SAGE_DIR@/libs/ntl/ $(AM_CPPFLAGS)
 
-complex_double_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lpari @GMP_OR_MPIR_LIBS@ -lm -lcsage
+complex_double_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lpari @GMP_OR_MPIR_LIBS@ -lm @CSAGE_LIBS@
 complex_double_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
 
-complex_interval_la_LIBADD = -lmpfi -lmpfr @GMP_OR_MPIR_LIBS@ -lcsage
+complex_interval_la_LIBADD = -lmpfi -lmpfr @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-complex_mpc_la_LIBADD = -lmpc -lmpfr @GMP_OR_MPIR_LIBS@ -lcsage
+complex_mpc_la_LIBADD = -lmpc -lmpfr @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-complex_number_la_LIBADD = -lmpfr @GMP_OR_MPIR_LIBS@ -lcsage
-factorint_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-fast_arith_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ -lcsage
+complex_number_la_LIBADD = -lmpfr @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+factorint_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+fast_arith_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 # fixme?
-fraction_field_FpT_la_LIBADD = -lcsage -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lntl -lzn_poly
+fraction_field_FpT_la_LIBADD = @CSAGE_LIBS@ -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lntl -lzn_poly
 fraction_field_FpT_la_SOURCES = fraction_field_FpT.pyxx
 
-integer_la_LIBADD = -lntl -lpari -lflint @GMP_OR_MPIR_LIBS@ -lcsage
+integer_la_LIBADD = -lntl -lpari -lflint @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 integer_la_CPPFLAGS = $(PYTHON_INCLUDES) $(AM_CPPFLAGS)
 
-integer_ring_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+integer_ring_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-laurent_series_ring_element_la_LIBADD = -lcsage
+laurent_series_ring_element_la_LIBADD = @CSAGE_LIBS@
 
-power_series_mpoly_la_LIBADD = -lcsage
-power_series_poly_la_LIBADD = -lcsage
-power_series_ring_element_la_LIBADD = -lcsage
+power_series_mpoly_la_LIBADD = @CSAGE_LIBS@
+power_series_poly_la_LIBADD = @CSAGE_LIBS@
+power_series_ring_element_la_LIBADD = @CSAGE_LIBS@
 
-residue_field_la_LIBADD = -lcsage
+residue_field_la_LIBADD = @CSAGE_LIBS@
 
-ring_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+ring_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-morphism_la_LIBADD = -lcsage
-rational_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+morphism_la_LIBADD = @CSAGE_LIBS@
+rational_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-real_lazy_la_LIBADD = -lcsage
+real_lazy_la_LIBADD = @CSAGE_LIBS@
 
-real_double_la_LIBADD = -lgsl @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ -lcsage
+real_double_la_LIBADD = -lgsl @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 real_double_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
 
-real_interval_absolute_la_LIBADD = @GMP_OR_MPIR_LIBS@
+real_interval_absolute_la_LIBADD = @CSAGE_LIBS@ @GMP_OR_MPIR_LIBS@
 
-real_mpfi_la_LIBADD = -lmpfi -lmpfr @GMP_OR_MPIR_LIBS@ -lcsage
+real_mpfi_la_LIBADD = -lmpfi -lmpfr @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-real_mpfr_la_LIBADD = -lmpfr -lpari @GMP_OR_MPIR_LIBS@ -lcsage
+real_mpfr_la_LIBADD = -lmpfr -lpari @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 noinst_HEADERS = mpfi.pxi mpc.pxi

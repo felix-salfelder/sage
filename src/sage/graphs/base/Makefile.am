@@ -5,7 +5,7 @@
 include $(top_srcdir)/common.mk
 inst_PYTHON = __init__.py all.py graph_backends.py
 
-LIBS+= -lcsage
+LIBS+= @CSAGE_LIBS@
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \

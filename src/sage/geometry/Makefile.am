@@ -13,7 +13,7 @@ geometry_PYTHON = \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 geometry_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la
-toric_lattice_element_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+toric_lattice_element_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 geometry_polyhedrondir = $(geometrydir)/polyhedron
 geometry_polyhedron_PYTHON = \

@@ -11,4 +11,4 @@ functions_PYTHON = \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 functions_LTLIBRARIES = prime_pi.la
-prime_pi_la_LIBADD = -lcsage
+prime_pi_la_LIBADD = @CSAGE_LIBS@

@@ -11,7 +11,7 @@ inst_LTLIBRARIES = \
     vertex_separation.la
 
 rankwidth_la_SOURCES = rankwidth.pyx rankwidth_c/rw.c
-rankwidth_la_LIBADD = -lcsage
-vertex_separation_la_LIBADD = -lcsage
+rankwidth_la_LIBADD = @CSAGE_LIBS@
+vertex_separation_la_LIBADD = @CSAGE_LIBS@
 
 EXTRA_DIST = fast_digraph.pyx

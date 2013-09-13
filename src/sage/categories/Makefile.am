@@ -44,6 +44,6 @@ categories_PYTHON = \
 AM_DEFAULT_SOURCE_EXT = .pyx
 categories_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la
 
-map_la_LIBADD = -lcsage
-morphism_la_LIBADD = -lcsage
-action_la_LIBADD = -lcsage
+map_la_LIBADD = @CSAGE_LIBS@
+morphism_la_LIBADD = @CSAGE_LIBS@
+action_la_LIBADD = @CSAGE_LIBS@

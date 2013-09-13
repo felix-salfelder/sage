@@ -22,17 +22,17 @@ structure_LTLIBRARIES = \
 
 element_la_CFLAGS = -Os $(AM_CFLAGS)
 
-coerce_actions_la_LIBADD = -lcsage
-coerce_la_LIBADD = -lcsage
-coerce_maps_la_LIBADD = -lcsage
-element_la_LIBADD = -lcsage
-generators_la_LIBADD = -lcsage
-list_clone_la_LIBADD = -lcsage
-list_clone_demo_la_LIBADD = -lcsage
-misc_la_LIBADD = -lcsage
-parent_base_la_LIBADD = -lcsage
-parent_gens_la_LIBADD = -lcsage
-parent_la_LIBADD = -lcsage
-parent_old_la_LIBADD = -lcsage
+coerce_actions_la_LIBADD = @CSAGE_LIBS@
+coerce_la_LIBADD = @CSAGE_LIBS@
+coerce_maps_la_LIBADD = @CSAGE_LIBS@
+element_la_LIBADD = @CSAGE_LIBS@
+generators_la_LIBADD = @CSAGE_LIBS@
+list_clone_la_LIBADD = @CSAGE_LIBS@
+list_clone_demo_la_LIBADD = @CSAGE_LIBS@
+misc_la_LIBADD = @CSAGE_LIBS@
+parent_base_la_LIBADD = @CSAGE_LIBS@
+parent_gens_la_LIBADD = @CSAGE_LIBS@
+parent_la_LIBADD = @CSAGE_LIBS@
+parent_old_la_LIBADD = @CSAGE_LIBS@
 
 noinst_HEADERS = coerce.pxi debug_options.pxd

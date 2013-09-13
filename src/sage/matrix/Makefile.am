@@ -27,66 +27,68 @@ change_ring_la_LIBADD = -l@BLAS@ -l@BLAS2@ @GMP_OR_MPIR_LIBS@
 change_ring_la_CPPFLAGS = @NUMPY_INCLUDES@ $(PYTHON_INCLUDES) $(AM_CPPFLAGS)
 
 matrix_la_CPPFLAGS = $(PYTHON_INCLUDES) $(AM_CPPFLAGS)
-matrix_la_LIBADD = -lcsage
+matrix_la_LIBADD = @CSAGE_LIBS@
 
-matrix0_la_LIBADD = -lcsage
-matrix1_la_LIBADD = -lcsage
-matrix2_la_LIBADD = -lcsage
+matrix0_la_LIBADD = @CSAGE_LIBS@
+matrix1_la_LIBADD = @CSAGE_LIBS@
+matrix2_la_LIBADD = @CSAGE_LIBS@
 
-matrix_dense_la_LIBADD = -lcsage
+matrix_dense_la_LIBADD = @CSAGE_LIBS@
 
-matrix_complex_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ -lcsage
+matrix_complex_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 matrix_complex_double_dense_la_CPPFLAGS = @NUMPY_INCLUDES@ $(AM_CPPFLAGS)
 
-matrix_cyclo_dense_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+matrix_cyclo_dense_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 matrix_cyclo_dense_la_SOURCES = matrix_cyclo_dense.pyxx
 matrix_cyclo_dense.cc: @srcdir@/matrix_cyclo_dense.pyxx
 
 matrix_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@
 matrix_double_dense_la_CPPFLAGS = @NUMPY_INCLUDES@ $(AM_CPPFLAGS)
-matrix_generic_dense_la_LIBADD = -lcsage
-matrix_integer_2x2_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-matrix_integer_dense_la_LIBADD = -liml -lpari @GMP_OR_MPIR_LIBS@ -lm -l@BLAS@ -l@BLAS2@ -lcsage
+matrix_generic_dense_la_LIBADD = @CSAGE_LIBS@
+matrix_integer_2x2_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+matrix_integer_dense_la_LIBADD = -liml -lpari @GMP_OR_MPIR_LIBS@ -lm -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 matrix_integer_dense_la_CFLAGS = @M4RI_CFLAGS@ $(AM_CFLAGS)
 matrix_integer_dense_la_CPPFLAGS = -I@SAGE_DIR@/ext $(AM_CPPFLAGS)
-matrix_integer_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-matrix_mod2_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lm4ri -lgd -lpng12 -lz -lcsage
+matrix_integer_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+matrix_mod2_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lm4ri -lgd -lpng12 -lz @CSAGE_LIBS@
 matrix_mod2_dense_la_CFLAGS = @M4RI_CFLAGS@ $(AM_CFLAGS)
-matrix_mod2e_dense_la_LIBADD = -lm4rie -lm4ri -lm -lcsage
+matrix_mod2e_dense_la_LIBADD = -lm4rie -lm4ri -lm @CSAGE_LIBS@
 matrix_mod2e_dense_la_CFLAGS = @M4RI_CFLAGS@ $(AM_CFLAGS)
 matrix_mod2e_dense_la_CPPFLAGS = @LIBM4RIE_INCLUDES@ $(AM_CPPFLAGS)
-matrix_modn_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+matrix_modn_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 matrix_modn_dense_double_la_SOURCES = matrix_modn_dense_double.pyxx
-matrix_modn_dense_double_la_LIBADD = -llinbox -lgivaro -lmpfr @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ -lcsage
+matrix_modn_dense_double_la_LIBADD = -llinbox -lgivaro -lmpfr @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 matrix_modn_dense_double.cc: @srcdir@/matrix_modn_dense_double.pyxx
 matrix_modn_dense_double_la_CPPFLAGS = -DDISABLE_COMMENTATOR -D__STDC_LIMIT_MACROS $(AM_CXXFLAGS) \
                                        -DINTEGER_MOD_INT32_LIMIT=46341 \
                                        -DINTEGER_MOD_INT64_LIMIT=2147483647 $(AM_CPPFLAGS)
 
 matrix_modn_dense_float_la_SOURCES = matrix_modn_dense_float.pyxx
-matrix_modn_dense_float_la_LIBADD = -llinbox -lgivaro -lmpfr @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ -lcsage
+matrix_modn_dense_float_la_LIBADD = -llinbox -lgivaro -lmpfr @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 matrix_modn_dense_float.cc: @srcdir@/matrix_modn_dense_float.pyxx
 matrix_modn_dense_float_la_CPPFLAGS = -DDISABLE_COMMENTATOR -D__STDC_LIMIT_MACROS $(AM_CPPFLAGS)
-matrix_modn_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+matrix_modn_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 matrix_mpolynomial_dense_la_SOURCES = matrix_mpolynomial_dense.pyxx
-matrix_mpolynomial_dense_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -lcsage
+matrix_mpolynomial_dense_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 matrix_mpolynomial_dense_la_CPPFLAGS = $(AM_CPPFLAGS) @SINGULAR_INCLUDES@ \
                                        -D__STDC_LIMIT_MACROS
 matrix_mpolynomial_dense.cc: @srcdir@/matrix_mpolynomial_dense.pyxx
 
-matrix_rational_dense_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ -lcsage
-matrix_rational_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-matrix_real_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ -lcsage
+matrix_rational_dense_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+matrix_rational_sparse_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+matrix_real_double_dense_la_LIBADD = -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 matrix_real_double_dense_la_CPPFLAGS = @NUMPY_INCLUDES@ $(AM_CPPFLAGS)
 
-matrix_sparse_la_LIBADD = -lcsage -lcsage
+matrix_sparse_la_LIBADD = @CSAGE_LIBS@ -lcsage
 
-matrix_window_modn_dense_la_LIBADD = -lcsage
-matrix_window_la_LIBADD = -lcsage
+matrix_window_modn_dense_la_LIBADD = @CSAGE_LIBS@
+matrix_window_la_LIBADD = @CSAGE_LIBS@
 
-misc_la_LIBADD = -lmpfr @GMP_OR_MPIR_LIBS@ -lcsage
+misc_la_LIBADD = -lmpfr @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+
+strassen_la_LIBADD = @CSAGE_LIBS@
 
 # somethings terribly wrong with singular
 matrix_mpolynomial_dense_la_CPPFLAGS += -DNDEBUG

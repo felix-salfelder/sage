@@ -19,14 +19,19 @@ inst_LTLIBRARIES = \
     hyperbolicity.la matchpoly.la planarity.la spanning_tree.la trees.la \
     weakly_chordal.la
 
-chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 cliquer_la_SOURCES = cliquer.pyx cl.c
-cliquer_la_LIBADD = -lcliquer -lcsage
-comparability_la_LIBADD = -lcsage
-distances_all_pairs_la_LIBADD = -lcsage
-generic_graph_pyx_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-matchpoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint -lcsage
+cliquer_la_LIBADD = -lcliquer @CSAGE_LIBS@
+comparability_la_LIBADD = @CSAGE_LIBS@
+convexity_properties_la_LIBADD = @CSAGE_LIBS@
+distances_all_pairs_la_LIBADD = @CSAGE_LIBS@
+generic_graph_pyx_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+genus_la_LIBADD = @CSAGE_LIBS@
+hyperbolicity_la_LIBADD = @CSAGE_LIBS@
+matchpoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint @CSAGE_LIBS@
 matchpoly_la_CFLAGS = -std=c99 $(AM_CFLAGS)
+spanning_tree_la_LIBADD = @CSAGE_LIBS@
+
 planarity_la_SOURCES = \
     planarity.pyx planarity_c/graphColorVertices.c \
     planarity_c/graphColorVertices_Extensions.c planarity_c/graphDrawPlanar.c \
@@ -54,8 +59,8 @@ graphs_generators_PYTHON = \
     generators/smallgraphs.py \
     generators/world_map.py
 
-trees_la_LIBADD = -lcsage
-weakly_chordal_la_LIBADD = -lcsage
+trees_la_LIBADD = @CSAGE_LIBS@
+weakly_chordal_la_LIBADD = @CSAGE_LIBS@
 
 noinst_HEADERS = cl.h
 EXTRA_DIST = cl.c

@@ -11,8 +11,8 @@ modular_modsym_PYTHON = \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 modular_modsym_LTLIBRARIES = apply.la heilbronn.la p1list.la relation_matrix_pyx.la
-apply_la_LIBADD = -lcsage -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lm -lstdc++
+apply_la_LIBADD = @CSAGE_LIBS@ -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lm -lstdc++
 apply_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
-heilbronn_la_LIBADD = -lcsage -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lm -lstdc++
+heilbronn_la_LIBADD = @CSAGE_LIBS@ -lflint @GMP_OR_MPIR_LIBS@ @GMP_OR_MPIR_XXLIBS@ -lm -lstdc++
 heilbronn_la_CFLAGS = -std=c99 -D_XPG6 $(AM_CFLAGS)
-p1list_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+p1list_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@

@@ -34,12 +34,13 @@ inst_LTLIBRARIES = \
     enumeration_mod_permgroup.la expnums.la partitions.la permutation_cython.la \
     q_bernoulli.la
 
-degree_sequences_la_LIBADD = -lcsage
-combinat_cython_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
-debruijn_sequence_la_LIBADD = -lcsage
-expnums_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+degree_sequences_la_LIBADD = @CSAGE_LIBS@
+combinat_cython_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+debruijn_sequence_la_LIBADD = @CSAGE_LIBS@
+expnums_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 partitions_la_SOURCES = partitions.pyxx partitions_c.cc
-partitions_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lmpfr -lcsage
+partitions_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lmpfr @CSAGE_LIBS@
+permutation_cython_la_LIBADD = @CSAGE_LIBS@
 
 combinat_cluster_algebra_quiverdir = $(instdir)/cluster_algebra_quiver
 combinat_cluster_algebra_quiver_PYTHON = \

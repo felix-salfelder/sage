@@ -15,10 +15,10 @@ plot_plot3d_LTLIBRARIES = \
     transform.la
 
 base_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-implicit_surface_la_LIBADD = -lgsl -lcsage
+implicit_surface_la_LIBADD = -lgsl @CSAGE_LIBS@
 implicit_surface_la_CPPFLAGS = $(AM_CPPFLAGS) @NUMPY_INCLUDES@
 index_face_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)
-index_face_set_la_LIBADD = -lcsage
-parametric_surface_la_LIBADD = -lcsage
+index_face_set_la_LIBADD = @CSAGE_LIBS@
+parametric_surface_la_LIBADD = @CSAGE_LIBS@
 
 noinst_HEADERS = point_c.pxi

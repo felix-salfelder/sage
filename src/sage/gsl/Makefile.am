@@ -31,15 +31,15 @@ callback_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@
 callback_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
 dwt_la_LIBADD = -lgsl -l@BLAS@
 dwt_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-fft_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+fft_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 fft_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-gsl_array_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+gsl_array_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 gsl_array_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-integration_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+integration_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 integration_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-interpolation_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+interpolation_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 interpolation_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-ode_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+ode_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 ode_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)
-probability_distribution_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ -lcsage
+probability_distribution_la_LIBADD = -lgsl -l@BLAS@ -l@BLAS2@ @CSAGE_LIBS@
 probability_distribution_la_CPPFLAGS = -DGSL_DISABLE_DEPRECATED=1 $(AM_CPPFLAGS)

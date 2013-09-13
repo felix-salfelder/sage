@@ -11,5 +11,5 @@ finance_LTLIBRARIES = \
     fractal.la markov_multifractal_cython.la time_series.la \
     option.la
 
-time_series_la_LIBADD = -lcsage
+time_series_la_LIBADD = @CSAGE_LIBS@
 time_series_la_CPPFLAGS = $(AM_CPPFLAGS) @NUMPY_INCLUDES@

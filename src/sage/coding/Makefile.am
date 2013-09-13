@@ -3,13 +3,13 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-codingdir = $(pythondir)/sage/coding
-coding_PYTHON = \
+inst_PYTHON = \
     __init__.py ag_code.py all.py code_bounds.py code_constructions.py decoder.py \
     guava.py linear_code.py sd_codes.py delsarte_bounds.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-coding_LTLIBRARIES = binary_code.la
+inst_LTLIBRARIES = binary_code.la
+binary_code_la_LIBADD = @CSAGE_LIBS@
 
 source_codingdir = $(codingdir)/source_coding
     source_coding_PYTHON = \

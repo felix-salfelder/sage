@@ -13,9 +13,9 @@ symbolic_PYTHON = \
 symbolic_LTLIBRARIES = constants_c.la expression.la function.la getitem.la pynac.la ring.la
 
 AM_DEFAULT_SOURCE_EXT = .pyxx
-constants_c_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ -lcsage
-expression_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ -lcsage
+constants_c_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+expression_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 function_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@
 getitem_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@
-pynac_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ -lgsl -lcsage
-ring_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ -lcsage
+pynac_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ -lgsl @CSAGE_LIBS@
+ring_la_LIBADD = -lpynac @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@

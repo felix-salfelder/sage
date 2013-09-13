@@ -25,19 +25,19 @@ interpreters_LTLIBRARIES = wrapper_rdf.la wrapper_cdf.la wrapper_rr.la \
                            wrapper_py.la wrapper_el.la
 
 nodist_wrapper_rdf_la_SOURCES = wrapper_rdf.pyx interp_rdf.c
-wrapper_rdf_la_LIBADD = -lgsl -lcsage
+wrapper_rdf_la_LIBADD = -lgsl @CSAGE_LIBS@
 
 nodist_wrapper_cdf_la_SOURCES = wrapper_cdf.pyx interp_cdf.c
-wrapper_cdf_la_LIBADD = -lcsage
+wrapper_cdf_la_LIBADD = @CSAGE_LIBS@
 
 nodist_wrapper_rr_la_SOURCES = wrapper_rr.pyx interp_rr.c
-wrapper_rr_la_LIBADD = -lmpfr -lcsage
+wrapper_rr_la_LIBADD = -lmpfr @CSAGE_LIBS@
 
 nodist_wrapper_py_la_SOURCES = wrapper_py.pyx interp_py.c
-wrapper_py_la_LIBADD = -lmpfr -lcsage
+wrapper_py_la_LIBADD = -lmpfr @CSAGE_LIBS@
 
 nodist_wrapper_el_la_SOURCES = wrapper_el.pyx interp_el.c
-wrapper_el_la_LIBADD = -lmpfr -lcsage
+wrapper_el_la_LIBADD = -lmpfr @CSAGE_LIBS@
 
 %.la: %.h
 

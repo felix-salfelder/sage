@@ -3,8 +3,10 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-rings_function_fielddir = $(pythondir)/sage/rings/function_field
-rings_function_field_PYTHON = __init__.py all.py constructor.py function_field.py function_field_ideal.py function_field_order.py maps.py
+inst_PYTHON = \
+    __init__.py all.py constructor.py function_field.py \
+    function_field_ideal.py function_field_order.py maps.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-rings_function_field_LTLIBRARIES = function_field_element.la
+inst_LTLIBRARIES = function_field_element.la
+function_field_element_la_LIBADD = @CSAGE_LIBS@

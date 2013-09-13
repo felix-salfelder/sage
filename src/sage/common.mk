@@ -27,13 +27,11 @@ CYTHON = export LD_LIBRARY_PATH="$(my_LD_LIBRARY_PATH)$(LD_LIBRARY_PATH:%=$(mayb
 # sage ("the distribution")...
 AUTOMAKE = export PATH="$(PATH)"; @AUTOMAKE@
 
-# -L@top_builddir@/../c_lib/src/.libs will be added automatically
 AM_LDFLAGS = -module -avoid-version
 
 AM_CPPFLAGS = @my_CPPFLAGS@
 
-# how to do this right? LDADD?
-AM_LDFLAGS+= -L@top_builddir@/../c_lib/src/.libs
+CSAGE_LIBS = -l@top_builddir@/../c_lib/src/libcsage.la
 
 # user specified MAKEFLAGS
 # AM_CPPFLAGS += $(CPPFLAGS)
@@ -54,9 +52,6 @@ AM_CPPFLAGS += -I$(top_builddir)/ext -I$(top_srcdir)/ext
 # BUG. that's what sage-upstream does
 AM_CFLAGS = -fno-strict-aliasing -fwrapv
 AM_CXXFLAGS = -fno-strict-aliasing -fwrapv
-
-# FIXME: place where required (partly done)
-LIBS += -lcsage
 
 # dont spam terminal with error messages
 CYTHONFLAGS = --fast-fail

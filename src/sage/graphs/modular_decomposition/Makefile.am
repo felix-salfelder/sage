@@ -9,4 +9,4 @@ graphs_modular_decomposition_PYTHON = __init__.py
 AM_DEFAULT_SOURCE_EXT = .pyx
 graphs_modular_decomposition_LTLIBRARIES = modular_decomposition.la 
 modular_decomposition_la_SOURCES = modular_decomposition.pyx src/dm.c
-modular_decomposition_la_LIBADD = -lcsage
+modular_decomposition_la_LIBADD = @CSAGE_LIBS@

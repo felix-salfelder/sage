@@ -3,8 +3,7 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-schemes_elliptic_curvesdir = $(pythondir)/sage/schemes/elliptic_curves
-schemes_elliptic_curves_PYTHON = \
+inst_PYTHON = \
     gal_reps.py mod5family.py ell_point.py ell_rational_field.py padics.py \
     __init__.py ell_local_data.py ell_finite_field.py ell_padic_field.py \
     ell_generic.py ell_wp.py sha_tate.py heegner.py lseries_ell.py ec_database.py \
@@ -16,6 +15,6 @@ schemes_elliptic_curves_PYTHON = \
     gal_reps_number_field.py weierstrass_transform.py jacobian.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-schemes_elliptic_curves_LTLIBRARIES = descent_two_isogeny.la
-descent_two_isogeny_la_LIBADD = -lflint @GMP_OR_MPIR_LIBS@ -lratpoints
+inst_LTLIBRARIES = descent_two_isogeny.la
+descent_two_isogeny_la_LIBADD = @CSAGE_LIBS@ -lflint @GMP_OR_MPIR_LIBS@ -lratpoints
 descent_two_isogeny_la_CFLAGS = -std=c99 $(AM_CFLAGS)

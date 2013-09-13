@@ -8,4 +8,4 @@ combinat_matrices_PYTHON = __init__.py all.py hadamard_matrix.py dlxcpp.py latin
 
 AM_DEFAULT_SOURCE_EXT = .pyxx
 combinat_matrices_LTLIBRARIES = dancing_links.la
-dancing_links_la_LIBADD = -lcsage
+dancing_links_la_LIBADD = @CSAGE_LIBS@

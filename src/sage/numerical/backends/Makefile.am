@@ -23,26 +23,26 @@ inst_LTLIBRARIES = \
     generic_backend.la glpk_backend.la \
     glpk_graph_backend.la ppl_backend.la
 
-coin_backend_la_LIBADD = -lcsage -lstdc++ -lCbc -lCbcSolver -lCgl -lClp -lCoinUtils -lOsiCbc -lOsiClp -lOsi
+coin_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++ -lCbc -lCbcSolver -lCgl -lClp -lCoinUtils -lOsiCbc -lOsiClp -lOsi
 coin_backend_la_SOURCES = coin_backend.pyxx
 coin_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-cplex_backend_la_LIBADD = -lcsage -lstdc++ -lcplex
+cplex_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++ -lcplex
 cplex_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-generic_backend_la_LIBADD = -lcsage -lstdc++
+generic_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++
 generic_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-glpk_backend_la_LIBADD = -lcsage -lstdc++ -lglpk @GMP_OR_MPIR_LIBS@ -lz
+glpk_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++ -lglpk @GMP_OR_MPIR_LIBS@ -lz
 glpk_backend_la_SOURCES = glpk_backend.pyxx
 glpk_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-glpk_graph_backend_la_LIBADD = -lcsage -lstdc++ -lglpk @GMP_OR_MPIR_LIBS@ -lz
+glpk_graph_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++ -lglpk @GMP_OR_MPIR_LIBS@ -lz
 glpk_graph_backend_la_SOURCES = glpk_graph_backend.pyxx
 glpk_graph_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-gurobi_backend_la_LIBADD = -lcsage -lstdc++ -lcplex
+gurobi_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++ -lcplex
 gurobi_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
-ppl_backend_la_LIBADD = -lcsage -lstdc++
+ppl_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++
 ppl_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)

@@ -30,14 +30,15 @@ misc_LTLIBRARIES = \
     readline_extra_commands.la refcount.la reset.la sage_timeit_class.la search.la \
     session.la stopgap.la lazy_attribute.la c3_controlled.la inputhook.la
 
-allocator_la_LIBADD = -lcsage
-randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+allocator_la_LIBADD = @CSAGE_LIBS@
+randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 #randstate_la_LDFLAGS = $(AM_LDFLAGS)
+inputhook_la_LIBADD = @CSAGE_LIBS@
 
 readline_extra_commands_la_LIBADD = -lreadline
 
-bitset_la_LIBADD = -lcsage
-binary_tree_la_LIBADD = -lcsage
-misc_c_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+bitset_la_LIBADD = @CSAGE_LIBS@
+binary_tree_la_LIBADD = @CSAGE_LIBS@
+misc_c_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 noinst_HEADERS = bitset_pxd.pxi bitset.pxi

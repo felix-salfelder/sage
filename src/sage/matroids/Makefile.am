@@ -37,3 +37,11 @@ sage_matroids_LTLIBRARIES = \
     basis_exchange_matroid.la basis_matroid.la \
     linear_matroid.la circuit_closures_matroid.la \
     unpickling.la
+
+basis_exchange_matroid_la_LIBADD = @CSAGE_LIBS@
+basis_matroid_la_LIBADD = @CSAGE_LIBS@
+extension_la_LIBADD = @CSAGE_LIBS@
+lean_matrix_la_LIBADD = @CSAGE_LIBS@
+linear_matroid_la_LIBADD = @CSAGE_LIBS@
+set_system_la_LIBADD = @CSAGE_LIBS@
+unpickling_la_LIBADD = @CSAGE_LIBS@

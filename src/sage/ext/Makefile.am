@@ -13,15 +13,15 @@ ext_LTLIBRARIES = \
     interactive_constructors_c.la multi_modular.la \
     pselect.la
 
-c_lib_la_LIBADD = -lcsage
+c_lib_la_LIBADD = @CSAGE_LIBS@
 
-multi_modular_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+multi_modular_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 multi_modular_la_CFLAGS = $(AM_CFLAGS) -std=c99
 
-fast_callable_la_LIBADD = -lcsage
-fast_eval_la_LIBADD = -lcsage
+fast_callable_la_LIBADD = @CSAGE_LIBS@
+fast_eval_la_LIBADD = @CSAGE_LIBS@
 
-pselect_la_LIBADD = -lcsage
+pselect_la_LIBADD = @CSAGE_LIBS@
 
 # interpreters-stamp:
 #	$(PYTHON) @srcdir@/gen_interpreters.py

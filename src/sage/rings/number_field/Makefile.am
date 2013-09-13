@@ -17,10 +17,10 @@ rings_number_field_LTLIBRARIES = \
 	 number_field_morphisms.la totallyreal.la totallyreal_data.la
 
 number_field_element_la_SOURCES = number_field_element.pyxx
-number_field_element_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+number_field_element_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 number_field_element_quadratic_la_SOURCES = number_field_element_quadratic.pyxx
-number_field_element_quadratic_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lcsage
+number_field_element_quadratic_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-totallyreal_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ -lcsage
-totallyreal_data_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lcsage
+totallyreal_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
+totallyreal_data_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@

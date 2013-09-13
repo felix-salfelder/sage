@@ -18,29 +18,28 @@ SUBDIRS = \
     linbox $(COND_LRCALC) mpmath mwrank ntl pari singular symmetrica
 
 include $(top_srcdir)/common.mk
-libsdir = $(pythondir)/sage/libs
-libs_PYTHON = __init__.py all.py
+inst_PYTHON = __init__.py all.py
 
-libs_polyboridir = $(libsdir)/polybori
+libs_polyboridir = $(instdir)/polybori
 libs_polybori_PYTHON = polybori/__init__.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-libs_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     ecl.la libsageecm.la ppl.la \
     ratpoints.la readline.la $(FES_MODULE)
 
-fes_la_LIBADD = -lcsage -lfes
+fes_la_LIBADD = @CSAGE_LIBS@ -lfes
 
-ecl_la_LIBADD = -lecl @GMP_OR_MPIR_LIBS@ -lcsage
+ecl_la_LIBADD = -lecl @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
 # FIXME: use @LIBECL_INCLUDES@
 ecl_la_CPPFLAGS = @LIBECL_INCLUDES@ $(AM_CPPFLAGS)
-libsageecm_la_LIBADD = -lecm @GMP_OR_MPIR_LIBS@
+libsageecm_la_LIBADD = @CSAGE_LIBS@ -lecm @GMP_OR_MPIR_LIBS@
 ppl_la_SOURCES = ppl.pyxx ppl_shim.cc
-ppl_la_LIBADD = -lppl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -lm -lcsage
-ratpoints_la_LIBADD = -lratpoints @GMP_OR_MPIR_LIBS@
+ppl_la_LIBADD = -lppl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -lm @CSAGE_LIBS@
+ratpoints_la_LIBADD = @CSAGE_LIBS@ -lratpoints @GMP_OR_MPIR_LIBS@
 
-libs_gmpdir = $(libsdir)/gmp
+libs_gmpdir = $(instdir)/gmp
 libs_gmp_PYTHON = gmp/__init__.py
 
 noinst_HEADERS = \

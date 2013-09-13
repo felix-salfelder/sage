@@ -26,4 +26,4 @@ combinat_crystals_PYTHON = \
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 combinat_crystals_LTLIBRARIES = letters.la
-letters_la_LIBADD = -lcsage
+letters_la_LIBADD = @CSAGE_LIBS@

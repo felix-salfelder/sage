@@ -13,7 +13,7 @@ groups_perm_gps_partn_ref_LTLIBRARIES = \
     refinement_matrices.la refinement_python.la refinement_sets.la
 
 # all of them (correct?)
-LIBS += -lcsage
+LIBS += @CSAGE_LIBS@
 
 automorphism_group_canonical_label_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint
 automorphism_group_canonical_label_la_CFLAGS = -std=c99 $(AM_CFLAGS)

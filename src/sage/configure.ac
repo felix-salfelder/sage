@@ -451,6 +451,9 @@ AS_IF([ test ! x$srcdir = "x."],
       [LIBCSAGE_INCLUDES+=' -I$(top_srcdir)/../c_lib/include'])
 AC_SUBST([LIBCSAGE_INCLUDES])
 
+CSAGE_LIBS='$(top_builddir)/../c_lib/src/libcsage.la'
+AC_SUBST([CSAGE_LIBS])
+
 # run time paths
 SAGE_LIBCSAGE_INCLUDES='-I${prefix}/include/csage'
 AC_SUBST([SAGE_LIBCSAGE_INCLUDES])
