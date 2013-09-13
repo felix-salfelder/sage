@@ -118,7 +118,7 @@ fi
 export SAGE_ROOT
 
 if [ "$1" = '-sh' -o "$1" = '--sh' ]; then
-	source src/bin/sage-env # fixme, use sagedist env. later...
+	source "sagedist/etc/env.sh"
 	exec sage-sh $@
 fi
 
