@@ -34,4 +34,4 @@ if [ -z "$v" ]; then
 fi
 
 prog=`basename "$0"`
-exec "$SAGE_LOCAL/@AUTOFOO@-$v/bin/$prog" "$@"
+exec "$(dirname $0)/../@AUTOFOO@-$v/bin/$prog" "$@"
