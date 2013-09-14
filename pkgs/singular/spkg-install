@@ -225,6 +225,7 @@ install-singular: clean-hack build
 	$(S_I) $(SRC)/Singular/singular "$(SAGE_PREFIX)/bin"
 
 install-docs:
+	$(S_I) -d $(SAGE_PREFIX)/share/singular/
 	$(S_I) -t $(SAGE_PREFIX)/share/singular/ $(SHARED)/singular.hlp $(SHARED)/singular.idx
 
 install-env: singular.sh
