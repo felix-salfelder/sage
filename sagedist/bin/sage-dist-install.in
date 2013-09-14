@@ -70,6 +70,10 @@ while test $# -ne 0; do
       shift
       dst_arg=$1
       args="$args $1"
+      if test ! -d $dst_arg; then
+        echo "$0: $dst_arg is not a directory." >&2
+        exit 1
+      fi
       shift
       ;;
     --) break;;
