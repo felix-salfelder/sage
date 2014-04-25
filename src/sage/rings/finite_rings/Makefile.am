@@ -3,16 +3,23 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-rings_finite_ringsdir = $(pythondir)/sage/rings/finite_rings
-rings_finite_rings_PYTHON = \
+inst_PYTHON = \
     all.py constructor.py element_ext_pari.py finite_field_ext_pari.py \
     finite_field_givaro.py finite_field_ntl_gf2e.py finite_field_prime_modn.py \
-    homset.py __init__.py integer_mod_ring.py finite_field_pari_ffelt.py
+    homset.py __init__.py integer_mod_ring.py finite_field_pari_ffelt.py \
+    conway_polynomials.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-rings_finite_rings_LTLIBRARIES = \
-    element_base.la element_givaro.la element_ntl_gf2e.la finite_field_base.la \
-    integer_mod.la element_pari_ffelt.la
+inst_LTLIBRARIES = \
+    element_base.la \
+    element_givaro.la \
+    element_ntl_gf2e.la \
+    element_pari_ffelt.la \
+    finite_field_base.la \
+    hom_finite_field_givaro.la \
+    hom_finite_field.la \
+    hom_prime_finite_field.la \
+    integer_mod.la
 
 element_base_la_CPPFLAGS = -DINTEGER_MOD_INT32_LIMIT=46341 -DINTEGER_MOD_INT64_LIMIT=2147483647 $(AM_CPPFLAGS)
 element_base_la_LIBADD = @CSAGE_LIBS@
@@ -37,7 +44,15 @@ element_pari_ffelt_la_LIBADD = @CSAGE_LIBS@
 finite_field_base_la_CPPFLAGS = $(AM_CPPFLAGS) -DINTEGER_MOD_INT32_LIMIT=46341 -DINTEGER_MOD_INT64_LIMIT=2147483647 $(AM_CPPFLAGS)
 finite_field_base_la_LIBADD = @CSAGE_LIBS@
 
+hom_finite_field_givaro_la_SOURCES = hom_finite_field_givaro.pyxx
+hom_finite_field_givaro_la_LIBADD = -lgivaro -lntl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ -lm -lstdc++ @CSAGE_LIBS@
+
 integer_mod_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 integer_mod_la_CPPFLAGS = -DINTEGER_MOD_INT32_LIMIT=46341 -DINTEGER_MOD_INT64_LIMIT=2147483647 $(AM_CPPFLAGS)
 
-noinst_HEADERS = stdint.pxd element_pari_ffelt.pxd
+noinst_HEADERS = \
+    stdint.pxd \
+    element_pari_ffelt.pxd \
+    hom_finite_field_givaro.pxd \
+    hom_finite_field.pxd \
+    hom_prime_finite_field.pxd

@@ -30,6 +30,7 @@ schemes_projectivedir = $(pythondir)/sage/schemes/projective
 schemes_projective_PYTHON = \
     projective/all.py \
     projective/__init__.py \
+    projective/endPN_minimal_model.py \
     projective/projective_homset.py \
     projective/projective_morphism.py \
     projective/projective_point.py \

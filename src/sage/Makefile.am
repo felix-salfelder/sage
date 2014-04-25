@@ -148,7 +148,7 @@ noinst_HEADERS = \
     modules/module.pxd modules/vector_rational_dense.pxd \
     modules/vector_double_dense.pxd modules/vector_mod2_dense.pxd \
     combinat/permutation_cython.pxd combinat/enumeration_mod_permgroup.pxd \
-    combinat/combinat_cython.pxd combinat/debruijn_sequence.pxd \
+    combinat/combinat_cython.pxd \
     geometry/triangulation/functions.pxd geometry/triangulation/data.pxd \
     geometry/triangulation/triangulations.pxd groups/group.pxd groups/old.pxd \
     groups/perm_gps/partn_ref/refinement_python.pxd \

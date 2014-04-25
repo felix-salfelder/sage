@@ -4,15 +4,15 @@
 #
 SUBDIRS = quatalg letterplace
 include $(top_srcdir)/common.mk
-algebrasdir = $(pythondir)/sage/algebras
-algebras_PYTHON = \
+inst_PYTHON = \
     affine_nil_temperley_lieb.py algebra_element.py algebra.py all.py \
     free_algebra_element.py free_algebra.py free_algebra_quotient_element.py \
     free_algebra_quotient.py group_algebra_new.py group_algebra.py __init__.py \
     iwahori_hecke_algebra.py nil_coxeter_algebra.py quaternion_algebra_element.py \
-    quaternion_algebra.py shuffle_algebra.py
+    quaternion_algebra.py shuffle_algebra.py \
+    hall_algebra.py
 
-algebras_steenroddir = $(pythondir)/sage/algebras/steenrod
+algebras_steenroddir = $(instdir)/steenrod
 algebras_steenrod_PYTHON = \
     steenrod/all.py \
     steenrod/__init__.py \

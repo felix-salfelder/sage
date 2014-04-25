@@ -11,7 +11,7 @@ categories_examples_PYTHON = \
     finite_monoids.py hopf_algebras_with_basis.py commutative_additive_monoids.py \
     with_realizations.py algebras_with_basis.py commutative_additive_semigroups.py \
     facade_sets.py infinite_enumerated_sets.py finite_semigroups.py \
-    finite_coxeter_groups.py
+    finite_coxeter_groups.py graded_modules_with_basis.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 categories_examples_LTLIBRARIES = semigroups_cython.la

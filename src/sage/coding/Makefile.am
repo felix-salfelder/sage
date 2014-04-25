@@ -11,7 +11,7 @@ AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = binary_code.la
 binary_code_la_LIBADD = @CSAGE_LIBS@
 
-source_codingdir = $(codingdir)/source_coding
+source_codingdir = $(instdir)/source_coding
     source_coding_PYTHON = \
     source_coding/all.py \
     source_coding/huffman.py \

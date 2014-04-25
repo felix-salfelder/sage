@@ -38,6 +38,7 @@ vector_mod2_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lm4ri -lpng12 -lgd @CSAGE_LIBS
 vector_mod2_dense_la_CFLAGS = @M4RI_CFLAGS@ $(AM_CFLAGS)
 
 vector_modn_dense_la_CFLAGS = $(AM_CFLAGS) -std=c99
+vector_modn_dense_la_CPPFLAGS = -DINTEGER_MOD_INT64_LIMIT=2147483647 $(AM_CPPFLAGS)
 vector_modn_dense_la_LIBADD = @CSAGE_LIBS@
 
 vector_rational_dense_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@

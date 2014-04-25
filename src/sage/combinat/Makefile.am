@@ -6,7 +6,7 @@ SUBDIRS = matrices words crystals
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
     tutorial.py misc.py multichoose_nk.py family.py permutation_nk.py \
-    partition_tuple.py sidon_sets.py yamanouchi.py lyndon_word.py __init__.py \
+    partition_tuple.py sidon_sets.py lyndon_word.py __init__.py \
     rsk.py \
     binary_tree.py tableau.py q_analogues.py restricted_growth.py backtrack.py \
     set_partition.py kazhdan_lusztig.py combinatorial_algebra.py skew_tableau.py \
@@ -25,8 +25,11 @@ inst_PYTHON = \
     composition_signed.py split_nk.py composition.py \
     non_decreasing_parking_function.py affine_permutation.py vector_partition.py \
     diagram_algebras.py similarity_class_type.py descent_algebra.py \
-    ribbon_shaped_tableau.py
-
+    ribbon_shaped_tableau.py binary_recurrence_sequences.py \
+    composition_tableau.py \
+    finite_state_machine.py \
+    hall_polynomial.py \
+    k_tableau.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
@@ -41,6 +44,15 @@ expnums_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 partitions_la_SOURCES = partitions.pyxx partitions_c.cc
 partitions_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lmpfr @CSAGE_LIBS@
 permutation_cython_la_LIBADD = @CSAGE_LIBS@
+
+combinat_ncsymdir = $(instdir)/ncsym
+combinat_ncsym_PYTHON = \
+    ncsym/all.py \
+    ncsym/bases.py \
+    ncsym/dual.py \
+    ncsym/__init__.py \
+    ncsym/ncsym.py
+
 
 combinat_cluster_algebra_quiverdir = $(instdir)/cluster_algebra_quiver
 combinat_cluster_algebra_quiver_PYTHON = \
@@ -110,6 +122,7 @@ combinat_root_system_PYTHON = \
     root_system/type_E.py \
     root_system/type_F_affine.py \
     root_system/type_F.py \
+    root_system/type_folded.py \
     root_system/type_G_affine.py \
     root_system/type_G.py \
     root_system/type_H.py \

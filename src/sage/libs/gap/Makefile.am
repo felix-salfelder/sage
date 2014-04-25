@@ -98,7 +98,7 @@ endif
 
 # main_CFLAGS = @GMP_CFLAGS@
 main_CPPFLAGS = -DGAPDIR="\"@GAP_DATA_DIR@\""
-main_LDADD = -lgap -ldl -lutil
+main_LDADD = $(GAP_LIBS) -ldl -lutil
 main_LDFLAGS = @GMP_OR_MPIR_LIBS@ -lm -L@top_builddir@/../c_lib/src/.libs
 
 $(LIBGAP_HACKED:%=%.hacked.lo): %.hacked.lo: %.c libGAP.h syms
@@ -115,7 +115,7 @@ noinst_HEADERS = libgap_wrap.h libgap.h libgap_internal.h
 
 EXTRA_DIST = $(LIBGAP_HACKED:%=%.c) libgap.link libgap.version
 
+# outdated?
 check_PROGRAMS = $(cond_MAIN)
 TESTS = $(cond_MAIN)
 main_SOURCES = test/main.c
-

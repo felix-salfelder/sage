@@ -3,8 +3,7 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-miscdir = $(pythondir)/sage/misc
-misc_PYTHON = \
+inst_PYTHON = \
     misc.py table.py map_threaded.py sage_unittest.py sage_extension.py \
     memory_info.py nested_class_test.py benchmark.py trace.py bindable_class.py \
     proof.py __init__.py python.py mathml.py latex_macros.py defaults.py \
@@ -22,13 +21,14 @@ misc_PYTHON = \
     test_class_pickling.py ascii_art.py attached_files.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-misc_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     allocator.la binary_tree.la bitset.la c3.la cachefunc.la citation.la \
     classcall_metaclass.la constant_function.la cython_c.la derivative.la \
     fast_methods.la fpickle.la function_mangling.la lazy_import.la lazy_list.la \
     misc_c.la nested_class.la parser.la pickle_old.la randstate.la \
     readline_extra_commands.la refcount.la reset.la sage_timeit_class.la search.la \
-    session.la stopgap.la lazy_attribute.la c3_controlled.la inputhook.la
+    session.la stopgap.la lazy_attribute.la c3_controlled.la inputhook.la \
+    weak_dict.la
 
 allocator_la_LIBADD = @CSAGE_LIBS@
 randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
@@ -41,4 +41,4 @@ bitset_la_LIBADD = @CSAGE_LIBS@
 binary_tree_la_LIBADD = @CSAGE_LIBS@
 misc_c_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-noinst_HEADERS = bitset_pxd.pxi bitset.pxi
+noinst_HEADERS = bitset.pxi

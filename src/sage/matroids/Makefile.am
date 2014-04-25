@@ -28,8 +28,7 @@ noinst_HEADERS = \
     linear_matroid.pxd \
     matroid.pxd \
     minorfix.h \
-    set_system.pxd \
-    unpickling.pxd
+    set_system.pxd
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 sage_matroids_LTLIBRARIES = \

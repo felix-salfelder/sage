@@ -54,6 +54,7 @@ graphs_generators_PYTHON = \
     generators/degree_sequence.py \
     generators/families.py \
     generators/__init__.py \
+    generators/intersection.py \
     generators/platonic_solids.py \
     generators/random.py \
     generators/smallgraphs.py \

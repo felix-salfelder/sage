@@ -4,18 +4,17 @@
 #
 SUBDIRS = triangulation
 include $(top_srcdir)/common.mk
-geometrydir = $(pythondir)/sage/geometry
-geometry_PYTHON = \
+inst_PYTHON = \
     cone.py polyhedra.py __init__.py fan_isomorphism.py toric_plotter.py \
     fan_morphism.py fan.py all.py hasse_diagram.py lattice_polytope.py polytope.py \
     toric_lattice.py newton_polygon.py pseudolines.py
 
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-geometry_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la
+inst_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la
 toric_lattice_element_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-geometry_polyhedrondir = $(geometrydir)/polyhedron
+geometry_polyhedrondir = $(instdir)/polyhedron
 geometry_polyhedron_PYTHON = \
     polyhedron/all.py \
     polyhedron/backend_cdd.py \
@@ -37,3 +36,10 @@ geometry_polyhedron_PYTHON = \
     polyhedron/representation.py \
     polyhedron/lattice_euclidean_group_element.py \
     polyhedron/ppl_lattice_polygon.py
+
+geom_riemanndir = $(instdir)/riemannian_manifolds
+geom_riemann_PYTHON = \
+    riemannian_manifolds/all.py \
+    riemannian_manifolds/__init__.py \
+    riemannian_manifolds/parametrized_surface3d.py \
+    riemannian_manifolds/surface3d_generators.py

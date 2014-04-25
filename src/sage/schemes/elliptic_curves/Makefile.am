@@ -12,7 +12,8 @@ inst_PYTHON = \
     ell_curve_isogeny.py cm.py padic_lseries.py gp_simon.py monsky_washnitzer.py \
     BSD.py ell_number_field.py modular_parametrization.py ell_egros.py \
     isogeny_class.py period_lattice.py \
-    gal_reps_number_field.py weierstrass_transform.py jacobian.py
+    gal_reps_number_field.py weierstrass_transform.py jacobian.py \
+    isogeny_small_degree.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = descent_two_isogeny.la

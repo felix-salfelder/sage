@@ -3,10 +3,9 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-dynamicsdir = $(pythondir)/sage/dynamics
-dynamics_PYTHON = all.py __init__.py
+inst_PYTHON = all.py __init__.py
 
-dynamics_exchangesdir = $(dynamicsdir)/exchanges
+dynamics_exchangesdir = $(instdir)/interval_exchanges
 dynamics_exchanges_PYTHON = \
     interval_exchanges/all.py \
     interval_exchanges/constructors.py \
@@ -16,7 +15,7 @@ dynamics_exchanges_PYTHON = \
     interval_exchanges/reduced.py \
     interval_exchanges/template.py
 
-dynamics_flatsurfacesdir = $(dynamicsdir)/flatsurfaces
+dynamics_flatsurfacesdir = $(instdir)/flat_surfaces
 dynamics_flatsurfaces_PYTHON = \
     flat_surfaces/all.py \
     flat_surfaces/__init__.py \

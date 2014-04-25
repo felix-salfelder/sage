@@ -637,6 +637,7 @@ AC_CONFIG_FILES([
     groups/matrix_gps/Makefile
     groups/perm_gps/Makefile
     groups/perm_gps/partn_ref/Makefile
+    groups/semimonomial_transformations/Makefile
     gsl/Makefile
     homology/Makefile
     interacts/Makefile

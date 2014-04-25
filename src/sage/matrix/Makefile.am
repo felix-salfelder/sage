@@ -94,5 +94,3 @@ strassen_la_LIBADD = @CSAGE_LIBS@
 matrix_mpolynomial_dense_la_CPPFLAGS += -DNDEBUG
 
 noinst_HEADERS = matrix_modn_dense_template_header.pxi matrix_modn_dense_template.pxi
-# these are commented out in module_list
-EXTRA_DIST = matrix_domain_dense.pyx matrix_domain_sparse.pyx
