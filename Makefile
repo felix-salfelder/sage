@@ -21,6 +21,12 @@ build: logs
 		"tee -a ../logs/install.log"
 	./sage -b
 
+# Preemptively download all standard upstream source tarballs.
+download:
+	export SAGE_ROOT=$$(pwd) && \
+	export PATH=$$SAGE_ROOT/src/bin:$$PATH && \
+	./src/bin/sage-download-upstream
+
 # ssl: build Sage, and also install pyOpenSSL. This is necessary for
 # running the secure notebook. This make target requires internet
 # access. Note that this requires that your system have OpenSSL
@@ -85,7 +91,7 @@ distclean: clean doc-clean lib-clean bdist-clean
 
 micro_release: bdist-clean lib-clean
 	@echo "Stripping binaries ..."
-	find local/lib local/bin -type f -exec strip '{}' ';' |& grep -v "File format not recognized" |  grep -v "File truncated" || true
+	LC_ALL=C find local/lib local/bin -type f -exec strip '{}' ';' 2>&1 | grep -v "File format not recognized" |  grep -v "File truncated" || true
 
 TESTPRELIMS = local/bin/sage-starts
 TESTALL = ./sage -t --all

@@ -391,6 +391,8 @@ cpdef error_enter_libgap_block_twice():
     """
     from sage.libs.gap.libsagegap import libgap
     try:
+        # The exception will be seen by this sig_on() after being
+        # raised by the second libgap_enter().
         sig_on()
         libgap_enter()
         libgap_enter()

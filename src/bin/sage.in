@@ -39,10 +39,10 @@ usage() {
     echo "                           --verbose - print debugging output during the test"
     echo "                           --optional - controls which optional tests are run"
     echo "                           --help - show all testing options"
-    echo "  -upgrade [url]      -- download, build and install standard packages from"
-    echo "                         given url.  If url not given, automatically selects a"
-    echo "                         suitable mirror.  If url='ask', it lets you select"
-    echo "                         the mirror (uses SAGE_SERVER as default)."
+    echo "  -upgrade [version]  -- download, build and install the given version. Here,"
+    echo "                         'version' is a git branch or tag name. Useful values"
+    echo "                         are 'master' (the currend development version, this"
+    echo "                         is the default) or a version number like '5.13'."
     echo "  -v, -version        -- print the Sage version"
     exit 0
 }
@@ -127,10 +127,10 @@ usage_advanced() {
     echo "  -standard           -- list all standard packages that can be installed"
    #echo "  -update             -- download latest non-optional Sage packages (do not build them)"
    #echo "  -update-build       -- build and install all downloaded non-optional Sage packages"
-    echo "  -upgrade [url]      -- download, build and install standard packages from"
-    echo "                         given url.  If url not given, automatically selects a"
-    echo "                         suitable mirror.  If url='ask', it lets you select"
-    echo "                         the mirror (uses SAGE_SERVER as default)."
+    echo "  -upgrade [version]  -- download, build and install the given version. Here,"
+    echo "                         'version' is a git branch or tag name. Useful values"
+    echo "                         are 'master' (the currend development version, this"
+    echo "                         is the default) or a version number like '5.13'."
 
     echo
     ####  1.......................26..................................................78
@@ -149,11 +149,15 @@ usage_advanced() {
     echo "  -bt [...]           -- build and test, options like -t below"
     echo "  -btp <N> [...]      -- build and test parallel, options like -tp below"
     echo "  -btnew [...]        -- build and test modified files, options like -tnew"
-    echo "  -fixdoctests <file.py> -- create <file.py>.out that would pass the doctests"
-    echo "                            and output a patch"
-    echo "  -startuptime [module]  -- display how long each component of Sage takes to"
-    echo "                            start up; optionally specify a module to get more"
-    echo "                            details about that particular module"
+    echo "  -fixdoctests <file.py> [output_file] [--long]"
+    echo "                      -- writes a new version of file.py to output_file"
+    echo "                         (defaults: to file.py.out) that will pass the doctests."
+    echo "                         With the optional --long argument the long time tests"
+    echo "                         are also checked."
+    echo "                         A patch for the new file is printed to stdout."
+    echo "  -startuptime [module] -- display how long each component of Sage takes to"
+    echo "                         start up; optionally specify a module to get more"
+    echo "                         details about that particular module"
     echo "  -t [options] <--all|files|dir>"
     echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
     echo "                         selected options:"
@@ -204,9 +208,7 @@ usage_advanced() {
     echo "  -crap sage-ver.tar  -- detect suspicious garbage in sage source tarball"
     echo "  -pkg <dir>          -- create Sage package dir.spkg from a given directory"
     echo "  -pkg_nc <dir>       -- as -pkg, but do not compress the package"
-    echo "  -rsyncdist VER      -- build an rsyncable source distribution of Sage (you"
-    echo "                         must first run sage -sdist VER for this to work)"
-    echo "  -sdist VER          -- build a source distribution of Sage"
+    echo "  -sdist              -- build a source distribution of Sage"
 
     echo
     ####  1.......................26..................................................78
@@ -797,23 +799,6 @@ if [ "$1" = '-bdist' -o "$1" = "--bdist" ]; then
     exec sage-bdist "$@"
 fi
 
-#if [ "$1" = '-update' ]; then
-#    sage-update
-#    exit $?
-#fi
-
-#if [ "$1" = '-update-build' -o "$1" = "--update-build" ]; then
-#    sage-update-build
-#    sage-update-build
-#    exit $?
-#fi
-
-if [ "$1" = '-upgrade' -o "$1" = "--upgrade" ]; then
-    shift
-    sage-upgrade "$@"
-    exit $?
-fi
-
 if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
     shift
     exec python "$SAGE_DOC_SRC/common/builder.py" "$@"
@@ -881,6 +866,11 @@ fi
 if [ "$1" = '-gthread' -o "$1" = '-qthread' -o "$1" = '-q4thread' -o "$1" = '-wthread' -o "$1" = '-pylab' ]; then
     # Intentionally no "shift" here
     interactive_sage "$@"
+fi
+
+if [ "$1" = '-dev' -o "$1" = "--dev" ]; then
+    shift
+    exec sage-dev "$@"
 fi
 
 if [ $# -ge 1 ]; then
