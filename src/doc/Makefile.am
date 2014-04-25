@@ -9,7 +9,8 @@ install-data-local: docbuild
 
 all: docbuild
 
-EXTRA_DIST = en/reference/footer.txt \
+EXTRA_DIST = bootstrap \
+             en/reference/footer.txt \
              en/reference/index.rst \
              en/reference/conf_sub.py \
              en/reference/conf.py \

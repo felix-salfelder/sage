@@ -287,3 +287,5 @@ all-local: $(DOCPY)
 ACLOCAL = export PATH="$(PATH)"; @ACLOCAL@
 AUTOCONF = export PATH="$(PATH)"; @AUTOCONF@
 AUTOHEADER = export PATH="$(PATH)"; @AUTOHEADER@
+
+EXTRA_DIST = bootstrap

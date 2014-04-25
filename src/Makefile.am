@@ -25,7 +25,7 @@ check-local: # py sage
 py:
 	$(MAKE) -C sage py
 
-EXTRA_DIST = autogen.sh install-sh
+EXTRA_DIST = bootstrap install-sh
 
 # in case (parts of) build system needs to be regenerated
 # take autotools from sage (the distribution) if necessary.

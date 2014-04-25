@@ -4,3 +4,4 @@
 #
 SUBDIRS = src include
 ACLOCAL_AMFLAGS = -Im4
+EXTRA_DIST = bootstrap

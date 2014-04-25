@@ -95,4 +95,4 @@ sageextsingular_DATA = \
     singular/rrbasis.lib \
     singular/sage.lib
 
-EXTRA_DIST = $(DATA)
+EXTRA_DIST = $(DATA) bootstrap

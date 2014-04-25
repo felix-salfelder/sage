@@ -30,6 +30,6 @@ fi
 for i in $MODULES; do
 	( cd $i;
 	  echo autogen in $( pwd )
-	  ./autogen.sh || ( echo trouble in $i/autogen.sh; exit 1 )
+	  ./bootstrap || ( echo trouble in $i/bootstrap; exit 1 )
 	) || exit 1
 done

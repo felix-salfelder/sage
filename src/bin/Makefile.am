@@ -60,6 +60,8 @@ sage-current-location.txt:
 #FIXME: this does not exactly belong here
 EXTRA_DIST = sage-banner
 
+EXTRA_DIST+= bootstrap
+
 # fixme: create symlink?
 # sage-bdist
 # sage-cachegrind
