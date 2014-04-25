@@ -20,6 +20,7 @@ check-local: # py sage
 	export PATH="@abs_top_builddir@/bin:@abs_top_srcdir@/bin:$$PATH"; \
 	export SAGE_MAXIMA_INIT=@abs_top_builddir@/bin/sage-maxima.lisp; \
 	export SAGE_ETC=@abs_top_builddir@/bin; \
+	export LD_LIBRARY_PATH="@abs_top_builddir@/c_lib/src/.libs:@abs_top_builddir@/sage/libs/gap/.libs$(LD_LIBRARY_PATH:%=:%)"; \
 	./bin/sage -t --all
 
 py:
