@@ -698,7 +698,10 @@ class SageTerminalApp(TerminalIPythonApp):
 
 
     def load_config_file(self, *args, **kwds):
-        from IPython.frontend.terminal.ipapp import default_config_file_name
+        try:
+           from IPython.frontend.terminal.ipapp import default_config_file_name
+        except ImportError:
+           default_config_file_name="some_default_config_file"
         from IPython.config.loader import PyFileConfigLoader, ConfigFileNotFound
         from IPython.core.profiledir import ProfileDir
         from IPython.utils.path import get_ipython_dir
