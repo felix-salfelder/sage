@@ -17,9 +17,9 @@ AUTHORS:
 
 from __future__ import print_function
 
-import os, sys, platform
+import os, sys
 
-from sage.env import SAGE_LOCAL, SAGE_SRC, UNAME
+from sage.env import SAGE_LOCAL, SAGE_SRC, UNAME, SAGE_CFLAGS
 from misc import SPYX_TMP
 
 def cblas():
@@ -67,10 +67,12 @@ def atlas():
     else:
         return 'atlas'
 
-include_dirs = [os.path.join(SAGE_LOCAL,'include','csage'),
-                os.path.join(SAGE_LOCAL,'include'), \
-                os.path.join(SAGE_LOCAL,'include','python'+platform.python_version().rsplit('.', 1)[0]), \
-                os.path.join(SAGE_LOCAL,'lib','python','site-packages','numpy','core','include'), \
+from sage.env import CSAGE_INCLUDEDIRS, LOCAL_INCLUDEDIR, PYTHON_INCLUDEDIR, NUMPY_INCLUDEDIR
+
+include_dirs = CSAGE_INCLUDEDIRS + \
+               [LOCAL_INCLUDEDIR, \
+                PYTHON_INCLUDEDIR, \
+                NUMPY_INCLUDEDIR, \
                 os.path.join(SAGE_SRC,'sage','ext'), \
                 os.path.join(SAGE_SRC), \
                 os.path.join(SAGE_SRC,'sage','gsl')]
@@ -139,7 +141,8 @@ def environ_parse(s):
     EXAMPLES::
 
         sage: from sage.misc.cython import environ_parse
-        sage: environ_parse('$SAGE_LOCAL') == SAGE_LOCAL
+        sage: from sage.env import SAGE_SRC
+        sage: environ_parse('$SAGE_SRC') == SAGE_SRC
         True
         sage: environ_parse('$THIS_IS_NOT_DEFINED_ANYWHERE')
         '$THIS_IS_NOT_DEFINED_ANYWHERE'
@@ -209,7 +212,7 @@ def pyx_preparse(s):
         ...,
         'ntl',
         'csage'],
-        ['.../include/csage',
+        [...
         '.../include',
         '.../include/python2.7',
         '.../lib/python/site-packages/numpy/core/include',
@@ -217,7 +220,7 @@ def pyx_preparse(s):
         '...',
         '.../sage/gsl'],
         'c',
-        [], ['-w', '-O2'])
+        [], ['-w', '-O2'...])
         sage: s, libs, inc, lang, f, args = pyx_preparse("# clang c++\n #clib foo\n # cinclude bar\n")
         sage: lang
         'c++'
@@ -235,9 +238,11 @@ def pyx_preparse(s):
         sage: libs[1:] == sage.misc.cython.standard_libs
         True
 
+        sage: inc[0]
+        'bar'
         sage: inc
-        ['bar',
-        '.../include/csage',
+        [...,
+        '.../include',
         '.../include',
         '.../include/python2.7',
         '.../lib/python/site-packages/numpy/core/include',
@@ -247,7 +252,7 @@ def pyx_preparse(s):
 
         sage: s, libs, inc, lang, f, args = pyx_preparse("# cargs -O3 -ggdb\n")
         sage: args
-        ['-w', '-O2', '-O3', '-ggdb']
+        ['-w', '-O2',..., '-O3', '-ggdb']
 
     TESTS::
 
@@ -273,7 +278,7 @@ def pyx_preparse(s):
     if lang != "c++": # has issues with init_csage()
         s = """\ninclude "interrupt.pxi"  # ctrl-c interrupt block support\ninclude "stdsage.pxi"  # ctrl-c interrupt block support\n""" + s
     args, s = parse_keywords('cargs', s)
-    args = ['-w','-O2'] + args
+    args = SAGE_CFLAGS.split() + args
 
     return s, libs, inc, lang, additional_source_files, args
 
@@ -335,9 +340,10 @@ def cython(filename, verbose=False, compile_message=False,
     Before :trac:`12975`, it would have beeen needed to write ``#clang c++``,
     but upper case ``C++`` has resulted in an error::
 
+        sage: from sage.env import SINGULAR_INCLUDEDIR, FACTORY_INCLUDEDIR
         sage: code = [
         ... "#clang C++",
-        ... "#cinclude %s/include/singular %s/include/factory"%(SAGE_LOCAL, SAGE_LOCAL),
+        ... "#cinclude %s %s"%(SINGULAR_INCLUDEDIR, FACTORY_INCLUDEDIR),
         ... "#clib m readline singular givaro ntl gmpxx gmp",
         ... "from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular",
         ... "from sage.libs.singular.polynomial cimport singular_polynomial_pow",
@@ -449,14 +455,14 @@ def cython(filename, verbose=False, compile_message=False,
 import distutils.sysconfig, os, sys
 from distutils.core import setup, Extension
 
-from sage.env import SAGE_LOCAL
+from sage.env import SAGE_LIBDIRS
 
-extra_link_args =  ['-L' + SAGE_LOCAL + '/lib']
+extra_link_args = ['-L' + x for x in SAGE_LIBDIRS]
 extra_compile_args = %s
 
 ext_modules = [Extension('%s', sources=['%s.%s', %s],
                      libraries=%s,
-                     library_dirs=[SAGE_LOCAL + '/lib/'],
+                     library_dirs=SAGE_LIBDIRS,
                      extra_compile_args = extra_compile_args,
                      extra_link_args = extra_link_args,
                      language = '%s' )]

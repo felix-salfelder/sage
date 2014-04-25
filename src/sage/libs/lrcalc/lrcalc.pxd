@@ -1,4 +1,4 @@
-cdef extern from "lrcalc/hashtab.h":
+cdef extern from "hashtab.h":
     ctypedef struct hashtab:
         pass
 
@@ -22,7 +22,7 @@ cdef extern from "lrcalc/hashtab.h":
     void* hash_value(hash_itr itr)
     int hash_intvalue(hash_itr itr)
 
-cdef extern from "lrcalc/vector.h":
+cdef extern from "vector.h":
     ctypedef struct vector:
         size_t length
         int* array
@@ -41,7 +41,7 @@ cdef extern from "lrcalc/vector.h":
     vector* vp_second(vecpair* vp)
 
 
-cdef extern from "lrcalc/symfcn.h":
+cdef extern from "symfcn.h":
     long long lrcoef_c "lrcoef"(vector* outer, vector* inner1, vector* inner2)
     hashtab* mult_c "mult"(vector *sh1, vector *sh2, int maxrows)
     hashtab* skew_c "skew"(vector *outer, vector *inner, int maxrows)
@@ -64,5 +64,5 @@ cdef extern from "lrcalc/symfcn.h":
     void st_free(skewtab *st)
 
 
-cdef extern from "lrcalc/schublib.h":
+cdef extern from "schublib.h":
     hashtab* mult_schubert_c "mult_schubert"(vector *sh1, vector *sh2, int rank)

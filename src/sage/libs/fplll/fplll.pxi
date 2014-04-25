@@ -2,7 +2,7 @@
 # general include
 #
 
-cdef extern from "fplll/fplll.h":
+cdef extern from "fplll.h":
     pass
 
 #
