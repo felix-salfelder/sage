@@ -111,17 +111,15 @@
 **  already dead.
 */
 #include        <string.h>
+#include        <stdint.h>
 #include        "system.h"              /* Ints, UInts                     */
-
-
 
 #include        "gasman.h"              /* garbage collector               */
 
 #include        "objects.h"             /* objects                         */
 #include        "scanner.h"             /* scanner                         */
 
-
-
+#include        "libgap_internal.h"     /* gasman callback                 */
 
 /****************************************************************************
 **
@@ -1068,7 +1066,6 @@ void            InitBags (
 
 }
 
-
 /****************************************************************************
 **
 *F  NewBag( <type>, <size> )  . . . . . . . . . . . . . .  allocate a new bag
@@ -1687,7 +1684,7 @@ void GenStackFuncBags ( void )
     UInt                i;              /* loop variable                   */
 
     top = (Bag*)((void*)&top);
-    if ( StackBottomBags < top ) {
+    if ( (intptr_t) StackBottomBags < (intptr_t)top ) {
         for ( i = 0; i < sizeof(Bag*); i += StackAlignBags ) {
             for ( p = (Bag*)((char*)StackBottomBags + i); p < top; p++ )
                 MARK_BAG( *p );
@@ -1797,6 +1794,9 @@ again:
 
     /* prepare the list of marked bags for the future                      */
     MarkedBags = 0;
+
+    /* call the libgap callback so library users can mark their own bags   */
+    libgap_call_gasman_callback();
 
     /* mark from the static area                                           */
     for ( i = 0; i < GlobalBags.nr; i++ )
