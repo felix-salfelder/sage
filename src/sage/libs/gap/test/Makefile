@@ -9,10 +9,10 @@ GAPDIR="$(SAGE_LOCAL)/gap/latest"
 VALGRIND=
 
 all: main
-	LD_LIBRARY_PATH=$(SAGE_LOCAL)/lib $(VALGRIND) ./main
+	LD_LIBRARY_PATH=/home/felix/extern/sage-git-transition/B-nontl/src/sage/libs/gap/.libs $(VALGRIND) ./main
 
 main: main.o Makefile
-	gcc -L$(SAGE_LOCAL)/lib -o main main.o -lgap -lcsage -lntl -lstdc++ -lpari -lpython2.7 -lm -lgmp
+	gcc -L/home/felix/extern/sage-git-transition/B-nontl/src/sage/libs/gap/.libs -o main main.o -lgap -lcsage -lntl -lstdc++ -lpari -lpython2.7 -lm -lgmp
 
 main.o: main.c
 	echo $(GAPDIR)

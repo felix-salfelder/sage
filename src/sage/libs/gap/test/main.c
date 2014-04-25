@@ -1,15 +1,8 @@
 #include <unistd.h>
 #include <stdio.h>
-#include "gap/libgap.h"
+#include "../libgap_wrap.h"
 
-#include "gap/config.h"
-#include "gap/system.h"
-#include "gap/objects.h"
-#include "gap/gasman.h"
-#include "gap/code.h"
-#include "gap/vars.h"
-#include "gap/read.h"
-
+#include <assert.h>
 extern char **environ;
 
 void error_handler(char* msg)
@@ -22,6 +15,10 @@ void eval(char* cmd) {
   libgap_start_interaction(cmd);
 
   libgap_enter();
+//libGAP_ReadEvalCommand(libGAP_FuncGetBottomLVars(0));
+
+  assert(libGAP_FuncGetBottomLVars(0)==libGAP_BottomLVars);
+
   libGAP_ReadEvalCommand(libGAP_BottomLVars);
   libGAP_ViewObjHandler(libGAP_ReadEvalResult);
   char* out = libgap_get_output();
