@@ -66,7 +66,7 @@ nodist_libgap_la_SOURCES = \
   compiler.o  funcs.o     listfunc.o  permutat.o  stats.o     weakptr.o \
   compstat.o  listoper.o  plist.o     streams.o   \
   c_oper1.o   lists.o     precord.o   string.o    \
-  costab.o    macfloat.o  range.o
+  costab.o    macfloat.o  range.o     pperm.o     trans.o
 
 
 # # actual libgap source
