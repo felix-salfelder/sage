@@ -7,7 +7,11 @@ inst_PYTHON = __init__.py all.py gen_py.py
 
 LIBS = @CSAGE_LIBS@
 AM_DEFAULT_SOURCE_EXT = .pyx
-inst_LTLIBRARIES = gen.la handle_error.la
+inst_LTLIBRARIES = \
+    gen.la \
+    handle_error.la \
+    pari_instance.la
+
 gen_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@
 
 noinst_HEADERS = handle_error.pxd

@@ -29,7 +29,8 @@ inst_PYTHON = \
     composition_tableau.py \
     finite_state_machine.py \
     hall_polynomial.py \
-    k_tableau.py
+    k_tableau.py \
+    six_vertex_model.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
@@ -81,7 +82,13 @@ combinat_rigged_configurations_PYTHON = \
     rigged_configurations/bij_abstract_class.py \
     rigged_configurations/bijection.py \
     rigged_configurations/bij_type_A.py \
+    rigged_configurations/bij_type_A2_dual.py \
+    rigged_configurations/bij_type_A2_even.py \
+    rigged_configurations/bij_type_A2_odd.py \
+    rigged_configurations/bij_type_B.py \
+    rigged_configurations/bij_type_C.py \
     rigged_configurations/bij_type_D.py \
+    rigged_configurations/bij_type_D_twisted.py \
     rigged_configurations/__init__.py \
     rigged_configurations/kleber_tree.py \
     rigged_configurations/kr_tableaux.py \
@@ -96,6 +103,7 @@ combinat_root_system_PYTHON = \
     root_system/all.py \
     root_system/ambient_space.py \
     root_system/associahedron.py \
+    root_system/branching_rules.py \
     root_system/cartan_matrix.py \
     root_system/cartan_type.py \
     root_system/coxeter_group.py \

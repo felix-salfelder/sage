@@ -613,6 +613,7 @@ AC_CONFIG_FILES([
     categories/examples/Makefile
     categories/Makefile
     coding/Makefile
+    coding/codecan/Makefile
     combinat/Makefile
     combinat/crystals/Makefile
     combinat/matrices/Makefile
@@ -637,6 +638,7 @@ AC_CONFIG_FILES([
     groups/matrix_gps/Makefile
     groups/perm_gps/Makefile
     groups/perm_gps/partn_ref/Makefile
+    groups/perm_gps/partn_ref2/Makefile
     groups/semimonomial_transformations/Makefile
     gsl/Makefile
     homology/Makefile

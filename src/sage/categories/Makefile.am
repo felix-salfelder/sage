@@ -4,8 +4,9 @@
 #
 SUBDIRS = examples
 include $(top_srcdir)/common.mk
-categoriesdir = $(pythondir)/sage/categories
-categories_PYTHON = \
+inst_PYTHON = \
+    complete_discrete_valuation.py \
+    discrete_valuation.py \
     sets_with_grading.py \
     tutorial.py ring_ideals.py modules_with_basis.py finite_enumerated_sets.py \
     gcd_domains.py monoids.py affine_weyl_groups.py commutative_algebras.py \
@@ -42,7 +43,7 @@ categories_PYTHON = \
     finite_dimensional_coalgebras_with_basis.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-categories_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la
+inst_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la
 
 map_la_LIBADD = @CSAGE_LIBS@
 morphism_la_LIBADD = @CSAGE_LIBS@

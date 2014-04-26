@@ -17,3 +17,4 @@ finite_set_map_cy_la_LIBADD = @CSAGE_LIBS@
 
 disjoint_set_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint @CSAGE_LIBS@
 disjoint_set_la_CFLAGS = -std=c99 $(AM_CFLAGS)
+disjoint_set_la_CPPFLAGS = -I@top_builddir@/libs/gap $(AM_CPPFLAGS)

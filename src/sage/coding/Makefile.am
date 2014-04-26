@@ -12,7 +12,7 @@ inst_LTLIBRARIES = binary_code.la
 binary_code_la_LIBADD = @CSAGE_LIBS@
 
 source_codingdir = $(instdir)/source_coding
-    source_coding_PYTHON = \
+source_coding_PYTHON = \
     source_coding/all.py \
     source_coding/huffman.py \
     source_coding/__init__.py

@@ -203,9 +203,8 @@ noinst_HEADERS = \
     rings/padics/padic_capped_absolute_element.pxd \
     rings/padics/padic_fixed_mod_element.pxd rings/padics/padic_ext_element.pxd \
     rings/padics/padic_generic_element.pxd \
-    rings/padics/padic_base_generic_element.pxd \
     rings/padics/padic_capped_relative_element.pxd \
-    rings/padics/pow_computer.pxd rings/padics/padic_base_coercion.pxd \
+    rings/padics/pow_computer.pxd \
     rings/padics/padic_ZZ_pX_element.pxd \
     rings/padics/padic_ZZ_pX_CR_element.pxd \
     rings/padics/padic_ZZ_pX_FM_element.pxd \

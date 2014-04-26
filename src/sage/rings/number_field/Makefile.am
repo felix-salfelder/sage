@@ -3,15 +3,14 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-rings_number_fielddir = $(pythondir)/sage/rings/number_field
-rings_number_field_PYTHON = \
+inst_PYTHON = \
     all.py class_group.py galois_group.py __init__.py maps.py morphism.py \
     number_field_ideal.py number_field_ideal_rel.py number_field.py \
     number_field_rel.py order.py small_primes_of_degree_one.py totallyreal_phc.py \
-    totallyreal_rel.py unit_group.py
+    totallyreal_rel.py unit_group.py splitting_field.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-rings_number_field_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     number_field_base.la number_field_element.la \
 	 number_field_element_quadratic.la \
 	 number_field_morphisms.la totallyreal.la totallyreal_data.la

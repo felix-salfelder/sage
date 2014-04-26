@@ -10,13 +10,16 @@ inst_PYTHON = \
     linearextensions.py schnyder.py graph.py digraph_generators.py \
     graph_generators.py graph_latex.py all.py digraph.py print_graphs.py \
     bipartite_graph.py graph_editor.py isgci.py graph_plot.py line_graph.py \
-    hypergraph.py
+    hypergraph.py \
+    tutte_polynomial.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
     chrompoly.la cliquer.la comparability.la convexity_properties.la \
     distances_all_pairs.la generic_graph_pyx.la genus.la graph_generators_pyx.la \
-    hyperbolicity.la matchpoly.la planarity.la spanning_tree.la trees.la \
+    hyperbolicity.la matchpoly.la planarity.la \
+    spanning_tree.la \
+    trees.la \
     weakly_chordal.la
 
 chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@

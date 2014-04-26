@@ -14,6 +14,15 @@ AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la
 toric_lattice_element_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
+hpdir = $(instdir)/hyperplane_arrangement
+hp_PYTHON = \
+    hyperplane_arrangement/affine_subspace.py \
+    hyperplane_arrangement/arrangement.py \
+    hyperplane_arrangement/hyperplane.py \
+    hyperplane_arrangement/__init__.py \
+    hyperplane_arrangement/library.py \
+    hyperplane_arrangement/plot.py
+
 geometry_polyhedrondir = $(instdir)/polyhedron
 geometry_polyhedron_PYTHON = \
     polyhedron/all.py \
