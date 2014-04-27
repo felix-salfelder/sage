@@ -687,7 +687,7 @@ class Maxima(MaximaAbstract, Expect):
                 #Note that this depends on the order of self._prompt_wait
                 if expr is self._prompt_wait and i > len(self._ask):
                     self.quit()
-                    raise ValueError, "%s\nComputation failed due to a bug in Maxima -- NOTE: Maxima had to be restarted."%v
+                    raise ValueError("%s\nComputation failed due to a bug in Maxima -- NOTE: Maxima had to be restarted."%v)
 
                 j = v.find('Is ')
                 v = v[j:]
@@ -695,8 +695,8 @@ class Maxima(MaximaAbstract, Expect):
                 msg = """Computation failed since Maxima requested additional constraints (try the command "maxima.assume('""" + v[4:k] +""">0')" before integral or limit evaluation, for example):\n""" + v + self._ask[i-1]
                 self._sendline(";")
                 self._expect_expr()
-                raise ValueError, msg
-        except KeyboardInterrupt, msg:
+                raise ValueError(msg)
+        except KeyboardInterrupt as msg:
             #print self._expect.before
             i = 0
             while True:
@@ -713,7 +713,7 @@ class Maxima(MaximaAbstract, Expect):
                     pass
                 else:
                     break
-            raise KeyboardInterrupt, msg
+            raise KeyboardInterrupt(msg)
 
     def _eval_line(self, line, allow_use_file=False,
                    wait_for_prompt=True, reformat=True, error_check=True, restart_if_needed=False):
@@ -755,7 +755,8 @@ class Maxima(MaximaAbstract, Expect):
         line_echo = self._expect.readline()
         if not wait_for_prompt:
             return
-        assert line_echo.strip() == line.strip(), 'mismatch:\n' + line_echo + line
+        # line_echo sometimes has randomly inserted terminal echo in front #15811
+        assert line_echo.strip().endswith(line.strip()), 'mismatch:\n' + line_echo + line
 
         self._expect_expr(self._display_prompt)
         out = self._before()        # input echo + output prompt + output
@@ -917,7 +918,7 @@ class Maxima(MaximaAbstract, Expect):
             Maxima ERROR:
                 Principal Value
         """
-        raise TypeError, "Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s"%(cmd, out.replace('-- an error.  To debug this try debugmode(true);',''))
+        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s"%(cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
 
     ###########################################
     # Direct access to underlying lisp interpreter.

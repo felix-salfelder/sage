@@ -13,6 +13,11 @@ include "sage/ext/stdsage.pxi"
 include "sage/ext/interrupt.pxi"  # ctrl-c interrupt block support
 
 cdef extern from "sage/libs/gap/libgap_wrap.h":
+# cdef extern from "gap/system.h":
+    ctypedef char libGAP_Char
+    ctypedef int libGAP_Int
+    ctypedef unsigned char libGAP_UChar
+
     void libgap_initialize(int argc, char** argv)
     ctypedef void(*libgap_gasman_callback_ptr)()
     void libgap_set_gasman_callback(libgap_gasman_callback_ptr callback)
@@ -27,10 +32,6 @@ cdef extern from "sage/libs/gap/libgap_wrap.h":
     void libgap_mark_stack_bottom()
     void libgap_enter()
     void libgap_exit()
-
-# cdef extern from "libgap/system.h":
-    ctypedef char libGAP_Char
-    ctypedef unsigned char libGAP_UChar
 
 # cdef extern from "libgap/code.h":
     ctypedef unsigned int libGAP_Stat
@@ -58,8 +59,8 @@ cdef extern from "sage/libs/gap/libgap_wrap.h":
     ctypedef void* libGAP_Obj
     libGAP_Obj libGAP_SHALLOW_COPY_OBJ(libGAP_Obj obj)
     bint libGAP_IS_INTOBJ(libGAP_Obj obj)
-    libGAP_Obj libGAP_INTOBJ_INT(int)
-    int libGAP_INT_INTOBJ(libGAP_Obj)
+    libGAP_Obj libGAP_INTOBJ_INT(libGAP_Int)
+    libGAP_Int libGAP_INT_INTOBJ(libGAP_Obj)
     libGAP_UInt libGAP_TNUM_OBJ(libGAP_Obj obj)
     char* libGAP_TNAM_OBJ(libGAP_Obj obj)
     cdef int libGAP_FIRST_REAL_TNUM

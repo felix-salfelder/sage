@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
+<<<<<<< HEAD:src/bin/sage.in
 # FIXME: move to a reasonable location. better use PATH
 PIPESTATUS_CMD="@abs_top_srcdir@/../../build/pipestatus"
 
 usage() {
     echo "----------------------------------------------------------------------"
-    grep -i version "$SAGE_ETC/sage-banner"
+    grep -v 'Type' "$SAGE_ETC/sage-banner"
     echo "----------------------------------------------------------------------"
     echo
+}
+
+usage() {
+    help_banner
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Optional arguments:"
@@ -48,10 +53,7 @@ usage() {
 }
 
 usage_advanced() {
-    echo "----------------------------------------------------------------------"
-    grep -i version "$SAGE_ETC/sage-banner"
-    echo "----------------------------------------------------------------------"
-    echo
+    help_banner
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
     echo "Running Sage:"
@@ -820,7 +822,7 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
             -args python `which sage-ipython` "$@" -i
     else
         cygdb "$SAGE_ROOT/src" "$SAGE_SRC/sage" \
-            -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
+            -- -x "$SAGE_LOCAL/bin/sage-gdb-commands" \
             -args python `which sage-ipython` "$@" -i
     fi
     exit $?

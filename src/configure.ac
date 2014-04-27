@@ -5,7 +5,7 @@
 # license: gplv3+
 #
 AC_PREREQ([2.69])
-AC_INIT([sagelib], [6.1.1-autotools], [sage-devel@googlegroups.com])
+AC_INIT([sagelib], [6.2.rc0-autotools], [sage-devel@googlegroups.com])
 
 # do not mix up with sage-the-distribution parts
 AC_CONFIG_AUX_DIR([.])
