@@ -149,9 +149,12 @@ AS_IF([$SINGULAR -q],,[AC_MSG_ERROR([singular doesn't work.])])
 AC_MSG_CHECKING([where Singular has its libs])
 SINGULAR_LIB=`echo 'system("SingularLib");' | $SINGULAR -q --no-rc --no-stdlib -b`
 AC_MSG_RESULT([$SINGULAR_LIB])
-if test ! -e $SINGULAR_LIB/algebra.lib; then
+if test -e ${SINGULAR_LIB%%:*}/algebra.lib; then
+    SINGULAR_LIB=${SINGULAR_LIB%%:*}
+else
     AC_MSG_ERROR([unexpected singular install, cannot find lib])
 fi
+
 AC_SUBST([SINGULAR_LIB])
 SINGULAR_BIN=`dirname $SINGULAR`
 AC_SUBST([SINGULAR_BIN])
