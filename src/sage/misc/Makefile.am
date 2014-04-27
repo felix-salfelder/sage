@@ -26,16 +26,13 @@ inst_LTLIBRARIES = \
     classcall_metaclass.la constant_function.la cython_c.la derivative.la \
     fast_methods.la fpickle.la function_mangling.la lazy_import.la lazy_list.la \
     misc_c.la nested_class.la parser.la pickle_old.la randstate.la \
-    readline_extra_commands.la refcount.la reset.la sage_timeit_class.la search.la \
-    session.la stopgap.la lazy_attribute.la c3_controlled.la inputhook.la \
+    refcount.la reset.la sage_timeit_class.la search.la \
+    session.la stopgap.la lazy_attribute.la c3_controlled.la \
     weak_dict.la
 
 allocator_la_LIBADD = @CSAGE_LIBS@
 randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 #randstate_la_LDFLAGS = $(AM_LDFLAGS)
-inputhook_la_LIBADD = @CSAGE_LIBS@
-
-readline_extra_commands_la_LIBADD = -lreadline
 
 bitset_la_LIBADD = @CSAGE_LIBS@
 binary_tree_la_LIBADD = @CSAGE_LIBS@

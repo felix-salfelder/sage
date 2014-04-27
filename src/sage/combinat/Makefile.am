@@ -177,6 +177,8 @@ combinat_designs_PYTHON = \
     designs/ext_rep.py \
     designs/incidence_structures.py \
     designs/__init__.py \
+    designs/latin_squares.py \
+    designs/orthogonal_designs.py \
     designs/steiner_quadruple_systems.py
 
 combinat_ncsf_qsymdir = $(instdir)/ncsf_qsym

@@ -6,7 +6,6 @@ csagedir = $(includedir)/csage
 csage_HEADERS = \
     ccobject.h \
     convert.h \
-    ginac_wrap.h \
     gmp_globals.h \
     gmp_or_mpir.h \
     gmpxx_or_mpirxx.h \
@@ -16,6 +15,5 @@ csage_HEADERS = \
     mpz_longlong.h \
     mpz_pylong.h \
     ntl_wrap.h \
-    pb_wrap.h \
     stdsage.h \
     ZZ_pylong.h

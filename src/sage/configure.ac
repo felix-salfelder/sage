@@ -682,6 +682,7 @@ AC_CONFIG_FILES([
     plot/plot3d/Makefile
     probability/Makefile
     quadratic_forms/Makefile
+    repl/Makefile
     rings/finite_rings/Makefile
     rings/function_field/Makefile
     rings/Makefile

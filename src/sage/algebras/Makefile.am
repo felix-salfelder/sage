@@ -20,3 +20,12 @@ algebras_steenrod_PYTHON = \
     steenrod/steenrod_algebra_misc.py \
     steenrod/steenrod_algebra_mult.py \
     steenrod/steenrod_algebra.py
+
+finitedir = $(instdir)/finite_dimensional_algebras
+finite_PYTHON = \
+    finite_dimensional_algebras/all.py \
+    finite_dimensional_algebras/finite_dimensional_algebra_element.py \
+    finite_dimensional_algebras/finite_dimensional_algebra_ideal.py \
+    finite_dimensional_algebras/finite_dimensional_algebra_morphism.py \
+    finite_dimensional_algebras/finite_dimensional_algebra.py \
+    finite_dimensional_algebras/__init__.py
