@@ -53,7 +53,7 @@ multi_polynomial_libsingular_la_CPPFLAGS = $(AM_CPPFLAGS) -D__STDC_LIMIT_MACROS 
 pbori_la_LIBADD = -lpolybori-0.8 -lpolybori_groebner-0.8 -lm4ri -lpng12 @CSAGE_LIBS@
 pbori_la_SOURCES = pbori.pyxx
 pbori_la_CXXFLAGS = $(m4ri_flags_filtered) $(AM_CXXFLAGS)
-pbori_la_CPPFLAGS = $(AM_CPPFLAGS) -I@SAGE_DIR@/libs/polybori
+pbori_la_CPPFLAGS = $(AM_CPPFLAGS) -I@SAGE_SRCDIR@/libs/polybori
 
 plural_la_LIBADD = -lm -lreadline -lsingular -lgivaro @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 plural_la_SOURCES = plural.pyxx

@@ -7,8 +7,8 @@ include $(top_srcdir)/common.mk
 inst_PYTHON = \
     cone.py polyhedra.py __init__.py fan_isomorphism.py toric_plotter.py \
     fan_morphism.py fan.py all.py hasse_diagram.py lattice_polytope.py polytope.py \
-    toric_lattice.py newton_polygon.py pseudolines.py
-
+    toric_lattice.py newton_polygon.py pseudolines.py \
+    linear_expression.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = integral_points.la point_collection.la toric_lattice_element.la

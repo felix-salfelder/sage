@@ -13,7 +13,8 @@ SUBDIRS = \
     graphs groups gsl homology \
     interfaces interacts lfunctions logic \
     matrix media misc modular modules monoids numerical \
-    parallel plot probability quadratic_forms rings sandpiles \
+    parallel plot probability quadratic_forms \
+    repl rings sandpiles \
     schemes sets stats structure symbolic tensor tests server doctest sat \
     dynamics matroids
 
@@ -94,7 +95,7 @@ noinst_HEADERS = \
     graphs/cliquer.pxd graphs/graph_decompositions/rankwidth.pxd \
     graphs/distances_all_pairs.pxd graphs/base/dense_graph.pxd \
     graphs/base/c_graph.pxd graphs/base/static_sparse_graph.pxd \
-    graphs/base/sparse_graph.pxd libs/ginac.pxd libs/gap/gap_includes.pxd \
+    graphs/base/sparse_graph.pxd libs/gap/gap_includes.pxd \
     libs/gap/util.pxd libs/gap/element.pxd libs/lcalc/lcalc_Lfunction.pxd \
     libs/fplll/fplll.pxd libs/coxeter3/coxeter.pxd libs/gmp/random.pxd \
     libs/gmp/types.pxd libs/gmp/mpf.pxd libs/gmp/all.pxd libs/gmp/mpq.pxd \

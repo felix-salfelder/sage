@@ -5,7 +5,9 @@
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
     all.py arxiv_0812_2725.py benchmark.py book_schilling_zabrocki_kschur_primer.py \
-    book_stein_ent.py book_stein_modform.py cmdline.py __init__.py parigp.py \
+    book_stein_ent.py book_stein_modform.py cmdline.py \
+    deprecation_test.py \
+    __init__.py parigp.py \
     startup.py gap_packages.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
@@ -23,6 +25,7 @@ tests_french_book_PYTHON = \
     french_book/domaines_doctest.py \
     french_book/float_doctest.py \
     french_book/__init__.py \
+    french_book/integration_doctest \
     french_book/linalg_doctest.py \
     french_book/linsolve_doctest.py \
     french_book/mpoly.py \

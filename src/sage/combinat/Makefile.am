@@ -154,7 +154,6 @@ combinat_sf_PYTHON = \
     sf/jack.py \
     sf/k_dual.py \
     sf/kfpoly.py \
-    sf/kschur.py \
     sf/llt.py \
     sf/macdonald.py \
     sf/monomial.py \
@@ -178,7 +177,7 @@ combinat_designs_PYTHON = \
     designs/incidence_structures.py \
     designs/__init__.py \
     designs/latin_squares.py \
-    designs/orthogonal_designs.py \
+    designs/orthogonal_arrays.py \
     designs/steiner_quadruple_systems.py
 
 combinat_ncsf_qsymdir = $(instdir)/ncsf_qsym

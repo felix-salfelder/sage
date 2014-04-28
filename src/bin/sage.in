@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-<<<<<<< HEAD:src/bin/sage.in
 # FIXME: move to a reasonable location. better use PATH
 PIPESTATUS_CMD="@abs_top_srcdir@/../../build/pipestatus"
 

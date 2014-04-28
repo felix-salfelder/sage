@@ -4,7 +4,9 @@
 #
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    __init__.py ag_code.py all.py code_bounds.py code_constructions.py decoder.py \
+    __init__.py ag_code.py all.py code_bounds.py code_constructions.py \
+    codes_catalog.py \
+    decoder.py \
     guava.py linear_code.py sd_codes.py delsarte_bounds.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx

@@ -4,10 +4,10 @@
 #
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    misc.py table.py map_threaded.py sage_unittest.py sage_extension.py \
+    misc.py table.py map_threaded.py sage_unittest.py \
     memory_info.py nested_class_test.py benchmark.py trace.py bindable_class.py \
     proof.py __init__.py python.py mathml.py latex_macros.py defaults.py \
-    classgraph.py remote_file.py superseded.py lazy_string.py persist.py prun.py \
+    classgraph.py remote_file.py superseded.py lazy_string.py persist.py \
     sage_itertools.py unknown.py prandom.py flatten.py typecheck.py cache.py \
     functional.py edit_module.py exceptions.py package.py sage_input.py \
     method_decorator.py lazy_format.py decorators.py preparser.py \

@@ -14,4 +14,4 @@ inst_LTLIBRARIES = \
 
 gen_la_LIBADD = -lpari @GMP_OR_MPIR_LIBS@
 
-noinst_HEADERS = handle_error.pxd
+noinst_HEADERS = handle_error.pxd pari_instance.pxd

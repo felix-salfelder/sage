@@ -50,4 +50,4 @@ noinst_HEADERS = \
     symmetrica/schur.pxi symmetrica/sc.pxi symmetrica/plet.pxi \
     symmetrica/part.pxi flint/nmod_poly_linkage.pxi flint/fmpz_poly.pxi \
     flint/fmpz.pxi cremona/defs.pxi singular/singular-cdefs.pxi \
-    ppl_shim.hh polybori/decl.pxd
+    ppl_shim.hh polybori/decl.pxd polybori/pb_wrap.h

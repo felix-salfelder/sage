@@ -481,8 +481,11 @@ AS_IF([test ! x$SAGE_LOCAL = xNONE],
       [SAGE_INC=NONE])
 AC_SUBST(SAGE_INC)
 
-SAGE_DIR=$srcdir
+SAGE_DIR=`pwd`
 AC_SUBST(SAGE_DIR)
+
+SAGE_SRCDIR=`pwd`/$srcdir
+AC_SUBST(SAGE_SRCDIR)
 
 AS_AC_EXPAND(SAGE_ETC, $sysconfdir)
 
