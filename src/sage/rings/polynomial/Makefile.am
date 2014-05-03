@@ -37,7 +37,7 @@ m4ri_flags_filtered = $(filter-out -std=c99,@M4RI_CFLAGS@)
 
 noinst_HEADERS = \
     polynomial_template.pxi polynomial_template_header.pxi \
-    polynomial_ring_homomorphism.pdx
+    polynomial_ring_homomorphism.pxd
 
 multi_polynomial_ideal_libsingular_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 multi_polynomial_ideal_libsingular_la_SOURCES = multi_polynomial_ideal_libsingular.pyxx
