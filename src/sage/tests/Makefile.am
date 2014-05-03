@@ -25,7 +25,7 @@ tests_french_book_PYTHON = \
     french_book/domaines_doctest.py \
     french_book/float_doctest.py \
     french_book/__init__.py \
-    french_book/integration_doctest \
+    french_book/integration_doctest.py \
     french_book/linalg_doctest.py \
     french_book/linsolve_doctest.py \
     french_book/mpoly.py \

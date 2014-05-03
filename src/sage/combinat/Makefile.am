@@ -28,6 +28,7 @@ inst_PYTHON = \
     ribbon_shaped_tableau.py binary_recurrence_sequences.py \
     composition_tableau.py \
     finite_state_machine.py \
+    finite_state_machine_generators.py \
     hall_polynomial.py \
     k_tableau.py \
     six_vertex_model.py
@@ -170,6 +171,7 @@ combinat_sf_PYTHON = \
 combinat_designsdir = $(instdir)/designs
 combinat_designs_PYTHON = \
     designs/all.py \
+    designs/bibd.py \
     designs/block_design.py \
     designs/covering_design.py \
     designs/design_catalog.py \

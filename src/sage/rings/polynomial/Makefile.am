@@ -25,7 +25,9 @@ rings_polynomial_LTLIBRARIES = \
     polynomial_integer_dense_flint.la polynomial_integer_dense_ntl.la \
     polynomial_modn_dense_ntl.la polynomial_rational_flint.la \
     polynomial_real_mpfr_dense.la polynomial_zmod_flint.la polynomial_zz_pex.la \
-    real_roots.la symmetric_reduction.la
+    polynomial_ring_homomorphism.la \
+    real_roots.la \
+    symmetric_reduction.la
 
 laurent_polynomial_la_LIBADD = @CSAGE_LIBS@
 cyclotomic_la_LIBADD = @CSAGE_LIBS@
@@ -33,7 +35,9 @@ polydict_la_LIBADD = @CSAGE_LIBS@
 
 m4ri_flags_filtered = $(filter-out -std=c99,@M4RI_CFLAGS@)
 
-noinst_HEADERS = polynomial_template.pxi polynomial_template_header.pxi
+noinst_HEADERS = \
+    polynomial_template.pxi polynomial_template_header.pxi \
+    polynomial_ring_homomorphism.pdx
 
 multi_polynomial_ideal_libsingular_la_LIBADD = -lm -lreadline -lsingular -lgivaro -lntl @GMP_OR_MPIR_XXLIBS@ @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 multi_polynomial_ideal_libsingular_la_SOURCES = multi_polynomial_ideal_libsingular.pyxx

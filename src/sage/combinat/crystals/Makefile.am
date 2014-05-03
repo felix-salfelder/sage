@@ -5,6 +5,7 @@
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
     affine.py \
+    affine_factorization.py \
     alcove_path.py \
     all.py \
     catalog_elementary_crystals.py \
