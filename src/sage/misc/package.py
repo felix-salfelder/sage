@@ -185,6 +185,13 @@ def is_package_installed(package):
         sage: is_package_installed('sage')
         True
     """
+    # this function is used to check whether "package" is available.
+    # but it returns whether the package has been installed within sage (the distribution).
+    # this is nonsense if sage the distribution is not in use. even worse, it
+    # makes user (=somebody without write permissions to sage-prefix) installs impossible.
+
+    # TODO: return whether package is available, possibly using HAVE_<PACKAGE>...?
+    return True
     return any(p.startswith(package) for p in install_package())
 
 def standard_packages():
