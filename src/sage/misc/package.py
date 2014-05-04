@@ -191,6 +191,9 @@ def is_package_installed(package):
     # makes user (=somebody without write permissions to sage-prefix) installs impossible.
 
     # TODO: return whether package is available, possibly using HAVE_<PACKAGE>...?
+    import sage.env
+    if(package=="database_cremona_ellcurve"):
+        return sage.env.HAVE_DATABASE_CREMONA_ELLCURVE=='1'
     return True
     return any(p.startswith(package) for p in install_package())
 
