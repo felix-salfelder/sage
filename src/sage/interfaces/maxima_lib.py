@@ -77,7 +77,8 @@ from maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
 ## We begin here by initializing Maxima in library mode
 ## i.e. loading it into ECL
 ecl_eval("(setf *load-verbose* NIL)")
-ecl_eval("(require 'maxima)")
+#TODO: ask maxima. use env.py etc.
+ecl_eval('(load #P"/usr/local/lib/maxima/5.33.0/binary-ecl/maxima.fas")')
 ecl_eval("(in-package :maxima)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defvar *MAXIMA-LANG-SUBDIR* NIL)")

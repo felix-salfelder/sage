@@ -555,8 +555,10 @@ class Maxima(MaximaAbstract, Expect):
         self._display_prompt = '<sage-display>'
         # See #15440 for the importance of the trailing space
         self._output_prompt_re = re.compile('\(\%o[0-9]+\) ')
+        # TODO: 'equal to -1?' is suboptimal
+        # TODO: is 'positive, negative, or zero?' still required?
         self._ask = ['zero or nonzero?', 'an integer?', 'positive, negative, or zero?',
-                     'positive or negative?', 'positive or zero?']
+                     'positive or negative?', 'positive or zero?', 'equal to -1?', 'positive, negative or zero?']
         self._prompt_wait = [self._prompt] + [re.compile(x) for x in self._ask] + \
                             ['Break [0-9]+'] #note that you might need to change _expect_expr if you
                                              #change this

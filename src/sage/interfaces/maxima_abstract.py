@@ -420,7 +420,7 @@ class MaximaAbstract(Interface):
         EXAMPLES::
 
             sage: maxima.version()
-            '5.29.1'
+            '5...'
         """
         return maxima_version()
 
