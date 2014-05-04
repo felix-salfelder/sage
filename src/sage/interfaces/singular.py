@@ -2149,14 +2149,15 @@ def generate_docstring_dictionary():
     nodes.clear()
     node_names.clear()
 
-    singular_docdir = os.environ["SAGE_LOCAL"]+"/share/singular/"
+    # TODO: proper SINGULAR_DOCDIR
+    singular_docdir = "/usr/share/singular-3-1-6/info"
 
     new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
     new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
 
     L, in_node, curr_node = [], False, None
 
-    for line in open(singular_docdir + "singular.hlp"):
+    for line in open(os.path.join(singular_docdir, "singular.hlp")):
         m = re.match(new_node,line)
         if m:
             # a new node starts
