@@ -14,6 +14,7 @@ SUBDIRS = c_lib sage $(DOC) bin ext # mac-app whatever
 check-local: # py sage
 	export SAGE_ROOT=/tmp; \
 	export SAGE_SRC=@abs_top_srcdir@; \
+	export SAGE_DOC_SRC=@abs_top_srcdir@/doc; \
 	export SAGE_EXTCODE="@abs_top_builddir@/ext"; \
 	export LIBCSAGE_INCLUDES="-I@abs_top_builddir@/c_lib/includes -I@abs_top_srcdir@/c_lib/includes"; \
 	export PYTHONPATH="@abs_top_builddir@$(PYTHONPATH:%=:%)"; \
