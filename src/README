@@ -10,3 +10,8 @@ caveats:
 
 - libgap headers are looked for in <libgap/*.h> not <gap/*.h>, because that's
   where the gap headers are. the libgap-workaround is still contained.
+
+merges from upstream-development:
+
+- merged in some ecl fix. see #12985
+- update pari to 2.7. see #15767
