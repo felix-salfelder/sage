@@ -6,3 +6,8 @@ make it work on non-sage-the-distribution
 
 fix sage (the distribution) to configure sagelib globally, then merge
 AC_CONFIG_SUBDIRS
+
+# misc missing todo
+
+- liblinbox check in configure.ac
+- LD_LIBRARY_PATH (for tests etc.) is likely unnecessary. recheck, remove
