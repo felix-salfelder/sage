@@ -1657,6 +1657,7 @@ cdef extern from 'pari/pari.h':
     GEN     znorder(GEN x, GEN o)
     GEN     znprimroot(GEN m)
     GEN     znstar(GEN x)
+    GEN     sqrtint(GEN x)
 
     # arith2.c
 
