@@ -573,12 +573,17 @@ AC_SUBST([GAP_DATA_DIR])
 #AC_SUBST([GAP_INCLUDES])
 AC_SUBST([GAP_INCLUDEDIR])
 
-AC_MSG_CHECKING([for gap libdir])
-AS_IF([test -x $SAGE_LOCAL/gap/latest/bin/*/gap],
+AC_MSG_CHECKING([for gap resources])
+AC_PATH_PROG(GAC, gac, no)
+AM_CONDITIONAL([HAVE_GAC], [test x$GAC = xno])
+AS_IF([test x$found_GAC != xno],
+      [GAP_LIB_DIR=`grep ^gap_bin= $GAC | cut -f2 -d=`],
+      [test -x $SAGE_LOCAL/gap/latest/bin/*/gap],
       [GAP_LIB_DIR=`dirname $SAGE_LOCAL/gap/latest/bin/*/gap`],
       [test -d /usr/lib/gap/bin],
       [GAP_LIB_DIR=/usr/lib/gap/bin],
-      [AC_MSG_ERROR([cannot find gap])])
+      [AC_MSG_ERROR([cannot find gap resources])])
+AC_SUBST([GAC])
 AC_SUBST([GAP_LIB_DIR])
 AC_MSG_RESULT([$GAP_LIB_DIR])
 
