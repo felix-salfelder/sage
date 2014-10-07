@@ -40,7 +40,13 @@ inst_LTLIBRARIES = \
     trees.la \
     weakly_chordal.la \
     independent_sets.la \
-    mcqd.la
+    $(MCQD_LA)
+
+if USE_MCQD
+    MCQD_LA = mcqd.la
+else
+    MCQD_LA =
+endif
 
 mcqd_la_SOURCES = mcqd.pyxx
 chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
