@@ -2,7 +2,7 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
-SUBDIRS = matrices words crystals
+SUBDIRS = matrices words crystals designs
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
     tutorial.py misc.py multichoose_nk.py family.py permutation_nk.py \
@@ -31,7 +31,10 @@ inst_PYTHON = \
     finite_state_machine_generators.py \
     hall_polynomial.py \
     k_tableau.py \
-    six_vertex_model.py
+    six_vertex_model.py \
+    shuffle.py \
+    gray_codes.py \
+    interval_posets.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
@@ -110,9 +113,12 @@ combinat_root_system_PYTHON = \
     root_system/coxeter_group.py \
     root_system/coxeter_matrix.py \
     root_system/dynkin_diagram.py \
+    root_system/hecke_algebra_representation.py \
     root_system/__init__.py \
+    root_system/non_symmetric_macdonald_polynomials.py \
     root_system/pieri_factors.py \
     root_system/plot.py \
+    root_system/root_lattice_realization_algebras.py \
     root_system/root_lattice_realizations.py \
     root_system/root_space.py \
     root_system/root_system.py \
@@ -130,8 +136,8 @@ combinat_root_system_PYTHON = \
     root_system/type_E_affine.py \
     root_system/type_E.py \
     root_system/type_F_affine.py \
-    root_system/type_F.py \
     root_system/type_folded.py \
+    root_system/type_F.py \
     root_system/type_G_affine.py \
     root_system/type_G.py \
     root_system/type_H.py \
@@ -142,6 +148,7 @@ combinat_root_system_PYTHON = \
     root_system/weight_space.py \
     root_system/weyl_characters.py \
     root_system/weyl_group.py
+
 
 combinat_sfdir = $(instdir)/sf
 combinat_sf_PYTHON = \
@@ -167,20 +174,6 @@ combinat_sf_PYTHON = \
     sf/sfa.py \
     sf/witt.py \
     sf/sf.py
-
-combinat_designsdir = $(instdir)/designs
-combinat_designs_PYTHON = \
-    designs/all.py \
-    designs/bibd.py \
-    designs/block_design.py \
-    designs/covering_design.py \
-    designs/design_catalog.py \
-    designs/ext_rep.py \
-    designs/incidence_structures.py \
-    designs/__init__.py \
-    designs/latin_squares.py \
-    designs/orthogonal_arrays.py \
-    designs/steiner_quadruple_systems.py
 
 combinat_ncsf_qsymdir = $(instdir)/ncsf_qsym
 combinat_ncsf_qsym_PYTHON = \

@@ -9,13 +9,20 @@ inst_PYTHON = \
     ell_generic.py ell_wp.py sha_tate.py heegner.py lseries_ell.py ec_database.py \
     ell_modular_symbols.py formal_group.py ell_tate_curve.py ell_field.py \
     ell_torsion.py weierstrass_morphism.py kodaira_symbol.py constructor.py all.py \
-    ell_curve_isogeny.py cm.py padic_lseries.py gp_simon.py monsky_washnitzer.py \
+    ell_curve_isogeny.py cm.py padic_lseries.py gp_simon.py \
     BSD.py ell_number_field.py modular_parametrization.py ell_egros.py \
-    isogeny_class.py period_lattice.py \
-    gal_reps_number_field.py weierstrass_transform.py jacobian.py \
-    isogeny_small_degree.py
+    isogeny_class.py \
+    gal_reps_number_field.py \
+    height.py \
+    isogeny_small_degree.py \
+    jacobian.py \
+    period_lattice.py \
+    weierstrass_transform.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-inst_LTLIBRARIES = descent_two_isogeny.la
+inst_LTLIBRARIES = \
+    descent_two_isogeny.la \
+    period_lattice_region.la
+
 descent_two_isogeny_la_LIBADD = @CSAGE_LIBS@ -lflint @GMP_OR_MPIR_LIBS@ -lratpoints
 descent_two_isogeny_la_CFLAGS = -std=c99 $(AM_CFLAGS)

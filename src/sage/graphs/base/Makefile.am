@@ -16,4 +16,6 @@ inst_LTLIBRARIES = \
     static_sparse_backend.la \
     static_sparse_graph.la
 
-noinst_HEADERS = static_sparse_backend.pxd
+noinst_HEADERS = \
+    static_dense_graph.pxd \
+    static_sparse_backend.pxd

@@ -11,4 +11,8 @@ inst_LTLIBRARIES = \
     autgroup_can_label.la \
     codecan.la
 
+codecan_la_CPPFLAGS = -I$(abs_top_builddir)/libs/gap $(AM_CPPFLAGS)
+
+noinst_HEADERS = codecan.pxd
+
 # _la_LIBADD = @CSAGE_LIBS@

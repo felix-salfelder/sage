@@ -40,10 +40,30 @@ inst_PYTHON = \
     cartesian_product.py unique_factorization_domains.py finite_coxeter_groups.py \
     regular_crystals.py bialgebras.py objects.py hecke_modules.py lattice_posets.py \
     finite_crystals.py finite_dimensional_modules_with_basis.py \
-    finite_dimensional_coalgebras_with_basis.py
+    finite_dimensional_coalgebras_with_basis.py \
+    additive_groups.py \
+    additive_monoids.py \
+    additive_semigroups.py \
+    associative_algebras.py \
+    category_with_axiom.py \
+    coxeter_group_algebras.py \
+    distributive_magmas_and_additive_magmas.py \
+    finite_sets.py \
+    magmas_and_additive_magmas.py \
+    magmatic_algebras.py \
+    permutation_groups.py \
+    unital_algebras.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-inst_LTLIBRARIES = action.la category_singleton.la functor.la map.la morphism.la
+inst_LTLIBRARIES = \
+    action.la \
+    category_cy_helper.la \
+    category_singleton.la \
+    functor.la \
+    map.la \
+    morphism.la
+
+noinst_HEADERS = category_cy_helper.pxd
 
 map_la_LIBADD = @CSAGE_LIBS@
 morphism_la_LIBADD = @CSAGE_LIBS@

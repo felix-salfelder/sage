@@ -16,7 +16,7 @@ SUBDIRS = \
     parallel plot probability quadratic_forms \
     repl rings sandpiles \
     schemes sets stats structure symbolic tensor tests server doctest sat \
-    dynamics matroids
+    dynamics matroids quivers game_theory
 
 inst_PYTHON = \
     all_cmdline.py \

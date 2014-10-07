@@ -622,6 +622,7 @@ AC_CONFIG_FILES([
     coding/codecan/Makefile
     combinat/Makefile
     combinat/crystals/Makefile
+    combinat/designs/Makefile
     combinat/matrices/Makefile
     combinat/words/Makefile
     crypto/Makefile
@@ -632,6 +633,7 @@ AC_CONFIG_FILES([
     ext/Makefile
     finance/Makefile
     functions/Makefile
+    game_theory/Makefile
     games/Makefile
     geometry/Makefile
     geometry/triangulation/Makefile
@@ -685,6 +687,7 @@ AC_CONFIG_FILES([
     plot/plot3d/Makefile
     probability/Makefile
     quadratic_forms/Makefile
+    quivers/Makefile
     repl/Makefile
     rings/finite_rings/Makefile
     rings/function_field/Makefile
@@ -702,6 +705,7 @@ AC_CONFIG_FILES([
     schemes/elliptic_curves/Makefile
     schemes/hyperelliptic_curves/Makefile
     schemes/Makefile
+    schemes/projective/Makefile
     schemes/toric/Makefile
     server/Makefile
     server/notebook/Makefile

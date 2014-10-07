@@ -2,12 +2,20 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
+SUBDIRS = codecan
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    __init__.py ag_code.py all.py code_bounds.py code_constructions.py \
+    ag_code.py \
+    all.py \
+    code_bounds.py \
+    code_constructions.py \
     codes_catalog.py \
     decoder.py \
-    guava.py linear_code.py sd_codes.py delsarte_bounds.py
+    delsarte_bounds.py \
+    guava.py \
+    __init__.py \
+    linear_code.py \
+    sd_codes.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = binary_code.la

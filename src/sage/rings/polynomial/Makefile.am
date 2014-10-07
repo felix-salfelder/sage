@@ -4,8 +4,7 @@
 #
 SUBDIRS = padics
 include $(top_srcdir)/common.mk
-rings_polynomialdir = $(pythondir)/sage/rings/polynomial
-rings_polynomial_PYTHON = \
+inst_PYTHON = \
     all.py complex_roots.py convolution.py groebner_fan.py ideal.py \
     infinite_polynomial_element.py infinite_polynomial_ring.py __init__.py \
     laurent_polynomial_ring.py multi_polynomial_element.py \
@@ -17,15 +16,18 @@ rings_polynomial_PYTHON = \
     toy_buchberger.py toy_d_basis.py toy_variety.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-rings_polynomial_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     cyclotomic.la laurent_polynomial.la multi_polynomial.la \
     multi_polynomial_ideal_libsingular.la multi_polynomial_libsingular.la \
     multi_polynomial_ring_generic.la pbori.la plural.la polydict.la \
     polynomial_compiled.la polynomial_element.la polynomial_gf2x.la \
     polynomial_integer_dense_flint.la polynomial_integer_dense_ntl.la \
     polynomial_modn_dense_ntl.la polynomial_rational_flint.la \
-    polynomial_real_mpfr_dense.la polynomial_zmod_flint.la polynomial_zz_pex.la \
+    polynomial_number_field.la \
+    polynomial_real_mpfr_dense.la \
     polynomial_ring_homomorphism.la \
+    polynomial_zmod_flint.la \
+    polynomial_zz_pex.la \
     real_roots.la \
     symmetric_reduction.la
 

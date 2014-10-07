@@ -4,7 +4,9 @@
 #
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    all.py arxiv_0812_2725.py benchmark.py book_schilling_zabrocki_kschur_primer.py \
+    all.py arxiv_0812_2725.py benchmark.py \
+    book_schilling_zabrocki_kschur_primer.py \
+    article_heuberger_krenn_kropf_fsm-in-sage.py \
     book_stein_ent.py book_stein_modform.py cmdline.py \
     deprecation_test.py \
     __init__.py parigp.py \

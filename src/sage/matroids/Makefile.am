@@ -2,11 +2,8 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
-
 include $(top_srcdir)/common.mk
-sagedir = $(pythondir)/sage
-sage_matroidsdir = $(sagedir)/matroids
-sage_matroids_PYTHON = \
+inst_PYTHON = \
     advanced.py \
     all.py \
     catalog.py \
@@ -14,6 +11,7 @@ sage_matroids_PYTHON = \
     dual_matroid.py \
     __init__.py \
     matroids_catalog.py \
+    matroids_plot_helpers.py \
     minor_matroid.py \
     named_matroids.py \
     rank_matroid.py \
@@ -31,7 +29,7 @@ noinst_HEADERS = \
     set_system.pxd
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-sage_matroids_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     matroid.la extension.la set_system.la lean_matrix.la \
     basis_exchange_matroid.la basis_matroid.la \
     linear_matroid.la circuit_closures_matroid.la \

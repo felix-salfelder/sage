@@ -2,8 +2,9 @@
 # (c) 2013 Felix Salfelder
 # license: gplv3+
 #
-SUBDIRS = elliptic_curves hyperelliptic_curves toric
+SUBDIRS = elliptic_curves hyperelliptic_curves toric projective
 include $(top_srcdir)/common.mk
+
 schemesdir = $(pythondir)/sage/schemes
 schemes_PYTHON = \
     all.py \
@@ -25,17 +26,6 @@ schemes_jacobians_PYTHON = \
     jacobians/abstract_jacobian.py \
     jacobians/all.py \
     jacobians/__init__.py
-
-schemes_projectivedir = $(pythondir)/sage/schemes/projective
-schemes_projective_PYTHON = \
-    projective/all.py \
-    projective/__init__.py \
-    projective/endPN_minimal_model.py \
-    projective/projective_homset.py \
-    projective/projective_morphism.py \
-    projective/projective_point.py \
-    projective/projective_rational_point.py \
-    projective/projective_space.py
 
 schemes_plane_conicsdir = $(pythondir)/sage/schemes/plane_conics
 schemes_plane_conics_PYTHON = \

@@ -4,16 +4,15 @@
 #
 SUBDIRS = proof
 include $(top_srcdir)/common.mk
-
-structuredir = $(pythondir)/sage/structure
-structure_PYTHON = \
+inst_PYTHON = \
     unique_representation.py sequence.py dynamic_class.py __init__.py \
     element_verify.py test_factory.py global_options.py all.py \
     factorization_integer.py factorization.py nonexact.py \
-    coerce_exceptions.py formal_sum.py list_clone_timings.py gens_py.py
+    coerce_exceptions.py formal_sum.py list_clone_timings.py gens_py.py \
+    indexed_generators.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-structure_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     category_object.la coerce.la coerce_actions.la coerce_dict.la coerce_maps.la \
     element.la factory.la generators.la list_clone.la list_clone_timings_cy.la \
     misc.la mutability.la parent.la parent_base.la parent_gens.la parent_old.la \

@@ -12,6 +12,7 @@ inst_PYTHON = \
     functional.py edit_module.py exceptions.py package.py sage_input.py \
     method_decorator.py lazy_format.py decorators.py preparser.py \
     interpreter.py bug.py dist.py temporary_file.py \
+    gperftools.py \
     object_multiplexer.py inline_fortran.py multireplace.py messaging.py \
     file_to_worksheet.py sagedoc.py all.py sh.py explain_pickle.py \
     abstract_method.py random_testing.py cython.py sage_timeit.py log.py html.py \
@@ -23,7 +24,9 @@ inst_PYTHON = \
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
     allocator.la binary_tree.la bitset.la c3.la cachefunc.la citation.la \
-    classcall_metaclass.la constant_function.la cython_c.la derivative.la \
+    classcall_metaclass.la constant_function.la cython_c.la \
+    darwin_utilities.la \
+    derivative.la \
     fast_methods.la fpickle.la function_mangling.la lazy_import.la lazy_list.la \
     misc_c.la nested_class.la parser.la pickle_old.la randstate.la \
     refcount.la reset.la sage_timeit_class.la search.la \
@@ -38,4 +41,8 @@ bitset_la_LIBADD = @CSAGE_LIBS@
 binary_tree_la_LIBADD = @CSAGE_LIBS@
 misc_c_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 
-noinst_HEADERS = bitset.pxi
+noinst_HEADERS = \
+    binary_matrix_pxd.pxi \
+    binary_matrix.pxi \
+    bitset.pxi \
+    c3_controlled.pxd

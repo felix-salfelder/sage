@@ -6,9 +6,9 @@ SUBDIRS = \
     finite_rings function_field number_field padics polynomial \
     universal_cyclotomic_field semirings
 include $(top_srcdir)/common.mk
-ringsdir = $(pythondir)/sage/rings
 
-rings_PYTHON = \
+inst_PYTHON = \
+    algebraic_closure_finite_field.py \
     misc.py infinity.py power_series_ring.py integral_domain_element.py __init__.py \
     invariant_theory.py complex_field.py multi_power_series_ring_element.py \
     complex_interval_field.py rational_field.py euclidean_domain_element.py \
@@ -23,14 +23,15 @@ rings_PYTHON = \
     real_interval_field.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-rings_LTLIBRARIES = \
+inst_LTLIBRARIES = \
     bernmm.la bernoulli_mod_p.la complex_double.la \
     complex_interval.la complex_mpc.la complex_number.la factorint.la fast_arith.la \
     fraction_field_FpT.la fraction_field_element.la integer.la integer_ring.la \
     laurent_series_ring_element.la morphism.la noncommutative_ideals.la \
     power_series_mpoly.la power_series_poly.la power_series_ring_element.la \
     rational.la real_double.la real_interval_absolute.la real_lazy.la real_mpfi.la \
-    real_mpfr.la residue_field.la ring.la
+    real_mpfr.la residue_field.la ring.la \
+    sum_of_squares.la
 
 bernmm_la_SOURCES = bernmm.pyxx bernmm/bern_modp.cpp bernmm/bern_modp_util.cpp bernmm/bern_rat.cpp
 bernmm_la_LIBADD = -lntl @GMP_OR_MPIR_LIBS@ -lpthread @CSAGE_LIBS@

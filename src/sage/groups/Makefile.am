@@ -5,12 +5,22 @@
 SUBDIRS = abelian_gps perm_gps matrix_gps semimonomial_transformations
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    braid.py __init__.py class_function.py generic.py pari_group.py \
-    free_group.py all.py group_homset.py groups_catalog.py conjugacy_classes.py \
-    finitely_presented.py \
-    libgap_group.py libgap_mixin.py \
+    all.py \
+    braid.py \
+    class_function.py \
+    conjugacy_classes.py \
     finitely_presented_catalog.py \
-    finitely_presented_named.py
+    finitely_presented_named.py \
+    finitely_presented.py \
+    free_group.py \
+    generic.py \
+    group_homset.py \
+    groups_catalog.py \
+    __init__.py \
+    libgap_group.py \
+    libgap_mixin.py \
+    pari_group.py \
+    raag.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = group.la libgap_wrapper.la old.la

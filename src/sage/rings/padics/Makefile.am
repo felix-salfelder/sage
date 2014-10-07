@@ -28,6 +28,8 @@ noinst_HEADERS = \
     common_conversion.pxd \
     CR_template_header.pxi \
     CR_template.pxi \
+    FM_template_header.pxi \
+    FM_template.pxi \
     morphism.pxd \
     padic_template_element_header.pxi \
     padic_template_element.pxi

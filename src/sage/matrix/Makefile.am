@@ -13,6 +13,7 @@ matrix_PYTHON = \
 AM_DEFAULT_SOURCE_EXT = .pyx
 matrix_LTLIBRARIES = \
     action.la change_ring.la matrix.la matrix0.la matrix1.la matrix2.la \
+    echelon_matrix.la \
     matrix_complex_double_dense.la matrix_cyclo_dense.la matrix_dense.la \
     matrix_double_dense.la matrix_generic_dense.la matrix_generic_sparse.la \
     matrix_integer_2x2.la matrix_integer_dense.la matrix_integer_sparse.la \

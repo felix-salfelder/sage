@@ -27,6 +27,7 @@ geometry_polyhedrondir = $(instdir)/polyhedron
 geometry_polyhedron_PYTHON = \
     polyhedron/all.py \
     polyhedron/backend_cdd.py \
+    polyhedron/backend_field.py \
     polyhedron/backend_ppl.py \
     polyhedron/base.py \
     polyhedron/base_QQ.py \
@@ -34,17 +35,19 @@ geometry_polyhedron_PYTHON = \
     polyhedron/base_ZZ.py \
     polyhedron/cdd_file_format.py \
     polyhedron/constructor.py \
+    polyhedron/double_description_inhomogeneous.py \
+    polyhedron/double_description.py \
     polyhedron/face.py \
     polyhedron/__init__.py \
+    polyhedron/lattice_euclidean_group_element.py \
     polyhedron/library.py \
     polyhedron/misc.py \
     polyhedron/palp_database.py \
     polyhedron/parent.py \
     polyhedron/plot.py \
+    polyhedron/ppl_lattice_polygon.py \
     polyhedron/ppl_lattice_polytope.py \
-    polyhedron/representation.py \
-    polyhedron/lattice_euclidean_group_element.py \
-    polyhedron/ppl_lattice_polygon.py
+    polyhedron/representation.py
 
 geom_riemanndir = $(instdir)/riemannian_manifolds
 geom_riemann_PYTHON = \

@@ -20,6 +20,7 @@ endif
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \
 	 $(COND_COIN) $(COND_CPLEX) $(COND_GUROBI) \
+    cvxopt_backend.la \
     generic_backend.la glpk_backend.la \
     glpk_graph_backend.la ppl_backend.la
 
@@ -46,3 +47,5 @@ gurobi_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
 
 ppl_backend_la_LIBADD = @CSAGE_LIBS@ -lstdc++
 ppl_backend_la_CPPFLAGS = -I@LIBCSAGE_INCLUDES@ $(AM_CPPFLAGS)
+
+noinst_HEADERS = cvxopt_backend.pxd

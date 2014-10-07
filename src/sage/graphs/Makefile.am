@@ -5,12 +5,30 @@
 SUBDIRS = base graph_decompositions modular_decomposition
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    pq_trees.py graph_database.py dot2tex_utils.py generic_graph.py __init__.py \
-    graph_coloring.py graph_list.py graph_bundle.py hypergraph_generators.py \
-    linearextensions.py schnyder.py graph.py digraph_generators.py \
-    graph_generators.py graph_latex.py all.py digraph.py print_graphs.py \
-    bipartite_graph.py graph_editor.py isgci.py graph_plot.py line_graph.py \
-    hypergraph.py \
+    all.py \
+    bipartite_graph.py \
+    digraph_generators.py \
+    digraph.py \
+    dot2tex_utils.py \
+    generic_graph.py \
+    graph_bundle.py \
+    graph_coloring.py \
+    graph_database.py \
+    graph_editor.py \
+    graph_generators.py \
+    graph_latex.py \
+    graph_list.py \
+    graph_plot_js.py \
+    graph_plot.py \
+    graph.py \
+    hypergraph_generators.py \
+    __init__.py \
+    isgci.py \
+    linearextensions.py \
+    line_graph.py \
+    pq_trees.py \
+    print_graphs.py \
+    schnyder.py \
     tutte_polynomial.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
@@ -20,7 +38,9 @@ inst_LTLIBRARIES = \
     hyperbolicity.la matchpoly.la planarity.la \
     spanning_tree.la \
     trees.la \
-    weakly_chordal.la
+    weakly_chordal.la \
+    independent_sets.la \
+    mcqd.la
 
 chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 cliquer_la_SOURCES = cliquer.pyx cl.c
@@ -66,5 +86,8 @@ graphs_generators_PYTHON = \
 trees_la_LIBADD = @CSAGE_LIBS@
 weakly_chordal_la_LIBADD = @CSAGE_LIBS@
 
-noinst_HEADERS = cl.h
+noinst_HEADERS = cl.h \
+    independent_sets.pxd \
+    mcqd.pxd
+
 EXTRA_DIST = cl.c

@@ -11,7 +11,6 @@ dist_bin_SCRIPTS = \
     sage-CSI \
     sage-CSI-helper.py \
     sage-cleaner \
-    sage-combinat \
     sage-coverageall \
     sage-cython \
     sage-download-file \

@@ -9,7 +9,9 @@ inst_PYTHON = \
     vector_space_morphism.py vector_callable_symbolic_dense.py \
     vector_symbolic_dense.py vector_space_homspace.py complex_double_vector.py \
     all.py matrix_morphism.py free_module.py quotient_module.py module_element.py \
-    free_quadratic_module.py free_module_homspace.py
+    free_quadratic_module.py free_module_homspace.py \
+    diamond_cutting.py \
+    free_module_integer.py
 
 noinst_HEADERS = \
 	 binary_search.pxi vector_integer_sparse_c.pxi vector_integer_sparse_h.pxi \

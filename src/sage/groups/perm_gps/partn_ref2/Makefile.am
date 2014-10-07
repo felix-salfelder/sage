@@ -16,4 +16,5 @@ AM_CPPFLAGS += -I@top_builddir@/libs/gap
 refinement_generic_la_LIBADD = @GMP_OR_MPIR_LIBS@ -lflint
 
 noinst_HEADERS = \
+    refinement_generic.h \
     refinement_generic.pxd

@@ -7,5 +7,6 @@ inst_PYTHON = \
     all.py cell_complex.py chain_complex_homspace.py chain_complex_morphism.py \
     chain_complex.py cubical_complex.py delta_complex.py examples.py __init__.py \
     homology_group.py \
+    matrix_utils.py \
     simplicial_complex_homset.py simplicial_complex_morphism.py \
     simplicial_complex.py tests.py

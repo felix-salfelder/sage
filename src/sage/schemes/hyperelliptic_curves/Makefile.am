@@ -10,9 +10,11 @@ inst_PYTHON = \
     hyperelliptic_g2_padic_field.py jacobian_generic.py \
     hyperelliptic_g2_rational_field.py hyperelliptic_padic_field.py \
     jacobian_homset.py hyperelliptic_finite_field.py jacobian_g2.py \
-    mestre.py
+    mestre.py monsky_washnitzer.py
 
-inst_LTLIBRARIES = hypellfrob.la
+inst_LTLIBRARIES = \
+    hypellfrob.la
+
 hypellfrob_la_SOURCES = \
 	 hypellfrob.pyxx hypellfrob/hypellfrob_cc.cpp hypellfrob/recurrences_ntl.cpp \
     hypellfrob/recurrences_zn_poly.cpp

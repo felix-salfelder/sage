@@ -43,11 +43,30 @@ libs_gmpdir = $(instdir)/gmp
 libs_gmp_PYTHON = gmp/__init__.py
 
 noinst_HEADERS = \
-    fplll/fplll.pxi coxeter3/decl.pxi pari/declinl.pxi pari/decl.pxi \
-    pari/pari_err.pxi ntl/ntl_ZZ_pEX_linkage.pxi ntl/decl.pxi \
-    ntl/ntl_GF2X_linkage.pxi ntl/misc.pxi symmetrica/symmetrica.pxi \
-    symmetrica/kostka.pxi symmetrica/sab.pxi symmetrica/sb.pxi \
-    symmetrica/schur.pxi symmetrica/sc.pxi symmetrica/plet.pxi \
-    symmetrica/part.pxi flint/nmod_poly_linkage.pxi flint/fmpz_poly.pxi \
-    flint/fmpz.pxi cremona/defs.pxi singular/singular-cdefs.pxi \
-    ppl_shim.hh polybori/decl.pxd polybori/pb_wrap.h
+    coxeter3/decl.pxi \
+    cremona/defs.pxi \
+    flint/fmpz_poly.pxi \
+    flint/fmpz.pxi \
+    flint/nmod_poly_linkage.pxi \
+    fplll/fplll.pxi \
+    linkages/padics/API.pxi \
+    linkages/padics/mpz.pxi \
+    ntl/decl.pxi \
+    ntl/misc.pxi \
+    ntl/ntl_GF2X_linkage.pxi \
+    ntl/ntl_ZZ_pEX_linkage.pxi \
+    pari/declinl.pxi \
+    pari/decl.pxi \
+    pari/pari_err.pxi \
+    polybori/decl.pxd \
+    polybori/pb_wrap.h \
+    ppl_shim.hh \
+    singular/singular-cdefs.pxi \
+    symmetrica/kostka.pxi \
+    symmetrica/part.pxi \
+    symmetrica/plet.pxi \
+    symmetrica/sab.pxi \
+    symmetrica/sb.pxi \
+    symmetrica/schur.pxi \
+    symmetrica/sc.pxi \
+    symmetrica/symmetrica.pxi

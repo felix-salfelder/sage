@@ -3,12 +3,26 @@
 # license: gplv3+
 #
 include $(top_srcdir)/common.mk
-functionsdir = $(pythondir)/sage/functions
-functions_PYTHON = \
-    trig.py orthogonal_polys.py other.py piecewise.py __init__.py transcendental.py \
-    wigner.py all.py spike_function.py exp_integral.py log.py hyperbolic.py \
-    special.py min_max.py generalized.py bessel.py
+inst_PYTHON = \
+    all.py \
+    bessel.py \
+    exp_integral.py \
+    generalized.py \
+    hyperbolic.py \
+    hypergeometric.py \
+    __init__.py \
+    jacobi.py \
+    log.py \
+    min_max.py \
+    orthogonal_polys.py \
+    other.py \
+    piecewise.py \
+    special.py \
+    spike_function.py \
+    transcendental.py \
+    trig.py \
+    wigner.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
-functions_LTLIBRARIES = prime_pi.la
+inst_LTLIBRARIES = prime_pi.la
 prime_pi_la_LIBADD = @CSAGE_LIBS@

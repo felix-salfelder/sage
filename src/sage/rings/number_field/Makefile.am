@@ -4,10 +4,13 @@
 #
 include $(top_srcdir)/common.mk
 inst_PYTHON = \
-    all.py class_group.py galois_group.py __init__.py maps.py morphism.py \
+    all.py \
+    bdd_height.py \
+    class_group.py galois_group.py __init__.py maps.py morphism.py \
     number_field_ideal.py number_field_ideal_rel.py number_field.py \
     number_field_rel.py order.py small_primes_of_degree_one.py totallyreal_phc.py \
-    totallyreal_rel.py unit_group.py splitting_field.py
+    totallyreal_rel.py unit_group.py splitting_field.py \
+    structure.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = \

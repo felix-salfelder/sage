@@ -4,9 +4,13 @@
 #
 include $(top_srcdir)/common.mk
 
-inst_PYTHON = all.py gap_functions.py \
-    __init__.py test_long.py \
-    context_managers.py
+inst_PYTHON = \
+    all.py \
+    gap_functions.py \
+    __init__.py \
+    context_managers.py \
+    saved_workspace.py \
+    test_long.py
 
 AM_DEFAULT_SOURCE_EXT = .pyx
 inst_LTLIBRARIES = element.la libsagegap.la util.la
