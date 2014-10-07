@@ -609,7 +609,7 @@ AC_CHECK_FUNCS([access lstat unlink mkdir mkdtemp mkstemp rmdir link rename])
 AC_CHECK_FUNCS([symlink readlink chmod fchmod chown fchown lchown dup dup2 mknod mkfifo])
 AC_CHECK_FUNCS([socket listen accept connect bind getsockname recv recvfrom recvmsg send])
 AC_CHECK_FUNCS([sendto sendmsg getsockopt setsockopt getprotobyname gethostbyname])
-AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir])
+AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir stat])
 
 #### output files
 
