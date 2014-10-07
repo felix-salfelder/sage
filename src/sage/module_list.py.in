@@ -2166,7 +2166,7 @@ if "@HAVE_LIBCRYPTOMINISAT@" != "0":
 if is_package_installed('mcqd'):
     ext_modules.append(
         Extension("sage.graphs.mcqd",
-                  ["sage/graphs/mcqd.pyx"],
+                  ["sage/graphs/mcqd.pyxx"],
                   language = "c++"))
 #                  libraries = ["mcqd"]))
 

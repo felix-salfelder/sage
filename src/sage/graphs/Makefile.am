@@ -42,6 +42,7 @@ inst_LTLIBRARIES = \
     independent_sets.la \
     mcqd.la
 
+mcqd_la_SOURCES = mcqd.pyxx
 chrompoly_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
 cliquer_la_SOURCES = cliquer.pyx cl.c
 cliquer_la_LIBADD = -lcliquer @CSAGE_LIBS@
