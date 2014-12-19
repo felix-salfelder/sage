@@ -31,7 +31,7 @@ AM_LDFLAGS = -module -avoid-version
 
 AM_CPPFLAGS = @my_CPPFLAGS@
 
-CSAGE_LIBS = -l@top_builddir@/../c_lib/src/libcsage.la
+CSAGE_LIBS = $(top_builddir)/../c_lib/src/libcsage.la
 
 # user specified MAKEFLAGS
 # AM_CPPFLAGS += $(CPPFLAGS)

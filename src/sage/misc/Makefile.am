@@ -33,10 +33,8 @@ inst_LTLIBRARIES = \
     session.la stopgap.la lazy_attribute.la c3_controlled.la \
     weak_dict.la
 
-allocator_la_LIBADD = @CSAGE_LIBS@
-randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
-#randstate_la_LDFLAGS = $(AM_LDFLAGS)
-
+allocator_la_LIBADD = $(CSAGE_LIBS)
+randstate_la_LIBADD = @GMP_OR_MPIR_LIBS@ $(CSAGE_LIBS)
 bitset_la_LIBADD = @CSAGE_LIBS@
 binary_tree_la_LIBADD = @CSAGE_LIBS@
 misc_c_la_LIBADD = @GMP_OR_MPIR_LIBS@ @CSAGE_LIBS@
