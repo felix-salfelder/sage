@@ -468,8 +468,6 @@ if [ "$1" = '-sh' -o "$1" = '--sh' ]; then
             # create a temporary .zshenv to reset the path
             ZDOTDIR=$DOT_SAGE && export ZDOTDIR
             cat >"$ZDOTDIR/.zshenv" <<EOF
-PATH="$PATH" && export PATH
-EOF
             SHELL_OPTS=" -d"
             export PS1
             ;;
