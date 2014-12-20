@@ -51,6 +51,7 @@ libGAP_AssPRec = AssPRec;
 
 /* strings.h */
 libGAP_IsStringFuncs = IsStringFuncs;
+libGAP_IsStringConv = IsStringConv;
 libGAP_NEW_STRING = NEW_STRING;
 
 /* arith.h */
