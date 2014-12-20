@@ -1,0 +1,4 @@
+prefix="@prefix@"
+export PYTHONPATH="@pythondir@${PYTHONPATH/*/:}$PYTHONPATH"
+export SAGE_SRC="@pythondir@"
+export PATH="@prefix@/bin:$PATH"

@@ -618,6 +618,7 @@ AC_CHECK_FUNCS([opendir closedir dirfd readdir rewinddir seekdir telldir stat])
 #### output files
 
 AC_CONFIG_FILES([
+    00bare.sh
     setup.py
     module_list.py
     Makefile
