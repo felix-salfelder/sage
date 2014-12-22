@@ -18,5 +18,6 @@ Makefile
 /install-sh
 /ltmain.sh
 /missing
+/compile
 
 *~
