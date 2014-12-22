@@ -5,8 +5,10 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
+transform=s&\.real$$&&;$(program_transform_name)
+noinst_SCRIPTS = sage
 dist_bin_SCRIPTS = \
-    sage \
+    sage.real \
     sage-build \
     sage-CSI \
     sage-CSI-helper.py \

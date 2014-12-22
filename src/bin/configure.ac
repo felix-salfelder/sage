@@ -34,5 +34,6 @@ SAGE64=no
 AC_SUBST([SAGE64])
 
 AC_CONFIG_FILES([sage], [chmod +x sage])
+AC_CONFIG_FILES([sage.real], [chmod +x sage.real])
 
 AC_OUTPUT([Makefile env.sh])
