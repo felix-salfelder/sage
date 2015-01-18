@@ -19,9 +19,6 @@ EXTRA_DIST = bootstrap \
              $(shell (cd @srcdir@; ls en/reference/combinat/*.rst)) \
              $(shell (cd @srcdir@; ls en/reference/polynomial_rings/polynomial_rings_*.rst)) \
              en/reference/misc/sagetex.rst \
-             en/reference/cmd/environ.rst \
-             en/reference/cmd/options.rst \
-             en/reference/cmd/startup.rst \
              en/reference/dynamics/interval_exchanges.rst \
              en/reference/dynamics/flat_surfaces.rst \
              en/reference/todolist.rst
